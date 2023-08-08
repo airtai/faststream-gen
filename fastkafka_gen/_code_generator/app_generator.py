@@ -9,9 +9,9 @@ import time
 
 from yaspin import yaspin
 
-from fastkafka._components.logger import get_logger
-from fastkafka._code_generator.helper import CustomAIChat, ValidateAndFixResponse
-from fastkafka._code_generator.prompts import APP_GENERATION_PROMPT
+from .._components.logger import get_logger
+from .helper import CustomAIChat, ValidateAndFixResponse
+from .prompts import APP_GENERATION_PROMPT
 
 # %% ../../nbs/App_Generator.ipynb 3
 logger = get_logger(__name__)
@@ -43,8 +43,7 @@ def _get_functions_prompt(
         parameters = ", ".join(
             [
                 f"Parameter: {param_name}, Type: {param_type}"
-                for parameter in v["parameters"]
-                for param_name, param_type in parameter.items()
+                for param_name, param_type in v["parameters"].items()
             ]
         )
         function_message = f"""
@@ -92,7 +91,7 @@ def _validate_response(response: str) -> str:
     # todo:
     return []
 
-# %% ../../nbs/App_Generator.ipynb 20
+# %% ../../nbs/App_Generator.ipynb 19
 def generate_app(plan: str, description: str) -> Tuple[str, str]:
     """Generate code for the new FastKafka app from the validated plan
     

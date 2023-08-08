@@ -76,7 +76,7 @@ logger_spaces_added: List[str] = []
 
 
 def get_logger(
-    name: str, *, level: int = logging.DEBUG, add_spaces: bool = True
+    name: str, *, level: int = logging.INFO, add_spaces: bool = True
 ) -> logging.Logger:
     """Return the logger class with default logging configuration.
 

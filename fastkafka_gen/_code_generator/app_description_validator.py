@@ -9,9 +9,9 @@ import time
 
 from yaspin import yaspin
 
-from fastkafka._components.logger import get_logger
-from fastkafka._code_generator.helper import CustomAIChat
-from fastkafka._code_generator.prompts import APP_VALIDATION_PROMPT
+from .._components.logger import get_logger
+from .helper import CustomAIChat
+from .prompts import APP_VALIDATION_PROMPT
 
 # %% ../../nbs/App_Description_Validator.ipynb 3
 logger = get_logger(__name__)

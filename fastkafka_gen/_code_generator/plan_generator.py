@@ -11,9 +11,9 @@ import json
 
 from yaspin import yaspin
 
-from fastkafka._components.logger import get_logger
-from fastkafka._code_generator.helper import CustomAIChat, ValidateAndFixResponse
-from fastkafka._code_generator.prompts import PLAN_GENERATION_PROMPT
+from .._components.logger import get_logger
+from .helper import CustomAIChat, ValidateAndFixResponse
+from .prompts import PLAN_GENERATION_PROMPT
 
 # %% ../../nbs/Plan_Generator.ipynb 3
 logger = get_logger(__name__)

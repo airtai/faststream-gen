@@ -8,7 +8,7 @@ from typing import *
 import time
 
 from yaspin import yaspin
-from fastkafka._components.logger import get_logger
+from .._components.logger import get_logger
 
 # %% ../../nbs/Test_Generator.ipynb 3
 logger = get_logger(__name__)
@@ -63,7 +63,7 @@ def generate_test(app_code: str) -> str:
     # TODO: Implement the actual functionality
     with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
 
-        time.sleep(3)
+        time.sleep(1)
         sp.text = ""
         sp.ok(" ✔ Tests are generated and saved at: /some_dir/test.py")
         return SAMPLE_CODE
