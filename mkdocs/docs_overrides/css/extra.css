@@ -1,0 +1,29 @@
+.md-typeset .admonition.caution,
+.md-typeset details.caution {
+  border-color: #ff9100;
+}
+.md-typeset .caution > .admonition-title,
+.md-typeset .caution > summary {
+  background-color: #ff91001a;
+}
+.md-typeset .caution > .admonition-title::before,
+.md-typeset .caution > summary::before {
+  background-color: #ff9100;
+  -webkit-mask-image: var(--md-admonition-icon--warning);
+          mask-image: var(--md-admonition-icon--warning);
+}
+
+.md-typeset .admonition.important,
+.md-typeset details.important {
+  border-color: #ff1744;
+}
+.md-typeset .important > .admonition-title,
+.md-typeset .important > summary {
+  background-color: #ff17441a;
+}
+.md-typeset .important > .admonition-title::before,
+.md-typeset .important > summary::before {
+  background-color: #ff1744;
+  -webkit-mask-image: var(--md-admonition-icon--danger);
+          mask-image: var(--md-admonition-icon--danger);
+}
