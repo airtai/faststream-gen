@@ -6,6 +6,7 @@ __all__ = ['logger', 'ENTITY_PROMPT', 'generate_app']
 # %% ../../nbs/App_Generator.ipynb 1
 from typing import *
 import time
+import json
 
 from yaspin import yaspin
 
@@ -34,7 +35,7 @@ def _generate_entities_string(plan: Dict[str, List[Dict[str, Any]]]) -> str:
 
 # %% ../../nbs/App_Generator.ipynb 8
 def _get_functions_prompt(
-    functions: Dict[str, Dict[str, Union[str, List[Any]]]],
+    functions: Dict[str, Dict[str, Union[str, Dict[str, str]]]],
     app_name: str,
     is_producer_function: bool = False,
 ) -> str:
@@ -43,7 +44,7 @@ def _get_functions_prompt(
         parameters = ", ".join(
             [
                 f"Parameter: {param_name}, Type: {param_type}"
-                for param_name, param_type in v["parameters"].items()
+                for param_name, param_type in v["parameters"].items() # type: ignore
             ]
         )
         function_message = f"""
@@ -58,7 +59,12 @@ The function should implement the following business logic:
 
         if is_producer_function:
             function_message += f'\n\nAfter implementing the above logic, the function should return the {v["returns"]} object.'
-            function_message = function_message.replace("consumes function", "produces function").replace("which should consume messages from the", "which should produce messages to the")
+            function_message = function_message.replace(
+                "consumes function", "produces function"
+            ).replace(
+                "which should consume messages from the",
+                "which should produce messages to the",
+            )
 
         function_messages.append(function_message)
 
@@ -87,7 +93,7 @@ def _generate_app_prompt(plan: str) -> str:
     return APP_GENERATION_PROMPT.format(generated_plan_prompt=generated_plan_prompt)
 
 # %% ../../nbs/App_Generator.ipynb 17
-def _validate_response(response: str) -> str:
+def _validate_response(response: str) -> List[str]:
     # todo:
     return []
 
