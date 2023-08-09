@@ -173,3 +173,6 @@ mkdocs/site/
 # nbdev_mkdocs
 mkdocs/docs/
 mkdocs/site/
+
+# fastkafka-gen
+fastkafka-gen/
