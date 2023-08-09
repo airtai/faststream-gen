@@ -72,18 +72,26 @@ def generate_fastkafka_app(
 
 \n"""
     ),
+    output_path: str = typer.Option(
+        "./fastkafka-gen",
+        "--output_path",
+        "-o",
+        help="Path to the output directory where generated files will be saved. This path should be relative to the current working directory.",
+    ),
 ) -> None:
     """Generate a new FastKafka app(s) effortlessly with advanced AI assistance"""
     try:
         _ensure_openai_api_key_set()
         validated_description, description_token = validate_app_description(description)
-#         validated_plan, plan_token = generate_plan(validated_description)
+        
+        output_file = f"{output_path}/plan.json"
+        plan_token = generate_plan(validated_description, output_file)
 #         code = generate_app(validated_plan, validated_description)
 #         test = generate_test(code)
         
 #         total_token_usage = description_token + plan_token
 #         typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
-        typer.secho("✨  All files were successfully generated.!", fg=typer.colors.CYAN)
+        typer.secho("✨  All files were successfully generated!", fg=typer.colors.CYAN)
     
     except (ValueError, KeyError) as e:
         typer.secho(e, err=True, fg=typer.colors.RED)
