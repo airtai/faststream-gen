@@ -1,0 +1,85 @@
+asyncapi: 2.5.0
+info:
+  title: Product currency converter
+  version: 0.0.1
+  description: 'A FastKafka application using localhost broker for testing, staging.airt.ai
+    for staging and prod.airt.ai for production, using default port numbers. It should
+    consume from ''store_product'' topic an JSON encoded object with the following
+    three attributes: product_name, currency and price. The format of the currency
+    will be three letter string, e.g. ''EUR''. For each consumed message, check if
+    the currency attribute is set to ''HRK''. If it is then change the currency to
+    ''EUR'' and divide the price by 7.5, if the currency is not set to ''HRK'' don''t
+    change the original message. Finally, publish the consumed message to ''change_currency''
+    topic. Use SASL_SSL with SCRAM-SHA-256 for authentication.'
+  contact:
+    name: Author
+    url: https://www.google.com/
+    email: noreply@gmail.com
+servers:
+  localhost:
+    url: localhost
+    description: local development kafka broker
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+  staging:
+    url: staging.airt.ai
+    description: staging kafka broker
+    protocol: kafka-secure
+    security:
+    - staging_default_security: []
+    variables:
+      port:
+        default: '9092'
+  production:
+    url: prod.airt.ai
+    description: production kafka broker
+    protocol: kafka-secure
+    security:
+    - production_default_security: []
+    variables:
+      port:
+        default: '9092'
+channels:
+  store_product:
+    subscribe:
+      message:
+        $ref: '#/components/messages/StoreProduct'
+      description: For each consumed message, check if the currency attribute is set
+        to 'HRK'. If it is then change the currency to 'EUR' and divide the price
+        by 7.5, if the currency is not set to 'HRK' don't change the original message.
+        Finally, publish the consumed message to 'change_currency' topic.
+  change_currency:
+    publish:
+      message:
+        $ref: '#/components/messages/StoreProduct'
+components:
+  messages:
+    StoreProduct:
+      payload:
+        properties:
+          product_name:
+            description: Name of the product.
+            title: Product Name
+            type: string
+          currency:
+            description: The currency.
+            title: Currency
+            type: string
+          price:
+            description: Price of the product.
+            title: Price
+            type: number
+        required:
+        - product_name
+        - currency
+        - price
+        title: StoreProduct
+        type: object
+  schemas: {}
+  securitySchemes:
+    staging_default_security:
+      type: scramSha256
+    production_default_security:
+      type: scramSha256

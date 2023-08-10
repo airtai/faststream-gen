@@ -1,0 +1,6 @@
+Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number.
+
+It should consume from 'store_product' topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. 'EUR'.
+For each consumed message, check if the currency attribute is set to 'HRK'. If it is then change the currency to 'EUR' and divide the price by 7.5, if the currency is not set to 'HRK' don't change the original message. Finally, publish the consumed message to 'change_currency' topic.
+
+Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
