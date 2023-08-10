@@ -1,0 +1,43 @@
+{
+    "entities": [
+        {
+            "name": "StoreProduct",
+            "arguments": {
+                "product_name": "str",
+                "currency": "str",
+                "price": "float"
+            }
+        }
+    ],
+    "apps": [
+        {
+            "app_name": "store_product_app",
+            "kafka_brokers": {
+                "localhost": {
+                  "url": "localhost",
+                  "description": "local development kafka broker",
+                  "port": 9092
+                }
+            },
+            "consumes_functions": {
+                "on_store_product": {
+                    "topic": "store_product",
+                    "parameters": {
+                        "msg": "StoreProduct"
+                      },
+                      "description": "This consumer function should consume messages from 'store_product' topic. The consumed message should be of type 'StoreProduct' which contains product details such as 'product_name', 'currency', and 'price'. After consuming the message, produce the message to the 'change_currency' topic."
+                }
+            },
+            "produces_functions": {
+                "to_change_currency": {
+                    "topic": "change_currency",
+                    "parameters": {
+                        "store_product": "StoreProduct"
+                      },
+                      "description": "Whenever this function is called with the 'StoreProduct' details, it should produce the 'StoreProduct' details to 'change_currency' topic. Before producing the 'StoreProduct' details, the function should check if the currency attribute of the 'StoreProduct' object is 'HRK', if so it should change the 'currency' to 'EUR' and divide the 'price' with 7.5.",
+                      "returns": "StoreProduct"
+                } 
+            }
+        }
+    ]
+}
