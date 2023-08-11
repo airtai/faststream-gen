@@ -14,6 +14,7 @@ from ._code_generator.app_description_validator import validate_app_description
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
+from ._code_generator.helper import set_logger_level
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -55,6 +56,7 @@ Note: Accessing OpenAI API incurs charges. However, when you sign up for the fir
     "generate",
     help="Generate a new FastKafka app(s) effortlessly with advanced AI assistance",
 )
+@set_logger_level
 def generate_fastkafka_app(
     description: str = typer.Argument(
         ...,
@@ -77,6 +79,12 @@ def generate_fastkafka_app(
         "--output_path",
         "-o",
         help="Path to the output directory where generated files will be saved. This path should be relative to the current working directory.",
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Enable verbose logging by setting the logger level to INFO.",
     ),
 ) -> None:
     """Generate a new FastKafka app(s) effortlessly with advanced AI assistance"""
