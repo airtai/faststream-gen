@@ -284,7 +284,7 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
         The total token used to generate the AsyncAPI spec
     """
     with yaspin(
-        text="Generating plan (usually takes 30 to 60 seconds)...",
+        text="Generating plan (usually takes around 15 to 30 seconds)...",
         color="cyan",
         spinner="clock",
     ) as sp:
