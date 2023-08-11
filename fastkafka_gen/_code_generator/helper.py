@@ -31,14 +31,24 @@ DEFAULT_MODEL = "gpt-3.5-turbo-16k" # gpt-3.5-turbo
 MAX_RETRIES = 5
 
 # %% ../../nbs/Helper.ipynb 6
-def set_logger_level(func):
+def set_logger_level(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator to set the logger level based on verbosity.
+
+    Args:
+        func: The function to be decorated.
+
+    Returns:
+        The decorated function.
+    """
+
     @functools.wraps(func)
-    def wrapper_decorator(*args, **kwargs):
+    def wrapper_decorator(*args, **kwargs): # type: ignore
         if ("verbose" in kwargs) and kwargs["verbose"]:
             set_level(logging.INFO)
         else:
             set_level(logging.WARNING)
         return func(*args, **kwargs)
+
     return wrapper_decorator
 
 # %% ../../nbs/Helper.ipynb 9
