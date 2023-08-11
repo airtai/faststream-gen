@@ -11,7 +11,7 @@ import typer
 
 from ._components.logger import get_logger
 from ._code_generator.app_description_validator import validate_app_description
-from ._code_generator.plan_generator import generate_plan
+from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
 
@@ -83,9 +83,8 @@ def generate_fastkafka_app(
     try:
         _ensure_openai_api_key_set()
         validated_description, description_token = validate_app_description(description)
-        
-        output_file = f"{output_path}/plan.json"
-        plan_token = generate_plan(validated_description, output_file)
+
+        asyncapi_spec_token = generate_asyncapi_spec(validated_description, output_path)
 #         code = generate_app(validated_plan, validated_description)
 #         test = generate_test(code)
         
