@@ -215,4 +215,4 @@ def fix(self: ValidateAndFixResponse, prompt: str) -> Tuple[str, str]:
         )
         iterations += 1
         if self.max_attempts is not None and iterations >= self.max_attempts:
-            raise ValueError(error_str)
+            raise ValueError(f"{error_str}\n\nprompt = {prompt}")
