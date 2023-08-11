@@ -288,6 +288,7 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
         color="cyan",
         spinner="clock",
     ) as sp:
+        logger.info("\nGenerating AsyncAPI specification")
         async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
         async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response)
         validated_async_spec, total_tokens = async_spec_validator.fix(description)
