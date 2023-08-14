@@ -318,7 +318,7 @@ asyncapi: 2.5.0
 info:
   title: Greet users
   version: 0.0.1
-  description: 'A FastKafka application which employs localhost, staging, and production brokers with default port number. It consumes JSON-encoded messages from the 'receive_name' topic, adds "Hello " to the user_name attribute, and publishes the modified message to 'send_greetings'. It uses SASL_SSL with SCRAM-SHA-256 for authentication, requiring username and password.'
+  description: "A FastKafka application which employs localhost, staging, and production brokers with default port number. It consumes JSON-encoded messages from the 'receive_name' topic, adds 'Hello ' to the user_name attribute, and publishes the modified message to 'send_greetings'. It uses SASL_SSL with SCRAM-SHA-256 for authentication, requiring username and password."
   contact:
     name: Author
     url: https://www.google.com/
@@ -394,6 +394,8 @@ Instructions you must follow while generating the AsyncAPI specification:
 - Extract content within "==== APP DESCRIPTION: ====" and use it in the app description section, beginning with "A FastKafka application which" and explain the app's purpose clearly and concisely. Always enclose the description in double quotes
 - Create a concise, meaningful info.title based on the extracted app description.
 - For every consumer and producer, carefully review the "==== APP DESCRIPTION: ====" section step-by-step. Create a clear description outlining the business logic that should be implemented by each consumer and producer. Ensure the description provides sufficient clarity for software developers to effectively implement the required functionality. Exclude redundant details between different producers or consumers.
+- Do not apply security to the localhost server; security is not needed for localhost server.
+- The localhost server uses only 'kafka' protocol, never 'kafka-secure'.
 
 Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
 
