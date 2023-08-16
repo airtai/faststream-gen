@@ -54,7 +54,7 @@ Note: Accessing OpenAI API incurs charges. However, when you sign up for the fir
 # %% ../nbs/CLI.ipynb 11
 @app.command(
     "generate",
-    help="Auto-generate FastKafka app code and integration tests with advanced AI assistance.",
+    help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
 )
 @set_logger_level
 def generate_fastkafka_app(
@@ -83,7 +83,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         "./fastkafka-gen",
         "--output_path",
         "-o",
-        help="The path to the output directory where the generated app code and integration tests will be saved. This path should be relative to the current working directory.",
+        help="The path to the output directory where the generated files will be saved. This path should be relative to the current working directory.",
     ),
     verbose: bool = typer.Option(
         False,
@@ -92,7 +92,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         help="Enable verbose logging by setting the logger level to INFO.",
     ),
 ) -> None:
-    """Auto-generate FastKafka app code and integration tests with advanced AI assistance."""
+    """Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description."""
     try:
         _ensure_openai_api_key_set()
         validated_description, description_token = validate_app_description(description)
