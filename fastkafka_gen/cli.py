@@ -47,14 +47,14 @@ These commands use a combination of OpenAI's gpt-3.5-turbo and gpt-3.5-turbo-16k
 
 Once you have the key, please set it in the OPENAI_API_KEY environment variable before executing the code generation commands.
 
-Note: Accessing OpenAI API incurs charges. However, when you sign up for the first time, you usually get free credits that are more than enough to generate multiple FastKafka applications. For further information on pricing and free credicts, check this link: https://openai.com/pricing
+Note: Accessing OpenAI API incurs charges. However, when you sign up for the first time, you usually get free credits that are more than enough to generate multiple FastKafka apps. For further information on pricing and free credicts, check this link: https://openai.com/pricing
     """,
 )
 
 # %% ../nbs/CLI.ipynb 11
 @app.command(
     "generate",
-    help="Generate a new FastKafka app(s) effortlessly with advanced AI assistance",
+    help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
 )
 @set_logger_level
 def generate_fastkafka_app(
@@ -63,13 +63,18 @@ def generate_fastkafka_app(
         help="""Summarize your FastKafka app in a few sentences!
 
 
-\nInclude details about message classes, FastKafka app configuration (e.g., kafka_brokers), consumer and producer functions, and specify the business logic to be implemented. 
+\nInclude details about messages, topics, servers, and a brief overview of the intended business logic.
 
 
 \nThe simpler and more specific the app description is, the better the generated app will be. Please refer to the below example for inspiration:
 
 
-\nCreate a FastKafka application that consumes messages from the "store_product" topic. These messages should have three attributes: "product_name," "currency," and "price". While consuming, the app needs to produce a message to the "change_currency" topic. The function responsible for producing should take a "store_product" object as input and return the same object. Additionally, this function should check if the currency in the input "store_product" is "HRK." If it is, then the currency should be changed to "EUR," and the price should be divided by 7.5. Remember, the app should use a "localhost" broker.
+\nCreate a FastKafka app using localhost broker for testing, staging.example-domain.ai for staging and prod.example-domain.ai for production. Use default port number.
+
+It should consume from 'store_product' topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. 'EUR'.
+For each consumed message, check if the currency attribute is set to 'HRK'. If it is then change the currency to 'EUR' and divide the price by 7.5, if the currency is not set to 'HRK' don't change the original message. Finally, publish the consumed message to 'change_currency' topic.
+
+Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
 
 
 \n"""
@@ -78,7 +83,7 @@ def generate_fastkafka_app(
         "./fastkafka-gen",
         "--output_path",
         "-o",
-        help="Path to the output directory where generated files will be saved. This path should be relative to the current working directory.",
+        help="The path to the output directory where the generated files will be saved. This path should be relative to the current working directory.",
     ),
     verbose: bool = typer.Option(
         False,
@@ -87,7 +92,7 @@ def generate_fastkafka_app(
         help="Enable verbose logging by setting the logger level to INFO.",
     ),
 ) -> None:
-    """Generate a new FastKafka app(s) effortlessly with advanced AI assistance"""
+    """Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description."""
     try:
         _ensure_openai_api_key_set()
         validated_description, description_token = validate_app_description(description)
