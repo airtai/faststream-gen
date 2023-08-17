@@ -399,6 +399,7 @@ Instructions you must follow while generating the AsyncAPI specification:
 
 Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
 
+==== APP DESCRIPTION: ====
 """
 
 # %% ../../nbs/Prompts.ipynb 5
