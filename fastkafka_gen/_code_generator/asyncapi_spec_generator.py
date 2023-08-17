@@ -53,6 +53,9 @@ def _validate_response(response: str) -> List[str]:
     Raises:
         json.JSONDecodeError: If the response is not a valid JSON.
     """
+    if "INCOMPLETE APP DESCRIPTION" in response.upper():
+        raise ValueError(response)
+    
     # check if nmp is installed
     try:
         _check_npm_with_local()
