@@ -418,7 +418,10 @@ The app description is missing the below details:
 - Business logic to implement
 
 
-Otherwise, if the app description contains all the required information. Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response."""
+Otherwise, if the app description contains all the required information. Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
+
+==== APP DESCRIPTION: ====
+"""
 
 # %% ../../nbs/Prompts.ipynb 5
 APP_GENERATION_PROMPT = """
