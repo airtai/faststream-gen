@@ -34,12 +34,12 @@ def _validate_response(response: str) -> List[str]:
     with TemporaryDirectory() as d:
         try:
             temp_file = Path(d) / APPLICATION_FILE_NAME
-            write_file_contents(temp_file, response)
+            write_file_contents(str(temp_file), response)
 
             # Import the module using importlib
             spec = importlib.util.spec_from_file_location("tmp_module", temp_file)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+            module = importlib.util.module_from_spec(spec) # type: ignore
+            spec.loader.exec_module(module) # type: ignore
 
         except Exception as e:
             return [ f"{type(e).__name__}: {e}"]
