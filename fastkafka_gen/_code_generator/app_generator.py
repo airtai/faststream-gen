@@ -13,52 +13,46 @@ from pathlib import Path
 from yaspin import yaspin
 
 from .._components.logger import get_logger
-from .helper import CustomAIChat, ValidateAndFixResponse
+from .helper import CustomAIChat, ValidateAndFixResponse, write_file_contents, read_file_contents
 from .prompts import APP_GENERATION_PROMPT
+from .constants import ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME
 
 # %% ../../nbs/App_Generator.ipynb 3
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Generator.ipynb 5
-def _validate_response() -> List[str]:
+def _validate_response(response: str) -> List[str]:
     return []
 
 # %% ../../nbs/App_Generator.ipynb 8
-def _save_app(contents: str, output_path: str) -> str:
-    """Save the YAML-formatted asyncapi spec in the specified output path.
-
-    Args:
-        contents: Generated python code
-        output_file: The path to save the generated code.
-    """
-    Path(output_path).mkdir(parents=True, exist_ok=True)
-    
-    output_file = f"{output_path}/application.py"
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(contents)
-    
-    return output_file
-
-# %% ../../nbs/App_Generator.ipynb 10
-def generate_app(asyncapi_spec: str, output_path: str) -> Tuple[str, str]:
+def generate_app(code_gen_directory: str) -> str:
     """Generate code for the new FastKafka app from the validated plan
-    
+
     Args:
-        asyncapi_spec: The validated AsyncAPI spec generated from the user's application description
-        output_path: The path where the validated spec AsyncAPI file is located
+        code_gen_directory: The directory containing the generated files.
+
     Returns:
-        The generated FastKafka code
+        The total token used to generate the FastKafka code
     """
-    # TODO: Generate code form the ASYNCAPI
     # TODO: Validate the generated code
-    with yaspin(text="Generating FastKafka app...", color="cyan", spinner="clock") as sp:
-        
-        app_generator = CustomAIChat(user_prompt=APP_GENERATION_PROMPT)
+    with yaspin(
+        text="Generating FastKafka app...", color="cyan", spinner="clock"
+    ) as sp:
+        spec_file_name = f"{code_gen_directory}/{ASYNC_API_SPEC_FILE_NAME}"
+        asyncapi_spec = read_file_contents(spec_file_name)
+
+        app_generator = CustomAIChat(
+            params={
+                "temperature": 0.5,
+            },
+            user_prompt=APP_GENERATION_PROMPT,
+        )
         app_validator = ValidateAndFixResponse(app_generator, _validate_response)
         validated_app, total_tokens = app_validator.fix(asyncapi_spec)
-        
-        output_file = _save_async_api_spec(validated_async_spec, output_path)
-        
+
+        output_file = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
+        write_file_contents(output_file, validated_app)
+
         sp.text = ""
-        sp.ok(" ✔ FastKafka app generated and saved at: {output_file}")
-        return validated_app, total_tokens
+        sp.ok(f" ✔ FastKafka app generated and saved at: {output_file}")
+        return total_tokens

@@ -98,11 +98,11 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         validated_description, description_token = validate_app_description(description)
 
         asyncapi_spec_token = generate_asyncapi_spec(validated_description, output_path)
-#         code = generate_app(validated_plan, validated_description)
+        app_token = generate_app(output_path)
 #         test = generate_test(code)
         
-#         total_token_usage = description_token + plan_token
-#         typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
+        total_token_usage = asyncapi_spec_token + app_token
+        typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
         typer.secho("✨  All files were successfully generated!", fg=typer.colors.CYAN)
     
     except (ValueError, KeyError) as e:

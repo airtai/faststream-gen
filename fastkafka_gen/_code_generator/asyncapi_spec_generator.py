@@ -6,7 +6,7 @@ __all__ = ['logger', 'generate_asyncapi_spec']
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 1
 from typing import *
 import time
-import yaml
+# import yaml
 import platform
 import subprocess  # nosec: B404: Consider possible security implications associated with the subprocess module.
 from pathlib import Path
@@ -17,8 +17,9 @@ from yaspin import yaspin
 from fastkafka._components.docs_dependencies import _check_npm_with_local, npm_required_major_version
 
 from .._components.logger import get_logger
-from .helper import CustomAIChat, ValidateAndFixResponse
+from .helper import CustomAIChat, ValidateAndFixResponse, write_file_contents
 from .prompts import ASYNCAPI_SPEC_GENERATION_PROMPT
+from .constants import ASYNC_API_SPEC_FILE_NAME
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 3
 logger = get_logger(__name__)
@@ -62,7 +63,7 @@ def _validate_response(response: str) -> List[str]:
         )
 
     with TemporaryDirectory() as d:
-        spec_path = Path(d) / "asyncapi.yml"
+        spec_path = Path(d) / ASYNC_API_SPEC_FILE_NAME
         with open(spec_path, "w", encoding="utf-8") as f:
             f.write(response)
 
@@ -95,22 +96,6 @@ def _validate_response(response: str) -> List[str]:
             )
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 14
-def _save_async_api_spec(contents: str, output_path: str) -> str:
-    """Save the YAML-formatted asyncapi spec in the specified output path.
-
-    Args:
-        contents: A YAML-formatted asyncapi spec.
-        output_file: The path to save the asyncapi spec.
-    """
-    Path(output_path).mkdir(parents=True, exist_ok=True)
-    
-    output_file = f"{output_path}/asyncapi.yml"
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(contents)
-    
-    return output_file
-
-# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 16
 def generate_asyncapi_spec(description: str, output_path: str) -> str:
     """Generate a AsyncAPI spec from the user's application description
 
@@ -130,8 +115,9 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
         async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
         async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response)
         validated_async_spec, total_tokens = async_spec_validator.fix(description)
-        
-        output_file = _save_async_api_spec(validated_async_spec, output_path)
+
+        output_file = f"{output_path}/{ASYNC_API_SPEC_FILE_NAME}"
+        write_file_contents(output_file, validated_async_spec)
 
         sp.text = ""
         sp.ok(f" ✔ AsyncAPI specification generated and saved to: {output_file}")
