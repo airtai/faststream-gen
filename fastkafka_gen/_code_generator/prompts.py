@@ -397,7 +397,29 @@ Instructions you must follow while generating the AsyncAPI specification:
 - Do not apply security to the localhost server; security is not needed for localhost server.
 - The localhost server uses only 'kafka' protocol, never 'kafka-secure'.
 
-Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
+If the application description is missing any required information for constructing the AsyncAPI spec - at least one produces or consumes function, defined message structure and application logic. Please enclose it in the ==== INCOMPLETE APP DESCRIPTION ==== section. 
+Please DON'T generate AsyncAPI specification for cases like this, just return ==== INCOMPLETE APP DESCRIPTION ==== and write which details are missing in the users app description.
+Refer to the examples below:
+
+==== EXAMPLE ASYNCAPI SPEC 3 ====
+Create a FastKafka application.
+
+==== INCOMPLETE APP DESCRIPTION ====
+The app description is missing the below details:
+- Message structure - define the structure of messages which will be consumed/produced
+- Topics to consume and produce
+- Business logic to implement
+
+
+==== EXAMPLE ASYNCAPI SPEC 4 ====
+create fastkafka app where message has user_data attribute
+
+==== INCOMPLETE APP DESCRIPTION ====
+The app description is missing the below details:
+- Topics to consume and produce
+- Business logic to implement
+
+Otherwise, if the app description contains all the required information. Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
 
 ==== APP DESCRIPTION: ====
 """
