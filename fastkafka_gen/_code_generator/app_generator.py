@@ -63,12 +63,7 @@ def generate_app(code_gen_directory: str) -> str:
         spec_file_name = f"{code_gen_directory}/{ASYNC_API_SPEC_FILE_NAME}"
         asyncapi_spec = read_file_contents(spec_file_name)
 
-        app_generator = CustomAIChat(
-            params={
-                "temperature": 0.5,
-            },
-            user_prompt=APP_GENERATION_PROMPT,
-        )
+        app_generator = CustomAIChat(user_prompt=APP_GENERATION_PROMPT)
         app_validator = ValidateAndFixResponse(app_generator, _validate_response)
         validated_app, total_tokens = app_validator.fix(asyncapi_spec)
 

@@ -394,6 +394,8 @@ Instructions you must follow while generating the AsyncAPI specification:
 - Extract content within "==== APP DESCRIPTION: ====" and use it in the app description section, beginning with "A FastKafka application which" and explain the app's purpose clearly and concisely. Always enclose the description in double quotes
 - Create a concise, meaningful info.title based on the extracted app description.
 - For every consumer and producer, carefully review the "==== APP DESCRIPTION: ====" section step-by-step. Create a clear description outlining the business logic that should be implemented by each consumer and producer. Ensure the description provides sufficient clarity for software developers to effectively implement the required functionality. Exclude redundant details between different producers or consumers.
+- If the description of consumer/producer requires modifying/updating the object, add the following sentence to the description at the end of the description:
+"Remember, make a new copy of the message object and only update the necessary parts."
 - Do not apply security to the localhost server; security is not needed for localhost server.
 - The localhost server uses only 'kafka' protocol, never 'kafka-secure'.
 
