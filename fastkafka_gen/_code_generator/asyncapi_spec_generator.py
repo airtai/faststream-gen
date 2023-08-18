@@ -6,7 +6,6 @@ __all__ = ['logger', 'generate_asyncapi_spec']
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 1
 from typing import *
 import time
-# import yaml
 import platform
 import subprocess  # nosec: B404: Consider possible security implications associated with the subprocess module.
 from pathlib import Path
