@@ -6,6 +6,7 @@ __all__ = ['logger', 'OPENAI_KEY_EMPTY_ERROR', 'OPENAI_KEY_NOT_SET_ERROR', 'app'
 # %% ../nbs/CLI.ipynb 1
 from typing import *
 import os
+import re
 
 import typer
 
@@ -51,7 +52,7 @@ Note: Accessing OpenAI API incurs charges. However, when you sign up for the fir
     """,
 )
 
-# %% ../nbs/CLI.ipynb 11
+# %% ../nbs/CLI.ipynb 12
 @app.command(
     "generate",
     help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
@@ -95,6 +96,11 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
     """Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description."""
     try:
         _ensure_openai_api_key_set()
+        
+        # replace all whitespaces in the description wiht ' ' and strip
+        _RE_COMBINE_WHITESPACE = re.compile(r"\s+")
+        description = _RE_COMBINE_WHITESPACE.sub(" ", description).strip()
+        
         validated_description, description_token = validate_app_description(description)
 
         asyncapi_spec_token = generate_asyncapi_spec(validated_description, output_path)
