@@ -52,7 +52,20 @@ Note: Accessing OpenAI API incurs charges. However, when you sign up for the fir
     """,
 )
 
-# %% ../nbs/CLI.ipynb 12
+# %% ../nbs/CLI.ipynb 11
+def _strip_white_spaces(description: str) -> str:
+    """Remove and strip excess whitespaces from a given description
+
+    Args:
+        description: The description string to be processed.
+
+    Returns:
+        The cleaned description string.
+    """
+    pattern = re.compile(r"\s+")
+    return pattern.sub(" ", description).strip()
+
+# %% ../nbs/CLI.ipynb 13
 @app.command(
     "generate",
     help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
@@ -97,18 +110,15 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
     try:
         _ensure_openai_api_key_set()
         
-        # replace all whitespaces in the description wiht ' ' and strip
-        _RE_COMBINE_WHITESPACE = re.compile(r"\s+")
-        description = _RE_COMBINE_WHITESPACE.sub(" ", description).strip()
-        
-        validated_description, description_token = validate_app_description(description)
+        cleaned_description = _strip_white_spaces(description)
+        validated_description, description_token = validate_app_description(cleaned_description)
 
         asyncapi_spec_token = generate_asyncapi_spec(validated_description, output_path)
-#         code = generate_app(validated_plan, validated_description)
+        app_token = generate_app(output_path)
 #         test = generate_test(code)
         
-#         total_token_usage = description_token + plan_token
-#         typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
+        total_token_usage = asyncapi_spec_token + app_token
+        typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
         typer.secho("✨  All files were successfully generated!", fg=typer.colors.CYAN)
     
     except (ValueError, KeyError) as e:

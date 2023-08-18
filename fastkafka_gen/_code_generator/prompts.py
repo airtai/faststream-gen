@@ -394,6 +394,8 @@ Instructions you must follow while generating the AsyncAPI specification:
 - Extract content within "==== APP DESCRIPTION: ====" and use it in the app description section, beginning with "A FastKafka application which" and explain the app's purpose clearly and concisely. Always enclose the description in double quotes
 - Create a concise, meaningful info.title based on the extracted app description.
 - For every consumer and producer, carefully review the "==== APP DESCRIPTION: ====" section step-by-step. Create a clear description outlining the business logic that should be implemented by each consumer and producer. Ensure the description provides sufficient clarity for software developers to effectively implement the required functionality. Exclude redundant details between different producers or consumers.
+- If the description of consumer/producer requires modifying/updating the object, add the following sentence to the description at the end of the description:
+"Remember, make a new copy of the message object and only update the necessary parts."
 - Do not apply security to the localhost server; security is not needed for localhost server.
 - The localhost server uses only 'kafka' protocol, never 'kafka-secure'.
 
@@ -426,28 +428,280 @@ Otherwise, if the app description contains all the required information. Please 
 
 # %% ../../nbs/Prompts.ipynb 5
 APP_GENERATION_PROMPT = """
-Strictly follow the below steps while generating the Python script
+Generate Python code using the `FastKafka` library based on contents in the "==== INPUT ASYNC SPECIFICATION: ====" section.
 
-==== Step by Step instruction: ==== 
+Here's an example of how the produced code "==== EXAMPLE CODE 1====", generated from "==== ASYNC SPECIFICATION 1====."
 
-We are implementing a FastKafka app (check above for description).
+==== EXAMPLE SPECIFICATION 1====
 
-This app has the following Message classes:
+asyncapi: 2.5.0
+info:
+  title: Greet users
+  version: 0.0.1
+  description: "A FastKafka application which consumes JSON-encoded messages from the 'receive_name' topic. For each consumed message, it constructs a new message object by appending 'Hello ' to the user_name attribute and publishes the modified message to the 'send_greetings' topic. The application utilizes localhost broker for testing, staging.airt.ai for staging, and prod.airt.ai for production."
+  contact:
+    name: Author
+    url: https://www.google.com/
+    email: noreply@gmail.com
+servers:
+  localhost:
+    url: localhost
+    description: local development kafka broker
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+  staging:
+    url: staging.airt.ai
+    description: staging kafka broker
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+  production:
+    url: prod.airt.ai
+    description: production kafka broker
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+channels:
+  receive_name:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Greetings'
+      description: For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic.
+  send_greetings:
+    publish:
+      message:
+        $ref: '#/components/messages/Greetings'
+      description: Produce the incoming messages to the 'send_greetings' topic as it is.
+components:
+  messages:
+    Greetings:
+      payload:
+        properties:
+          user_name:
+            description: Name of the user.
+            title: User Name
+            type: string
+        required:
+          - user_name
+        title: Greetings
+        type: object
+  schemas: {}
+  securitySchemes: {}
 
-{generated_plan_prompt}
+==== EXAMPLE CODE 1====
 
-==== Additional strong guidelines for you to follow: ==== 
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
 
-- You should strictly follow the above steps and generate code only for the things mentioned in ==== Step by Step instruction: ==== section.
-- Never import unnecessary libraries.
-- Import all the necessary libraries at the beginning of the script.
-- You SHOULD always import all the symbols from the typing module and that should be your first import statement.
-- DO NOT enclose the Python script within backticks. Meaning NEVER ADD ```python to your response 
-- The response should be an executable Python script only, with no additional text.
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    version="0.0.1", 
+    title='Greet users',
+)
+
+
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    msg = Greetings(user_name = f"Hello {msg.user_name}")
+    await to_send_greetings(msg)
+
+
+send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
+@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    return msg
+
+
+Here's another illustrative example with authentication and encryption:
+
+==== EXAMPLE SPECIFICATION 2====
+
+asyncapi: 2.5.0
+info:
+  title: Greet users
+  version: 0.0.1
+  description: "A FastKafka application which employs localhost, staging, and production brokers with default port number. It consumes JSON-encoded messages from the 'receive_name' topic, adds 'Hello ' to the user_name attribute, and publishes the modified message to 'send_greetings'. It uses SASL_SSL with SCRAM-SHA-256 for authentication, requiring username and password."
+  contact:
+    name: Author
+    url: https://www.google.com/
+    email: noreply@gmail.com
+servers:
+  localhost:
+    url: localhost
+    description: local development kafka broker
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+  staging:
+    url: staging.airt.ai
+    description: staging kafka broker
+    protocol: kafka-secure
+    security:
+    - staging_default_security: []
+    variables:
+      port:
+        default: '9092'
+  production:
+    url: prod.airt.ai
+    description: production kafka broker
+    protocol: kafka-secure
+    security:
+    - production_default_security: []
+    variables:
+      port:
+        default: '9092'
+channels:
+  receive_name:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Greetings'
+      description: For each consumed message, construct a new message object and append
+        'Hello ' in front of the name attribute. Finally, publish the consumed message
+        to 'send_greetings' topic.
+  send_greetings:
+    publish:
+      message:
+        $ref: '#/components/messages/Greetings'
+      description: Produce the incoming messages to the 'send_greetings' as it is.
+components:
+  messages:
+    Greetings:
+      payload:
+        properties:
+          user_name:
+            description: Name of the user.
+            title: User Name
+            type: string
+        required:
+        - user_name
+        title: Greetings
+        type: object
+  schemas: {}
+  securitySchemes:
+    staging_default_security:
+      type: scramSha256
+    production_default_security:
+      type: scramSha256
+
+==== EXAMPLE CODE 2====
+
+from typing import *
+from pydantic import BaseModel, Field
+from aiokafka.helpers import create_ssl_context
+
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+        "security": {"type": "scramSha256"},
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+        "security": {"type": "scramSha256"},
+    }
+}
+
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    version="0.0.1", 
+    title='Greet users',
+    security_protocol = "SASL_SSL",
+    sasl_mechanism= "SCRAM-SHA-256",
+    sasl_plain_username= "<username>",
+    sasl_plain_password=  "<password>",
+    ssl_context= create_ssl_context(),
+)
+
+
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    msg = Greetings(user_name = f"Hello {msg.user_name}")
+    await to_send_greetings(msg)
+
+
+send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
+@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    return msg
+
+
+
+==== INSTRUCTIONS: ====
+
+Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
+
+- Follow the PEP 8 Style Guide for Python while writing the code
+- Write optimised ans readable Code
+- Output only a valid executable python code. No other extra text should be included in your response.
+- DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+- Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
 - All the attributes of the Message class should be assigned with an instance of Field class with appropriate values. It cannot be a primitive type (e.g., str, int, float, bool). 
 - Don't ever put "pass" or "#TODO" comments in the implementation. Instead, always write real implementation!
+- Never ever update or modify the parameters directly in the consumes or produces function. Always create a new instance of the parameter and make only necessary updates. Example:
+    ```python
+        @greetings_app.consumes(topic="receive_name", description=receive_name_description)
+        async def on_receive_name(msg: Greetings):
+            # always create a new instance of the Greetings class and do not modify the msg parameter directly.
+            msg = Greetings(user_name = f"Hello {msg.user_name}")
+            await to_send_greetings(msg)
+    ```
+    
 
-Please refer to the below ==== APP DESCRIPTION: ==== for additional implementation details: 
+==== INPUT ASYNC SPECIFICATION: ====
 
 """
 
