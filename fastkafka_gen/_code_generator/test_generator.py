@@ -57,7 +57,7 @@ def _validate_response(test_code: str, app_code: str) -> List[str]:
         return []
 
 # %% ../../nbs/Test_Generator.ipynb 9
-def generate_test(description: str, code_gen_directory: str) -> str:
+def generate_test(description: str, code_gen_directory: str) -> Dict[str, int]:
     """Generate integration test for the FastKafka app
 
     Args:

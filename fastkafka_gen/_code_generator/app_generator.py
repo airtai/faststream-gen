@@ -20,7 +20,7 @@ from .constants import ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Generator.ipynb 5
-def generate_app(code_gen_directory: str) -> str:
+def generate_app(code_gen_directory: str) -> Dict[str, int]:
     """Generate code for the new FastKafka app from the validated plan
 
     Args:

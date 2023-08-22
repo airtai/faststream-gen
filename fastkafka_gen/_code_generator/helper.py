@@ -230,7 +230,7 @@ class CustomAIChat:
         self.params = params
 
     @_retry_with_exponential_backoff()
-    def __call__(self, user_prompt: str) -> Tuple[str, str]:
+    def __call__(self, user_prompt: str) -> Tuple[str, Dict[str, int]]:
         """Call OpenAI API chat completion endpoint and generate a response.
 
         Args:
@@ -298,7 +298,7 @@ class ValidateAndFixResponse:
 
     def fix(
         self, prompt: str, use_prompt_in_validation: bool = False
-    ) -> Tuple[str, str]:
+    ) -> Tuple[str, Dict[str, int]]:
         raise NotImplementedError()
 
 # %% ../../nbs/Helper.ipynb 28
@@ -312,7 +312,7 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
     Returns:
         Dict[str, int]: Dictionary where the keys are TOKEN_TYPES and their values are the sum of OpenAI "usage" dictionaries
     """
-    added_tokens = defaultdict(int)
+    added_tokens: Dict[str, int] = defaultdict(int)
     for usage in usage_list:
         for token_type in TOKEN_TYPES:
             added_tokens[token_type] += usage[token_type]
@@ -323,7 +323,7 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
 @patch  # type: ignore
 def fix(
     self: ValidateAndFixResponse, prompt: str, use_prompt_in_validation: bool = False
-) -> Tuple[str, str]:
+) -> Tuple[str, Dict[str, int]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
     Args:
@@ -340,7 +340,7 @@ def fix(
     """
     iterations = 0
     initial_prompt = prompt
-    total_tokens_usage = defaultdict(int)
+    total_tokens_usage: Dict[str, int] = defaultdict(int)
     while True:
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])

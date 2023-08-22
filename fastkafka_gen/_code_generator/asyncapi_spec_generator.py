@@ -181,7 +181,7 @@ def _optimize_asyncapi_file(asyncapi_yaml_path: str) -> None:
         logger.info(f"Issues while executing 'asyncapi optimize' command: {p.stdout.decode()}")
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 20
-def generate_asyncapi_spec(description: str, output_path: str) -> str:
+def generate_asyncapi_spec(description: str, output_path: str) -> Dict[str, int]:
     """Generate a AsyncAPI spec from the user's application description
 
     Args:
