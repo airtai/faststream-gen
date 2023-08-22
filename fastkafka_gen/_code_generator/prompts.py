@@ -707,247 +707,122 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 
 # %% ../../nbs/Prompts.ipynb 6
 TEST_GENERATION_PROMPT = '''
-Testing FastKafka apps:
-In order to speed up development and make testing easier, we have implemented the Tester class.
-The Tester instance starts in-memory implementation of Kafka broker i.e. there is no need for starting localhost Kafka service for testing FastKafka apps. The Tester will redirect consumes and produces decorated functions to the in-memory Kafka broker so that you can quickly test FasKafka apps without the need of a running Kafka broker and all its dependencies. Also, for each FastKafka consumes and produces function, Tester will create it's mirrored fuction i.e. if the consumes function is implemented, the Tester will create the produces function (and the other way - if the produces function is implemented, Tester will create consumes function).
+Generate Integration test for the contents in the ==== APP IMPLEMENTATION: ==== using the `FastKafka` library.
 
-Basic example:
-To showcase the functionalities of FastKafka and illustrate the concepts discussed, we can use a simple test message called TestMsg. Here's the definition of the TestMsg class:
+Here's an example of the test code "==== EXAMPLE TEST CODE ====", generated from "==== EXAMPLE APP CODE ===="
 
-"""
-class TestMsg(BaseModel):
-    msg: str = Field(...)
-"""
+==== EXAMPLE APP CODE ====
 
-In this example we have implemented FastKafka app with one consumes and one produces function. on_input function consumes messages from the input topic and to_output function produces messages to the output topic.
-Note: it is necessary to define parameter and return types in the produces and consumes functions
-application.py file:
-"""
+from typing import *
 from pydantic import BaseModel, Field
-
-app = FastKafka()
-
-
-@app.consumes()
-async def on_input(msg: TestMsg):
-    await to_output(TestMsg(msg=f"Hello {msg.msg}"))
-
-
-@app.produces()
-async def to_output(msg: TestMsg) -> TestMsg:
-    return msg
-"""
-
-Testing the application:
-Tester is using async code so it needs to be written inside async function.
-In this example app has imlemented on_input and to_output functions. We can now use Tester to create their mirrored functions: to_input and on_output.
-Testing process for this example could look like this:
-tester produces the message to the input topic
-Assert that the app consumed the message by calling on_input with the accurate argument
-Within on_input function, to_output function is called - and message is produced to the output topic
-Assert that the tester consumed the message by calling on_output with the accurate argument
-test.py:
-"""
-import asyncio
-from fastkafka.testing import Tester
-from application import *
-
-async def async_tests():
-    async with Tester(app).using_inmemory_broker() as tester:
-        input_msg = TestMsg(msg="Mickey")
-
-        # tester produces message to the input topic
-        await tester.to_input(input_msg)
-
-        # assert that app consumed from the input topic and it was called with the accurate argument
-        await app.awaited_mocks.on_input.assert_called_with(
-            TestMsg(msg="Mickey"), timeout=5
-        )
-        # assert that tester consumed from the output topic and it was called with the accurate argument
-        await tester.awaited_mocks.on_output.assert_called_with(
-            TestMsg(msg="Hello Mickey"), timeout=5
-        )
-    print("ok")
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(async_tests())
-"""
-For each consumes function, tester mirrors the consumes produces function.
-And for each produces function, tester mirrors consumes function.
-i.e if kafka_app has implemented on_topic_1 consumes function, tester will have to_topic_1 produces function, and if kafka_app has implemented to_topic_2 produces function, tester will have on_topic_2 consumes function.
-
-Example 2:
-application.py
-"""
-import asyncio
-from fastkafka. import FastKafka
-from pydantic import BaseModel, Field
-from typing import Optional
-
-
-class Employee(BaseModel):
-    name: str
-    surname: str
-    email: Optional[str] = None
-
-
-class EmaiMessage(BaseModel):
-    sender: str = "info@gmail.com"
-    receiver: str
-    subject: str
-    message: str
-
-
-kafka_brokers = dict(localhost=[dict(url="server_1", port=9092)], production=[dict(url="production_server_1", port=9092)])
-app = FastKafka(kafka_brokers=kafka_brokers)
-
-
-@app.consumes()
-async def on_new_employee(msg: Employee):
-    employee = await to_employee_email(msg)
-    await to_welcome_message(employee)
-
-
-@app.produces()
-async def to_employee_email(employee: Employee) -> Employee:
-    # generate new email
-    employee.email = employee.name + "." + employee.surname + "@gmail.com"
-    return employee
-
-
-@app.produces()
-async def to_welcome_message(employee: Employee) -> EmaiMessage:
-    message = f"Dear {employee.name},\nWelcome to the company"
-    return EmaiMessage(receiver=employee.email, subject="Welcome", message=message)
-"""
-
-test.py:
-"""
-import asyncio
-from fastkafka.testing import Tester
-from application import *
-
-
-async def async_tests():
-    assert app._kafka_config["bootstrap_servers_id"] == "localhost"
-    
-    async with Tester(app).using_inmemory_broker(bootstrap_servers_id="production") as tester:
-        assert app._kafka_config["bootstrap_servers_id"] == "production"
-        assert tester._kafka_config["bootstrap_servers_id"] == "production"
-    
-        # produce the message to new_employee topic
-        await tester.to_new_employee(Employee(name="Mickey", surname="Mouse"))
-        # previous line is equal to:
-        # await tester.mirrors[app.on_new_employee](Employee(name="Mickey", surname="Mouse"))
-
-        # Assert app consumed the message
-        await app.awaited_mocks.on_new_employee.assert_called_with(
-            Employee(name="Mickey", surname="Mouse"), timeout=5
-        )
-
-        # If the the previous assert is true (on_new_employee was called),
-        # to_employee_email and to_welcome_message were called inside on_new_employee function
-
-        # Now we can check if this two messages were consumed
-        await tester.awaited_mocks.on_employee_email.assert_called(timeout=5)
-        await tester.awaited_mocks.on_welcome_message.assert_called(timeout=5)
-    
-    assert app._kafka_config["bootstrap_servers_id"] == "localhost"
-    print("ok")
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(async_tests())
-"""
-
-
-============
-At the beginnig of testing script import application which is located at the application.py file. The implementation of application.py is described in the "==== APP IMPLEMENTATION: ====" section.
-Do not implement again application.py, just import it and use it's elements for test writing!
-Also import asyncio and Tester:
-"""
-from fastkafka.testing import Tester
-import asyncio
-"""
-implement async test function which uses Tester for the testing of the FastKafka apps in the "==== APP IMPLEMENTATION: ==== " section
-
-While testing, crate an new message object each time you assert some statement (don't reuse the same object)!
-
-Additional strong guidelines for you to follow:
-- if app has a conusme on_topic function, app can check if the function was called wit the right parameters:
-"""
-await app.awaited_mocks.on_topic.assert_called_with(
-    msg, timeout=5
-)
-"""
-
-- if app has a conusme on_topic function, tester can produce message to that topic:  await tester.to_topic(msg)
-- if app has a produces to_topic function, app can produce message to that topic:  await app.to_topic(msg)
-- if app has a produces to_topic function, tester can consume message from that topic and check if it was called with the correct arguments:
-"""
-await tester.awaited_mocks.on_topic.assert_called_with(
-    msg, timeout=5
-)
-"""
-
-Rules:
-- if app has a conusme on_topic function, tester CAN NOT consume message from that topic and check if it was called with the correct arguments:: 
-"""
-await tester.awaited_mocks.on_topic.assert_called_with(
-    msg, timeout=5
-)
-"""
-- if app has a produces to_topic function, tester CAN NOT produce message to that topic:  await tester.to_topic(msg)
-
-Add to the end of the python sctipt async test function and within it use Tester class for testing this app
-The response should be an executable Python script only, with no additional text!!!!!
-
-==== APP DESCRIPTION: ====
-Create FastKafka application which consumes messages from the store_product topic, it consumes messages with three attributes: product_name, currency and price. While consuming, it should produce a message to the change_currency topic. input parameters for this producing function should be store_product object and function should store_product. produces function should check if the currency in the input store_product parameter is "HRK", currency should be set to "EUR" and the price should be divided with 7.5.
-
-==== APP IMPLEMENTATION: ====
-"""
 from fastkafka import FastKafka
-from pydantic import BaseModel, Field
 
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
 
 kafka_brokers = {
     "localhost": {
         "url": "localhost",
         "description": "local development kafka broker",
         "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
     }
 }
 
-title = "FastKafka Application"
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
 
-kafka_app = FastKafka(
-    title=title,
-    kafka_brokers=kafka_brokers,
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    version="0.0.1", 
+    title='Greet users',
 )
 
 
-class StoreProduct(BaseModel):
-    product_name: str = Field(..., description="Name of the product")
-    currency: str = Field(..., description="Currency")
-    price: float
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    msg = Greetings(user_name = f"Hello {msg.user_name}")
+    await to_send_greetings(msg)
 
 
-@kafka_app.consumes(prefix="on", topic="store_product")
-async def on_store_product(msg: StoreProduct):
-    await to_change_currency(msg)
+@greetings_app.produces(topic="send_greetings")
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    return msg
 
 
-@kafka_app.produces(prefix="to", topic="change_currency")
-async def to_change_currency(store_product: StoreProduct) -> StoreProduct:
-    # Producing logic
-    if store_product.currency == "HRK":
-        store_product.currency = "EUR"
-        store_product.price /= 7.5
-    
-    return store_product
-"""
+==== EXAMPLE TEST CODE ====
+
+import asyncio
+from fastkafka.testing import Tester
+try:
+    from .application import *
+except ImportError as e:
+    from application import *
+
+async def async_tests():
+    async with Tester(greetings_app) as tester:
+        input_msg = Greetings(user_name = "World")
+
+        # tester produces message to the store_product topic
+        await tester.to_receive_name(input_msg)
+
+         # assert that app consumed from the store_product topic and it was called with the accurate argument
+        await greetings_app.awaited_mocks.on_receive_name.assert_called_with(
+            input_msg, timeout=5
+        )
+
+        # assert that tester consumed from the change_currency topic and it was called with the accurate argument
+        await tester.awaited_mocks.on_send_greetings.assert_called_with(
+            Greetings(user_name = "Hello World"), timeout=5
+        )
+    print("ok")
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(async_tests())
+
+
+==== INSTRUCTIONS: ====
+
+Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
+    - Follow the PEP 8 Style Guide for Python while writing the code
+    - Write optimised ans readable Code
+    - Output only a valid executable python code. No other extra text should be included in your response.
+    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
+    - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+    - At the beginnig of testing script import all the symbols from the application.py module.
+    - The implementation of application.py is described in the "==== APP IMPLEMENTATION: ====" section.
+    - Do not implement the application.py again, just import it and use it's elements for writing the test. Also import asyncio and Tester:
+        ``` python
+            from fastkafka.testing import Tester
+            import asyncio
+        ```
+    - Implement async test function which uses Tester for the testing of the FastKafka apps in the "==== APP IMPLEMENTATION: ====" section
+    - While testing, crate an new message object each time you assert some statement (don't reuse the same object)!
+    - If app has a conusme on_topic function, tester CAN NOT consume message from that topic. It can only check if it was called with the correct arguments. For example:
+        ``` python
+            await tester.awaited_mocks.on_topic.assert_called_with(
+                msg, timeout=5
+            )
+        ```
+    - If app has a produces to_topic function, tester CAN NOT produce message to that topic.
+
+The response should be an executable Python script only, with no additional text!!!!!
+
+==== APP DESCRIPTION: ====
+==== REPLACE WITH APP DESCRIPTION ====
+
+==== APP IMPLEMENTATION: ====
 '''

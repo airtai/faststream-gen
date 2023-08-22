@@ -12,6 +12,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from yaspin import yaspin
+import yaml
+from packaging import version
 
 from fastkafka._components.docs_dependencies import _check_npm_with_local, npm_required_major_version
 
@@ -99,7 +101,86 @@ def _validate_response(response: str) -> List[str]:
                 f"Validation of AsyncAPI spec failed, '$ {' '.join(cmd)}'{p.stdout.decode()}.\n\nPlease try again."
             )
 
-# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 14
+# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 15
+def _asyncapi_to_latest_version(asyncapi_yaml_path: str) -> None:
+    """
+    Convert the AsyncAPI specification to the latest version.
+
+    Args:
+        asyncapi_yaml_path: The AsyncAPI specification which needs to be converted.
+    """
+    with open(asyncapi_yaml_path, "r") as stream:
+        current_version = yaml.safe_load(stream)["asyncapi"]
+        
+    LATEST_ASYNCAPI_VERSION = "2.6.0"
+    if version.parse(current_version) < version.parse(LATEST_ASYNCAPI_VERSION):
+        cmd = [
+            "npx",
+            "-y",
+            "-p",
+            "@asyncapi/cli",
+            "asyncapi",
+            "convert",
+            f"{asyncapi_yaml_path}",
+            "-t",
+            f"{LATEST_ASYNCAPI_VERSION}",
+            "-o",
+            f"{asyncapi_yaml_path}",
+        ]
+        # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
+        p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
+            cmd,
+            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            shell=True if platform.system() == "Windows" else False,
+        )
+        
+        logger.info("Executing 'asyncapi convert' on the generated asyncapi specification file:")
+        if p.returncode == 0:
+            current_version = LATEST_ASYNCAPI_VERSION
+        else:   
+            logger.info(f"Issues while executing 'asyncapi convert' command: {p.stdout.decode()}")
+            
+    logger.info(f"Using AsyncAPI version: {current_version} for the specification creation")
+
+# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 17
+def _optimize_asyncapi_file(asyncapi_yaml_path: str) -> None:
+    """
+    Optimize the AsyncAPI specificationn.
+
+    Args:
+        asyncapi_yaml_path: The AsyncAPI specification which needs to be optimized.
+    """
+    cmd = [
+        "npx",
+        "-y",
+        "-p",
+        "@asyncapi/cli",
+        "asyncapi",
+        "optimize",
+        f"{asyncapi_yaml_path}",
+        "-o",
+        "overwrite",
+    ]
+    # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
+    p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
+        cmd,
+        stderr=subprocess.STDOUT,
+        stdout=subprocess.PIPE,
+        shell=True if platform.system() == "Windows" else False,
+    )
+
+    # Note: asyncapi cli is returning incorrect log. 
+    # If we want to optimize asyncapi.yml, we will get the message "Created file asyncapi_optimized.yml"
+    # asyncapi_optimized.yml ISN'T created - asyncapi.yml was overwritten (we are using attribute -o overwrite)
+ 
+    logger.info("Executing 'asyncapi optimize' on the generated asyncapi specification file:")
+    if p.returncode == 0:
+        logger.info(p.stdout.decode())
+    else:   
+        logger.info(f"Issues while executing 'asyncapi optimize' command: {p.stdout.decode()}")
+
+# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 20
 def generate_asyncapi_spec(description: str, output_path: str) -> str:
     """Generate a AsyncAPI spec from the user's application description
 
@@ -122,6 +203,8 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
 
         output_file = f"{output_path}/{ASYNC_API_SPEC_FILE_NAME}"
         write_file_contents(output_file, validated_async_spec)
+        _asyncapi_to_latest_version(output_file)
+        _optimize_asyncapi_file(output_file)
 
         sp.text = ""
         sp.ok(f" ✔ AsyncAPI specification generated and saved to: {output_file}")
