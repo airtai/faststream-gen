@@ -69,7 +69,7 @@ def _strip_white_spaces(description: str) -> str:
     return pattern.sub(" ", description).strip()
 
 # %% ../nbs/CLI.ipynb 13
-EMPTY_DESCRIPTION_ERROR = "Error: you need to provide the application description by providing it with the --description argument or by providing it within a textual file wit the --input_file argument."
+EMPTY_DESCRIPTION_ERROR = "Error: you need to provide the application description by providing it with the command line argument or by providing it within a textual file wit the --input_file argument."
 
 def _get_description(input_path: str) -> str:
     """Reads description from te file and returns it as a string
@@ -89,7 +89,7 @@ def _get_description(input_path: str) -> str:
             lines = file.readlines()
             # Join the lines 
             description = '\r'.join(lines)
-            typer.secho(f"Reading application description from '{str(pathlib.Path(input_path).absolute())}'.", fg=typer.colors.CYAN)
+            logger.info(f"Reading application description from '{str(pathlib.Path(input_path).absolute())}'.")
     except Exception as e:
         raise ValueError(f"Error while reading from the file: '{str(pathlib.Path(input_path).absolute())}'\n{str(e)}")
     return description
@@ -129,7 +129,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         help="""
         The path to the file with the app desription. This path should be relative to the current working directory.
         
-        \n\nWhen the user provides the application description both by via the file and through the CLI argument, the CLI argument takes precedence.
+        \n\nIf the app description is passed via both a --input_file and a command line argument, the description from the command line will be used to create the application.
         """,
     ),
     output_path: str = typer.Option(
