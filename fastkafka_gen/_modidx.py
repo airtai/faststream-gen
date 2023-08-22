@@ -61,6 +61,7 @@ d = { 'settings': { 'branch': 'main',
                                                                                                             'fastkafka_gen/_components/logger.py')},
             'fastkafka_gen.cli': { 'fastkafka_gen.cli._ensure_openai_api_key_set': ( 'cli.html#_ensure_openai_api_key_set',
                                                                                      'fastkafka_gen/cli.py'),
+                                   'fastkafka_gen.cli._get_description': ('cli.html#_get_description', 'fastkafka_gen/cli.py'),
                                    'fastkafka_gen.cli._strip_white_spaces': ('cli.html#_strip_white_spaces', 'fastkafka_gen/cli.py'),
                                    'fastkafka_gen.cli.generate_fastkafka_app': ( 'cli.html#generate_fastkafka_app',
                                                                                  'fastkafka_gen/cli.py')}}}
