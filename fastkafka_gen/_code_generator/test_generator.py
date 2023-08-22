@@ -74,11 +74,11 @@ def generate_test(description: str, code_gen_directory: str) -> str:
         prompt = TEST_GENERATION_PROMPT.replace("==== REPLACE WITH APP DESCRIPTION ====", description)
         test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
-        validated_test, total_tokens = test_validator.fix(app_code, True)
+        validated_test, usage = test_validator.fix(app_code, True)
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(output_file, validated_test)
 
         sp.text = ""
         sp.ok(f" ✔ Tests are generated and saved at: {output_file}")
-        return total_tokens
+        return usage

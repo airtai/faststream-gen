@@ -15,7 +15,8 @@ from ._code_generator.app_description_validator import validate_app_description
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
-from ._code_generator.helper import set_logger_level
+from ._code_generator.helper import set_logger_level, add_tokens_usage
+from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -66,6 +67,21 @@ def _strip_white_spaces(description: str) -> str:
     return pattern.sub(" ", description).strip()
 
 # %% ../nbs/CLI.ipynb 13
+def _calculate_price(total_tokens_usage: Dict[str, int], model: str = DEFAULT_MODEL) -> float:
+    """Calculates the total price based on the number of promt & completion tokens and the models price for input and output tokens (per 1k tokens).
+
+    Args:
+        total_tokens_usage: OpenAI "usage" dictionaries which defines prompt_tokens, completion_tokens and total_tokens
+
+
+    Returns:
+        float: The price for used tokens
+    """
+    model_price = MODEL_PRICING[model]
+    price = (total_tokens_usage["prompt_tokens"] * model_price["input"] + total_tokens_usage["completion_tokens"] * model_price["output"]) / 1000
+    return price
+
+# %% ../nbs/CLI.ipynb 15
 @app.command(
     "generate",
     help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
@@ -117,8 +133,11 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         app_token = generate_app(output_path)
         test_token = generate_test(validated_description, output_path)
         
-        total_token_usage = asyncapi_spec_token + app_token + test_token
-        typer.secho(f" ▶ Total tokens usage: {total_token_usage}", fg=typer.colors.CYAN)
+        total_tokens_usage = add_tokens_usage([asyncapi_spec_token, app_token, test_token])
+        price = _calculate_price(total_tokens_usage)
+        
+        typer.secho(f" ▶ Total tokens usage: {total_tokens_usage['total_tokens']}", fg=typer.colors.CYAN)
+        typer.secho(f" 🤑 Total price: {round(price, 5)}💲", fg=typer.colors.CYAN)
         typer.secho("✨  All files were successfully generated!", fg=typer.colors.CYAN)
     
     except (ValueError, KeyError) as e:

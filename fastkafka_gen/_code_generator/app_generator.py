@@ -43,11 +43,11 @@ def generate_app(code_gen_directory: str) -> str:
             user_prompt=APP_GENERATION_PROMPT,
         )
         app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-        validated_app, total_tokens = app_validator.fix(asyncapi_spec)
+        validated_app, usage = app_validator.fix(asyncapi_spec)
 
         output_file = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         write_file_contents(output_file, validated_app)
 
         sp.text = ""
         sp.ok(f" ✔ FastKafka app generated and saved at: {output_file}")
-        return total_tokens
+        return usage

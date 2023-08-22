@@ -199,7 +199,7 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
         logger.info("\nGenerating AsyncAPI specification")
         async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
         async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response)
-        validated_async_spec, total_tokens = async_spec_validator.fix(description)
+        validated_async_spec, usage = async_spec_validator.fix(description)
 
         output_file = f"{output_path}/{ASYNC_API_SPEC_FILE_NAME}"
         write_file_contents(output_file, validated_async_spec)
@@ -208,4 +208,4 @@ def generate_asyncapi_spec(description: str, output_path: str) -> str:
 
         sp.text = ""
         sp.ok(f" ✔ AsyncAPI specification generated and saved to: {output_file}")
-        return total_tokens
+        return usage

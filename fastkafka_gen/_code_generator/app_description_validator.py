@@ -40,7 +40,7 @@ def validate_app_description(description: str) -> Tuple[str, str]:
     ) as sp:
         
         ai = CustomAIChat(model = "gpt-3.5-turbo", user_prompt=APP_VALIDATION_PROMPT)
-        response, total_tokens = ai(description)
+        response, usage = ai(description)
         
         sp.text = ""
         if response == "0":
@@ -49,4 +49,4 @@ def validate_app_description(description: str) -> Tuple[str, str]:
             raise ValueError(f"✘ Error: Application description validation failed.\n{GENERAL_FASTKAFKA_RESPONSE}")
         else:
             sp.ok(" ✔ Application description validated")
-            return description, total_tokens
+            return description, usage
