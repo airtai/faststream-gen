@@ -20,7 +20,7 @@ from .constants import ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Generator.ipynb 5
-def generate_app(code_gen_directory: str) -> str:
+def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
     """Generate code for the new FastKafka app from the validated plan
 
     Args:
@@ -43,11 +43,11 @@ def generate_app(code_gen_directory: str) -> str:
             user_prompt=APP_GENERATION_PROMPT,
         )
         app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-        validated_app, total_tokens = app_validator.fix(asyncapi_spec)
+        validated_app, total_usage = app_validator.fix(asyncapi_spec, total_usage)
 
         output_file = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         write_file_contents(output_file, validated_app)
 
         sp.text = ""
         sp.ok(f" ✔ FastKafka app generated and saved at: {output_file}")
-        return total_tokens
+        return total_usage

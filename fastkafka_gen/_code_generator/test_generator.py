@@ -57,7 +57,7 @@ def _validate_response(test_code: str, app_code: str) -> List[str]:
         return []
 
 # %% ../../nbs/Test_Generator.ipynb 9
-def generate_test(description: str, code_gen_directory: str) -> str:
+def generate_test(description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
     """Generate integration test for the FastKafka app
 
     Args:
@@ -74,11 +74,11 @@ def generate_test(description: str, code_gen_directory: str) -> str:
         prompt = TEST_GENERATION_PROMPT.replace("==== REPLACE WITH APP DESCRIPTION ====", description)
         test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
-        validated_test, total_tokens = test_validator.fix(app_code, True)
+        validated_test, total_usage = test_validator.fix(app_code, total_usage=total_usage, use_prompt_in_validation=True)
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(output_file, validated_test)
 
         sp.text = ""
         sp.ok(f" ✔ Tests are generated and saved at: {output_file}")
-        return total_tokens
+        return total_usage
