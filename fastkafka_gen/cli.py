@@ -175,7 +175,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
 
         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
         tokens_list = generate_app(output_path, tokens_list)
-        #tokens_list = generate_test(validated_description, output_path, tokens_list)
+        tokens_list = generate_test(validated_description, output_path, tokens_list)
         
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
