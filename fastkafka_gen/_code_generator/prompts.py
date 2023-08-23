@@ -680,12 +680,14 @@ async def to_send_greetings(msg: Greetings) -> Greetings:
 
 
 
+
 ==== INSTRUCTIONS: ====
 
 Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
 
 - Follow the PEP 8 Style Guide for Python while writing the code
 - Write optimised ans readable Code
+- Use Pydantic V2! In this version, Pydantic.Field attribute 'regex' is replaced with 'pattern'!
 - Output only a valid executable python code. No other extra text should be included in your response.
 - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
 - Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
