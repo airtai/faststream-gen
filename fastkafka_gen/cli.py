@@ -163,6 +163,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
 ) -> None:
     """Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description."""
     try:
+        tokens_list: List[Dict[str, int]] = []
         _ensure_openai_api_key_set()
         if not description:
             if not input_path:
@@ -170,22 +171,32 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
             description = _get_description(input_path)
         
         cleaned_description = _strip_white_spaces(description)
-        validated_description, description_token = validate_app_description(cleaned_description)
+        validated_description, tokens_list = validate_app_description(cleaned_description, tokens_list)
 
-        asyncapi_spec_token = generate_asyncapi_spec(validated_description, output_path)
-        app_token = generate_app(output_path)
-        test_token = generate_test(validated_description, output_path)
+        tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
+        tokens_list = generate_app(output_path, tokens_list)
+        #tokens_list = generate_test(validated_description, output_path, tokens_list)
         
-        total_tokens_usage = add_tokens_usage([asyncapi_spec_token, app_token, test_token])
-        price = _calculate_price(total_tokens_usage)
-        
-        typer.secho(f" ▶ Total tokens usage: {total_tokens_usage['total_tokens']}", fg=typer.colors.CYAN)
-        typer.secho(f" 🤑 Total price: {round(price, 5)}💲", fg=typer.colors.CYAN)
-        typer.secho("✨  All files were successfully generated!", fg=typer.colors.CYAN)
-    
+        fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
-        typer.secho(e, err=True, fg=typer.colors.RED)
+        fg = typer.colors.RED
+        typer.secho(e, err=True, fg=fg)
         raise typer.Exit(code=1)
     except Exception as e:
-        typer.secho(f"Unexpected internal error: {e}", err=True, fg=typer.colors.RED)
+        fg = typer.colors.RED
+        typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
         raise typer.Exit(code=1)
+    finally:
+        total_tokens_usage = add_tokens_usage(tokens_list)
+        price = _calculate_price(total_tokens_usage)
+        
+        typer.secho(f" ▶ Total tokens usage: {total_tokens_usage['total_tokens']}", fg=fg)
+        typer.secho(f" 🤑 Total price: {round(price, 5)}💲", fg=fg)
+        
+        phases = ["validation", "specification generation", "app generation", "test generation"]
+        logger.info("Number of tokens per phase:")
+        for i, token in enumerate(tokens_list):
+            logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
+        
+    typer.secho("✨  All files were successfully generated!", fg=fg)
+        

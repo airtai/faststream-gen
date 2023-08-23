@@ -297,8 +297,8 @@ class ValidateAndFixResponse:
         return prompt_with_errors
 
     def fix(
-        self, prompt: str, use_prompt_in_validation: bool = False
-    ) -> Tuple[str, Dict[str, int]]:
+        self, prompt: str, total_usage: List[Dict[str, int]], use_prompt_in_validation: bool = False
+    ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
 # %% ../../nbs/Helper.ipynb 28
@@ -322,8 +322,8 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
 # %% ../../nbs/Helper.ipynb 31
 @patch  # type: ignore
 def fix(
-    self: ValidateAndFixResponse, prompt: str, use_prompt_in_validation: bool = False
-) -> Tuple[str, Dict[str, int]]:
+    self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], use_prompt_in_validation: bool = False
+) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
     Args:
@@ -341,25 +341,30 @@ def fix(
     iterations = 0
     initial_prompt = prompt
     total_tokens_usage: Dict[str, int] = defaultdict(int)
-    while True:
-        response, usage = self.generate(prompt)
-        total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
-        errors = (
-            self.validate(response, prompt)
-            if use_prompt_in_validation
-            else self.validate(response)
-        )
-        if len(errors) == 0:
-            return response, total_tokens_usage
-        error_str = "\n".join(errors)
-        logger.info(
-            f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
-        )
-        prompt = self.construct_prompt_with_error_msg(
-            initial_prompt, response, error_str
-        )
-        iterations += 1
-        if self.max_attempts is not None and iterations >= self.max_attempts:
-            raise ValueError(
-                f"Maximum number of retries ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n"
+    try:
+        while True:
+            response, usage = self.generate(prompt)
+            total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
+            errors = (
+                self.validate(response, prompt)
+                if use_prompt_in_validation
+                else self.validate(response)
             )
+            if len(errors) == 0:
+                total_usage.append(total_tokens_usage)
+                return response, total_usage
+            error_str = "\n".join(errors)
+            logger.info(
+                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
+            )
+            prompt = self.construct_prompt_with_error_msg(
+                initial_prompt, response, error_str
+            )
+            iterations += 1
+            if self.max_attempts is not None and iterations >= self.max_attempts:
+                raise ValueError(
+                    f"Maximum number of retries ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n"
+                )
+    except:
+        total_usage.append(total_tokens_usage)
+        raise

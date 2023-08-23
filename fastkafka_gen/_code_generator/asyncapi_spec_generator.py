@@ -181,7 +181,7 @@ def _optimize_asyncapi_file(asyncapi_yaml_path: str) -> None:
         logger.info(f"Issues while executing 'asyncapi optimize' command: {p.stdout.decode()}")
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 20
-def generate_asyncapi_spec(description: str, output_path: str) -> Dict[str, int]:
+def generate_asyncapi_spec(description: str, output_path: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
     """Generate a AsyncAPI spec from the user's application description
 
     Args:
@@ -189,7 +189,7 @@ def generate_asyncapi_spec(description: str, output_path: str) -> Dict[str, int]
         output_path: The path to the output file where the generated AsyncAPI spec will be saved.
 
     Returns:
-        The total token used to generate the AsyncAPI spec
+        Appends total token used to generate the AsyncAPI spec to the end of total_usage list
     """
     with yaspin(
         text="Generating AsyncAPI specification (usually takes around 15 to 30 seconds)...",
@@ -199,7 +199,7 @@ def generate_asyncapi_spec(description: str, output_path: str) -> Dict[str, int]
         logger.info("\nGenerating AsyncAPI specification")
         async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
         async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response)
-        validated_async_spec, usage = async_spec_validator.fix(description)
+        validated_async_spec, total_usage = async_spec_validator.fix(description, total_usage)
 
         output_file = f"{output_path}/{ASYNC_API_SPEC_FILE_NAME}"
         write_file_contents(output_file, validated_async_spec)
@@ -208,4 +208,4 @@ def generate_asyncapi_spec(description: str, output_path: str) -> Dict[str, int]
 
         sp.text = ""
         sp.ok(f" ✔ AsyncAPI specification generated and saved to: {output_file}")
-        return usage
+        return total_usage
