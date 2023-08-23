@@ -691,12 +691,11 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 - Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
 - All the attributes of the Message class should be assigned with an instance of Field class with appropriate values. It cannot be a primitive type (e.g., str, int, float, bool). 
 - Don't ever put "pass" or "#TODO" comments in the implementation. Instead, always write real implementation!
-- Never ever update or modify the parameters directly in the consumes or produces function. Always create a new instance of the parameter and make only necessary updates. Example:
+- Never ever update or modify the msg object directly in the consumes or produces function. Always create a new instance of the msg object and make only necessary updates. Example:
     ```python
         @greetings_app.consumes(topic="receive_name", description=receive_name_description)
         async def on_receive_name(msg: Greetings):
-            # always create a new instance of the Greetings class and do not modify the msg parameter directly.
-            msg = Greetings(user_name = f"Hello {msg.user_name}")
+            msg = Greetings(user_name = f"Hello {msg.user_name}") # always create a new instance of the msg class and do not modify the msg parameter directly.
             await to_send_greetings(msg)
     ```
     
@@ -802,9 +801,14 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
     - Output only a valid executable python code. No other extra text should be included in your response.
     - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
     - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
-    - At the beginnig of testing script import all the symbols from the application.py module.
-    - The implementation of application.py is described in the "==== APP IMPLEMENTATION: ====" section.
-    - Do not implement the application.py again, just import it and use it's elements for writing the test. Also import asyncio and Tester:
+    - At the beginnig of testing script import all the symbols from the application.py module. Always use the below syntax for importing and never break this rule.
+        ``` python
+            try:
+                from .application import *
+            except ImportError as e:
+                from application import *
+        ```
+    - Also import asyncio and Tester:
         ``` python
             from fastkafka.testing import Tester
             import asyncio
