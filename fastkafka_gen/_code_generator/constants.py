@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['ASYNC_API_SPEC_FILE_NAME', 'APPLICATION_FILE_NAME', 'INTEGRATION_TEST_FILE_NAME', 'DEFAULT_PARAMS', 'DEFAULT_MODEL',
-           'MAX_RETRIES']
+           'MAX_RETRIES', 'TOKEN_TYPES', 'MODEL_PRICING']
 
 # %% ../../nbs/Constants.ipynb 2
 ASYNC_API_SPEC_FILE_NAME = "asyncapi.yml"
@@ -17,3 +17,17 @@ DEFAULT_PARAMS = {
 DEFAULT_MODEL = "gpt-3.5-turbo-16k" # gpt-3.5-turbo
 
 MAX_RETRIES = 5
+
+# %% ../../nbs/Constants.ipynb 6
+TOKEN_TYPES = ["prompt_tokens", "completion_tokens", "total_tokens"]
+
+MODEL_PRICING = {
+    "gpt-4-32k": {
+        "input": 0.06,
+        "output": 0.12
+    },
+    "gpt-3.5-turbo-16k": {
+        "input": 0.003,
+        "output": 0.004
+    },
+}

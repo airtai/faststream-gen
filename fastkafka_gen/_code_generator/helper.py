@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['logger', 'add_dir_to_sys_path', 'write_file_contents', 'read_file_contents', 'validate_python_code',
-           'set_logger_level', 'CustomAIChat', 'ValidateAndFixResponse']
+           'set_logger_level', 'CustomAIChat', 'ValidateAndFixResponse', 'add_tokens_usage']
 
 # %% ../../nbs/Helper.ipynb 1
 from typing import *
@@ -16,14 +16,14 @@ from tempfile import TemporaryDirectory
 import importlib.util
 import os
 import sys
-
+from collections import defaultdict
 
 import openai
 from fastcore.foundation import patch
 
 from .._components.logger import get_logger, set_level
 from .prompts import SYSTEM_PROMPT, DEFAULT_FASTKAFKA_PROMPT
-from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME
+from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME, TOKEN_TYPES
 
 # %% ../../nbs/Helper.ipynb 3
 logger = get_logger(__name__)
@@ -230,7 +230,7 @@ class CustomAIChat:
         self.params = params
 
     @_retry_with_exponential_backoff()
-    def __call__(self, user_prompt: str) -> Tuple[str, str]:
+    def __call__(self, user_prompt: str) -> Tuple[str, Dict[str, int]]:
         """Call OpenAI API chat completion endpoint and generate a response.
 
         Args:
@@ -250,7 +250,7 @@ class CustomAIChat:
         
         return (
             response["choices"][0]["message"]["content"],
-            response["usage"]["total_tokens"],
+            response["usage"],
         )
 
 # %% ../../nbs/Helper.ipynb 26
@@ -297,15 +297,33 @@ class ValidateAndFixResponse:
         return prompt_with_errors
 
     def fix(
-        self, prompt: str, use_prompt_in_validation: bool = False
-    ) -> Tuple[str, str]:
+        self, prompt: str, total_usage: List[Dict[str, int]], use_prompt_in_validation: bool = False
+    ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
 # %% ../../nbs/Helper.ipynb 28
+def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
+    """Add list of OpenAI "usage" dictionaries by categories defined in TOKEN_TYPES (prompt_tokens, completion_tokens and total_tokens).
+
+    Args:
+        usage_list: List of OpenAI "usage" dictionaries
+
+
+    Returns:
+        Dict[str, int]: Dictionary where the keys are TOKEN_TYPES and their values are the sum of OpenAI "usage" dictionaries
+    """
+    added_tokens: Dict[str, int] = defaultdict(int)
+    for usage in usage_list:
+        for token_type in TOKEN_TYPES:
+            added_tokens[token_type] += usage[token_type]
+            
+    return added_tokens
+
+# %% ../../nbs/Helper.ipynb 31
 @patch  # type: ignore
 def fix(
-    self: ValidateAndFixResponse, prompt: str, use_prompt_in_validation: bool = False
-) -> Tuple[str, str]:
+    self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], use_prompt_in_validation: bool = False
+) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
     Args:
@@ -322,24 +340,31 @@ def fix(
     """
     iterations = 0
     initial_prompt = prompt
-    while True:
-        response, total_tokens = self.generate(prompt)
-        errors = (
-            self.validate(response, prompt)
-            if use_prompt_in_validation
-            else self.validate(response)
-        )
-        if len(errors) == 0:
-            return response, total_tokens
-        error_str = "\n".join(errors)
-        logger.info(
-            f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
-        )
-        prompt = self.construct_prompt_with_error_msg(
-            initial_prompt, response, error_str
-        )
-        iterations += 1
-        if self.max_attempts is not None and iterations >= self.max_attempts:
-            raise ValueError(
-                f"Maximum number of retries ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n"
+    total_tokens_usage: Dict[str, int] = defaultdict(int)
+    try:
+        while True:
+            response, usage = self.generate(prompt)
+            total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
+            errors = (
+                self.validate(response, prompt)
+                if use_prompt_in_validation
+                else self.validate(response)
             )
+            if len(errors) == 0:
+                total_usage.append(total_tokens_usage)
+                return response, total_usage
+            error_str = "\n".join(errors)
+            logger.info(
+                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
+            )
+            prompt = self.construct_prompt_with_error_msg(
+                initial_prompt, response, error_str
+            )
+            iterations += 1
+            if self.max_attempts is not None and iterations >= self.max_attempts:
+                raise ValueError(
+                    f"Maximum number of retries ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n"
+                )
+    except:
+        total_usage.append(total_tokens_usage)
+        raise
