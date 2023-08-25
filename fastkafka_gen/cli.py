@@ -190,8 +190,10 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         total_tokens_usage = add_tokens_usage(tokens_list)
         price = _calculate_price(total_tokens_usage)
         
-        typer.secho(f" ▶ Total tokens usage: {total_tokens_usage['total_tokens']}", fg=fg)
-        typer.secho(f" 🤑 Total price: {round(price, 5)}💲", fg=fg)
+        typer.secho(f" Tokens used: {total_tokens_usage['total_tokens']}", fg=fg)
+        logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")
+        logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
+        typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
         
         phases = ["validation", "specification generation", "app generation", "test generation"]
         logger.info("Number of tokens per phase:")
