@@ -354,11 +354,14 @@ def fix(
                 total_usage.append(total_tokens_usage)
                 return response, total_usage
             error_str = "\n".join(errors)
-            logger.info(
-                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
-            )
+#             logger.info(
+#                 f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the invalid response with the mentioned errors:\n\n{response}\n\n"
+#             )
             prompt = self.construct_prompt_with_error_msg(
                 initial_prompt, response, error_str
+            )
+            logger.info(
+                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the updated prompt message along with the previously generated invalid response:\n{prompt}"
             )
             iterations += 1
             if self.max_attempts is not None and iterations >= self.max_attempts:

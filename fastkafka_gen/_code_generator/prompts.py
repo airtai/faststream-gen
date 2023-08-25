@@ -693,12 +693,11 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 - Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
 - All the attributes of the Message class should be assigned with an instance of Field class with appropriate values. It cannot be a primitive type (e.g., str, int, float, bool). 
 - Don't ever put "pass" or "#TODO" comments in the implementation. Instead, always write real implementation!
-- Never ever update or modify the parameters directly in the consumes or produces function. Always create a new instance of the parameter and make only necessary updates. Example:
+- Never ever update or modify the msg object directly in the consumes or produces function. Always create a new instance of the msg object and make only necessary updates. Example:
     ```python
         @greetings_app.consumes(topic="receive_name", description=receive_name_description)
         async def on_receive_name(msg: Greetings):
-            # always create a new instance of the Greetings class and do not modify the msg parameter directly.
-            msg = Greetings(user_name = f"Hello {msg.user_name}")
+            msg = Greetings(user_name = f"Hello {msg.user_name}") # always create a new instance of the msg class and do not modify the msg parameter directly.
             await to_send_greetings(msg)
     ```
     
@@ -709,9 +708,12 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 
 # %% ../../nbs/Prompts.ipynb 6
 TEST_GENERATION_PROMPT = '''
-Generate Integration test for the contents in the ==== APP IMPLEMENTATION: ==== using the `FastKafka` library.
+Testing FastKafka apps:
+In order to speed up development and make testing easier, we have implemented the Tester class.
+The Tester instance starts in-memory implementation of Kafka broker i.e. there is no need for starting localhost Kafka service for testing FastKafka apps. The Tester will redirect consumes and produces decorated functions to the in-memory Kafka broker so that you can quickly test FasKafka apps without the need of a running Kafka broker and all its dependencies. Also, for each FastKafka consumes and produces function, Tester will create it's mirrored fuction i.e. if the consumes function is implemented, the Tester will create the produces function (and the other way - if the produces function is implemented, Tester will create consumes function).
 
-Here's an example of the test code "==== EXAMPLE TEST CODE ====", generated from "==== EXAMPLE APP CODE ===="
+
+First lets understand the relationship between the application code and the test code with an example. in the below example the application code is mentioned in the ==== EXAMPLE APP CODE ==== section and the test code is mentioned in the ==== EXAMPLE TEST CODE ====. You need to understand carefully the ==== EXAMPLE APP CODE ==== and based on the that you need to create the ==== EXAMPLE TEST CODE ====.
 
 ==== EXAMPLE APP CODE ====
 
@@ -721,7 +723,7 @@ from fastkafka import FastKafka
 
 
 class Greetings(BaseModel):
-    user_name: str = Field(..., description="Name of the user.")
+    user_name: str = Field(..., description="Name of the user.")    
 
 kafka_brokers = {
     "localhost": {
@@ -764,7 +766,9 @@ async def to_send_greetings(msg: Greetings) -> Greetings:
     return msg
 
 
-==== EXAMPLE TEST CODE ====
+For the above ==== EXAMPLE APP CODE ==== below is how the generated ==== EXAMPLE TEST CODE ==== will look like:
+
+==== EXAMPLE TEST CODE ==== # do not include this in your response. This is for your understanding
 
 import asyncio
 from fastkafka.testing import Tester
@@ -796,32 +800,162 @@ if __name__ == "__main__":
     loop.run_until_complete(async_tests())
 
 
-==== INSTRUCTIONS: ====
 
-Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
-    - Follow the PEP 8 Style Guide for Python while writing the code
-    - Write optimised ans readable Code
-    - Output only a valid executable python code. No other extra text should be included in your response.
-    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
-    - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
-    - At the beginnig of testing script import all the symbols from the application.py module.
-    - The implementation of application.py is described in the "==== APP IMPLEMENTATION: ====" section.
-    - Do not implement the application.py again, just import it and use it's elements for writing the test. Also import asyncio and Tester:
-        ``` python
-            from fastkafka.testing import Tester
-            import asyncio
-        ```
-    - Implement async test function which uses Tester for the testing of the FastKafka apps in the "==== APP IMPLEMENTATION: ====" section
-    - While testing, crate an new message object each time you assert some statement (don't reuse the same object)!
-    - If app has a conusme on_topic function, tester CAN NOT consume message from that topic. It can only check if it was called with the correct arguments. For example:
+Now let's understand the ==== EXAMPLE TEST CODE ==== step by step:
+
+- First, we are importing the application module so that we can run the test against it
+- Then, we are constructing a new Greetings object.
+- In our application code we have a consumes function called "on_receive_name" which receives messages from "receive_name" topic. We already learnt that the Tester class in FastKafka will automatically create a mirrored fuction for "on_receive_name" i.e. "to_receive_name". Now let test the "on_receive_name" by publishing a message to the "to_receive_name" function of the Tester instance like below:
+
+        await tester.to_receive_name(input_msg)
+
+- Now let's test if the message published in "receive_name" topic is received on by the on_receive_name function with the below code. Make sure you call the below function with the app instance rather than the Tester class instance.
+
+        await greetings_app.awaited_mocks.on_receive_name.assert_called_with(
+            input_msg, timeout=5
+        )
+
+- Finally, lets test if the messages sent to the "send_greetings" are received by the "to_send_greetings" funcrtion or not. The application code we have "to_send_greetings" function, and we just learnt the FastKafka will automatically create a mirrored fuction for "to_send_greetings" i.e. "on_send_greetings". Now let test the "to_send_greetings" by making sure the "on_send_greetings" function is called with the expected message in the Tester instance like below:
+
+        await tester.awaited_mocks.on_send_greetings.assert_called_with(
+            Greetings(user_name = "Hello World"), timeout=5
+        )
+
+
+Here's another illustrative example: A generated test code "==== EXAMPLE APP CODE 1 ====" derived from app code "==== EXAMPLE TEST CODE 1 ===="
+
+==== EXAMPLE APP CODE 1 ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Order(BaseModel):
+    name: str = Field(..., description="Name of the order.")
+    quantity: int = Field(..., description="Quantity of the order.")
+    location: Optional[str] = Field(None, description="Location of the order.")
+
+class InventoryUpdate(BaseModel):
+    quantity: int = Field(..., description="Quantity to update in the inventory.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+order_app_description = "Create a FastKafka application using localhost broker for testing. Use default port number. It should consume messages from 'receive_order' topic and the message will be a JSON encoded object with two attributes: name and quantity. Upon consumption, enhance the message by adding a 'location' attribute set to 'Zagreb'. Subsequently, forward the modified message to the 'place_order' topic. It should also send another message to the 'update_inventory' topic with a 'quantity' attribute corresponding to the received quantity value."
+
+order_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=order_app_description, 
+    version="0.0.1", 
+    title='Order Processing',
+)
+
+
+receive_order_description = "Upon consumption, enhance the message by adding a 'location' attribute set to 'Zagreb'. Subsequently, forward the modified message to the 'place_order' topic."
+
+@order_app.consumes(topic="receive_order", description=receive_order_description)
+async def on_receive_order(msg: Order):
+    msg = Order(name=msg.name, quantity=msg.quantity, location="Zagreb")
+    await to_place_order(msg)
+    await to_update_inventory(msg.quantity)
+
+
+place_order_description = "Publish the modified message from the 'receive_order' topic to the 'place_order' topic."
+@order_app.produces(topic="place_order", description=place_order_description)
+async def to_place_order(msg: Order) -> Order:
+    return msg
+
+
+update_inventory_description = "Send a message to the 'update_inventory' topic with a 'quantity' attribute corresponding to the received quantity value."
+@order_app.produces(topic="update_inventory", description=update_inventory_description)
+async def to_update_inventory(quantity: int) -> InventoryUpdate:
+    return InventoryUpdate(quantity=quantity)
+
+
+
+For the above ==== EXAMPLE APP CODE 1 ==== below is how the generated ==== EXAMPLE TEST CODE 1 ==== will look like:
+
+==== EXAMPLE TEST CODE 1 ==== # do not include this in your response. This is for your understanding
+
+import asyncio
+from fastkafka.testing import Tester
+try:
+    from .application import *
+except ImportError as e:
+    from application import *
+
+async def async_tests():
+    async with Tester(order_app) as tester:
+        input_msg = Order(name="Test Order", quantity=10)
+
+        # tester produces message to the receive_order topic
+        await tester.to_receive_order(input_msg)
+
+        # assert that app consumed from the receive_order topic and it was called with the accurate argument
+        await order_app.awaited_mocks.on_receive_order.assert_called_with(
+            input_msg, timeout=5
+        )
+
+        # assert that tester consumed from the place_order topic and it was called with the accurate argument
+        await tester.awaited_mocks.on_place_order.assert_called_with(
+            Order(name="Test Order", quantity=10, location="Zagreb"), timeout=5
+        )
+
+        # assert that tester consumed from the update_inventory topic and it was called with the accurate argument
+        await tester.awaited_mocks.on_update_inventory.assert_called_with(
+            InventoryUpdate(quantity=10), timeout=5
+        )
+    print("ok")
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(async_tests())
+
+
+==== COMMON MISTAKES AND HOW TO AVOID IT ====
+
+You have the tendency to make the below common mistakes. Never ever do that.
+
+    - Sometimes you are returning the response which is not a valid python code. Sometimes it contains characters like ==== APP DESCRIPTION ====, wrapping the code with ```python. Never do that. Always return a valid python code
+    - Sometimes you tend to use the same consume function from the ==== APP IMPLEMENTATION ==== in the test code aswell. Never do that. If app has a conusme "on_topic" function, tester cannot consume message from that topic. It can only check if it was called with the correct arguments. For example:
         ``` python
             await tester.awaited_mocks.on_topic.assert_called_with(
                 msg, timeout=5
             )
         ```
-    - If app has a produces to_topic function, tester CAN NOT produce message to that topic.
+    - Similarly, If app has a produces to_topic function, tester code cannot produce message to that topic.
 
-The response should be an executable Python script only, with no additional text!!!!!
+
+==== INSTRUCTIONS: ====
+
+Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
+    - The examples and the explaination of the ==== EXAMPLE TEST CODE ==== are only for your understanding. Do not include those in your response.
+    - Your response should only include a valid execuatble python code. Which means your response should start from import asyncio and ends with the loop.run_until_complete(async_tests()).
+    - No other extra text should be included in your response ever. You CANNOT break this rule.
+    - Follow the PEP 8 Style Guide for Python while writing the code
+    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
+    - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+    - At the beginnig of testing script import all the symbols from the application.py module. Always use the below syntax for importing and never break this rule.
+
+            try:
+                from .application import *
+            except ImportError as e:
+                from application import *
+    - Also import asyncio and Tester:
+
+            from fastkafka.testing import Tester
+            import asyncio
+
+
+The response should be an executable Python script only, with no additional text!!!!!. Do not break this rule.
+
+Now, understand the code mentioned in the below ==== APP IMPLEMENTATION: ==== step by step and generate test for it using the `FastKafka` library.
 
 ==== APP DESCRIPTION: ====
 ==== REPLACE WITH APP DESCRIPTION ====
