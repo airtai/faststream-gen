@@ -680,6 +680,112 @@ async def to_send_greetings(msg: Greetings) -> Greetings:
 
 
 
+==== COMMON MISTAKES AND HOW TO AVOID IT ====
+
+You have the tendency to make the below common mistakes. Never ever do that.
+
+- You often miss to add return annotation for producer functions. Always remember the producer function should have return annotation. Let's look at an example of this issue and learn how to fix it. Below is an example of the ==== EXAMPLE INCORRECT APP CODE ==== generated from the valid specification. 
+
+==== EXAMPLE INCORRECT APP CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the employee.")
+    age: int = Field(..., description="Age of the employee.")
+    location: str = Field(..., description="Location of the employee.")
+    experience: str = Field(..., description="Experience of the employee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "Create a FastKafka application using localhost broker for testing. Use default port number. It should consume messages from 'new_joinee' topic and the message will be a JSON encoded object with attributes: employee_name, age, location, and experience. The consumed message should be published to 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='FastKafka Application',
+)
+
+
+consume_description = "Consume messages from the 'new_joinee' topic and send the details to the 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    await to_project_team(msg)
+    await to_admin_team(msg)
+
+
+publish_project_description = "Publish the consumed message to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee): # bug in this line: Missing return type annotation
+    return msg
+
+
+publish_admin_description = "Publish the consumed message to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee): # bug in this line: Missing return type annotation
+    return msg
+
+==== EXAMPLE CORRECT APP CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the employee.")
+    age: int = Field(..., description="Age of the employee.")
+    location: str = Field(..., description="Location of the employee.")
+    experience: str = Field(..., description="Experience of the employee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "Create a FastKafka application using localhost broker for testing. Use default port number. It should consume messages from 'new_joinee' topic and the message will be a JSON encoded object with attributes: employee_name, age, location, and experience. The consumed message should be published to 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='FastKafka Application',
+)
+
+
+consume_description = "Consume messages from the 'new_joinee' topic and send the details to the 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    await to_project_team(msg)
+    await to_admin_team(msg)
+
+
+publish_project_description = "Publish the consumed message to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee: # bug fixed in this line: added correct return annotation
+    return msg
+
+
+publish_admin_description = "Publish the consumed message to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee)  -> NewJoinee: # bug fixed in this line: added correct return annotation
+    return msg
+
 
 ==== INSTRUCTIONS: ====
 
@@ -922,20 +1028,223 @@ if __name__ == "__main__":
 
 You have the tendency to make the below common mistakes. Never ever do that.
 
-    - Sometimes you are returning the response which is not a valid python code. Sometimes it contains characters like ==== APP DESCRIPTION ====, wrapping the code with ```python. Never do that. Always return a valid python code
-    - Sometimes you tend to use the same consume function from the ==== APP IMPLEMENTATION ==== in the test code aswell. Never do that. If app has a conusme "on_topic" function, tester cannot consume message from that topic. It can only check if it was called with the correct arguments. For example:
-        ``` python
-            await tester.awaited_mocks.on_topic.assert_called_with(
-                msg, timeout=5
-            )
-        ```
-    - Similarly, If app has a produces to_topic function, tester code cannot produce message to that topic.
+    - Let's look at an example of an invalid test code and how to fix it. Below is an example of the ==== EXAMPLE INCORRECT TEST CODE ==== generated from the valid ==== EXAMPLE APP CODE ====. 
+    - The ==== EXAMPLE INCORRECT TEST CODE ==== is incorrect and the correct code is given in ==== EXAMPLE CORRECT TEST CODE ====.
+
+    ==== EXAMPLE APP CODE ====
+
+        from typing import *
+        from pydantic import BaseModel, Field
+        from fastkafka import FastKafka
+
+
+        class NewJoinee(BaseModel):
+            employee_name: str = Field(..., description="Name of the employee.")
+            age: int = Field(..., description="Age of the employee.")
+            location: str = Field(..., description="Location of the employee.")
+            experience: str = Field(..., description="Experience of the employee.")
+
+        kafka_brokers = {
+            "localhost": {
+                "url": "localhost",
+                "description": "local development kafka broker",
+                "port": 9092,
+            }
+        }
+
+        app_description = "A FastKafka application that consumes messages from the 'new_joinee' topic and produces messages to the 'project_team' and 'admin_team' topics. The consumed messages should contain attributes such as 'employee_name', 'age', 'location', and 'experience'. The application uses the localhost broker."
+
+        app = FastKafka(
+            kafka_brokers=kafka_brokers, 
+            description=app_description, 
+            version="0.0.1", 
+            title='FastKafka Application',
+        )
+
+
+        consume_description = "Consume messages from the 'new_joinee' topic and send the details to the 'project_team' and 'admin_team' topics."
+
+        @app.consumes(topic="new_joinee", description=consume_description)
+        async def on_new_joinee(msg: NewJoinee):
+            await to_project_team(msg)
+            await to_admin_team(msg)
+
+
+        publish_project_description = "Publish the received details from the 'new_joinee' topic to the 'project_team' topic."
+
+        @app.produces(topic="project_team", description=publish_project_description)
+        async def to_project_team(msg: NewJoinee) -> NewJoinee:
+            return msg
+
+
+        publish_admin_description = "Publish the received details from the 'new_joinee' topic to the 'admin_team' topic."
+
+        @app.produces(topic="admin_team", description=publish_admin_description)
+        async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+            return msg
+
+
+    ==== EXAMPLE INCORRECT TEST CODE ====
+
+        import asyncio
+        from fastkafka.testing import Tester
+        try:
+            from .application import *
+        except ImportError as e:
+            from application import *
+
+        async def async_tests():
+            async with Tester(app) as tester:
+                input_msg = NewJoinee(
+                    employee_name="John Doe",
+                    age=30,
+                    location="New York",
+                    experience="5 years"
+                )
+
+                await tester.to_new_joinee(input_msg)
+
+                await app.awaited_mocks.on_new_joinee.assert_called_with(
+                    input_msg, timeout=5
+                )
+
+                await tester.awaited_mocks.to_project_team.assert_called_with( # bug in this line
+                    input_msg, timeout=5
+                )
+
+                await tester.awaited_mocks.to_admin_team.assert_called_with( # bug in this line
+                    input_msg, timeout=5
+                )
+            print("ok")
+
+        if __name__ == "__main__":
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(async_tests())
+
+
+    ==== EXAMPLE CORRECT TEST CODE ====
+
+        import asyncio
+        from fastkafka.testing import Tester
+        try:
+            from .application import *
+        except ImportError as e:
+            from application import *
+
+        async def async_tests():
+            async with Tester(app) as tester:
+                input_msg = NewJoinee(
+                    employee_name="John Doe",
+                    age=30,
+                    location="New York",
+                    experience="5 years"
+                )
+
+                await tester.to_new_joinee(input_msg)
+
+                await app.awaited_mocks.on_new_joinee.assert_called_with(
+                    input_msg, timeout=5
+                )
+
+                await tester.awaited_mocks.on_project_team.assert_called_with( # bug fixed in this line
+                    input_msg, timeout=5
+                )
+
+                await tester.awaited_mocks.on_admin_team.assert_called_with( # bug fixed in this line
+                    input_msg, timeout=5
+                )
+            print("ok")
+
+        if __name__ == "__main__":
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(async_tests())
+
+
+==== BUG EXPLAINATION ====
+
+    - In the above ==== EXAMPLE INCORRECT TEST CODE ====, the tester class cannot have "to_project_team" method because the ==== EXAMPLE APP CODE ==== already has "to_project_team".
+    - As explained earlier, for each FastKafka consumes and produces function, Tester will create it's mirrored fuction i.e. if the consumes function is implemented in the ==== EXAMPLE APP CODE ====, the Tester will create the produces function in ==== EXAMPLE CORRECT TEST CODE ==== and vice versa.
+    - So the tester class cannot have "on_project_team" and can only have "to_project_team".
+    - Simillarly the  tester class cannot have "on_admin_team" and can only have "to_admin_team".
+
+
+- While using assert_called_with, always use an object to test. Never ever use primitive type. Below is an example:
+
+    ==== EXAMPLE INCORRECT TEST CODE ====
+        import asyncio
+        from fastkafka.testing import Tester
+        try:
+            from .application import *
+        except ImportError as e:
+            from application import *
+
+        async def async_tests():
+            async with Tester(order_app) as tester:
+                input_msg = Order(name="Test Order", quantity=10)
+
+                # tester produces message to the receive_order topic
+                await tester.to_receive_order(input_msg)
+
+                # assert that app consumed from the receive_order topic and it was called with the accurate argument
+                await order_app.awaited_mocks.on_receive_order.assert_called_with(
+                    input_msg, timeout=5
+                )
+
+                # assert that tester consumed from the place_order topic and it was called with the accurate argument
+                await tester.awaited_mocks.on_place_order.assert_called_with(
+                    Order(name="Test Order", quantity=10, location="Zagreb"), timeout=5
+                )
+
+                # assert that tester consumed from the update_inventory topic and it was called with the accurate argument
+                await tester.awaited_mocks.on_update_inventory.assert_called_with(
+                    10, timeout=5  # bug in this line: cannot use primitive datatypes for assertion
+                )
+            print("ok")
+
+    ==== EXAMPLE CORRECT TEST CODE ====
+    
+        import asyncio
+        from fastkafka.testing import Tester
+        try:
+            from .application import *
+        except ImportError as e:
+            from application import *
+
+        async def async_tests():
+            async with Tester(order_app) as tester:
+                input_msg = Order(name="Test Order", quantity=10)
+
+                # tester produces message to the receive_order topic
+                await tester.to_receive_order(input_msg)
+
+                # assert that app consumed from the receive_order topic and it was called with the accurate argument
+                await order_app.awaited_mocks.on_receive_order.assert_called_with(
+                    input_msg, timeout=5
+                )
+
+                # assert that tester consumed from the place_order topic and it was called with the accurate argument
+                await tester.awaited_mocks.on_place_order.assert_called_with(
+                    Order(name="Test Order", quantity=10, location="Zagreb"), timeout=5
+                )
+
+                # assert that tester consumed from the update_inventory topic and it was called with the accurate argument
+                await tester.awaited_mocks.on_update_inventory.assert_called_with(
+                    InventoryUpdate(quantity=10), timeout=5  # bug fixed in this line: used a new Object for assertion
+                )
+            print("ok")
+
+==== BUG EXPLAINATION ====
+    - In the above ==== EXAMPLE INCORRECT TEST CODE ====, the tester instance calls assert_called_with method and passes a primitive data type. In this case an int.
+    - This should not be the case, the assert_called_with method should always take an object as paramter and not a primitive data type.
+
+
+
 
 
 ==== INSTRUCTIONS: ====
 
 Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
-    - The examples and the explaination of the ==== EXAMPLE TEST CODE ==== are only for your understanding. Do not include those in your response.
+    - The examples and the explaination of the ==== EXAMPLE TEST CODE ====, ==== EXAMPLE INCORRECT TEST CODE ==== and ==== EXAMPLE CORRECT TEST CODE ==== are only for your understanding. Do not include those in your response.
     - Your response should only include a valid execuatble python code. Which means your response should start from import asyncio and ends with the loop.run_until_complete(async_tests()).
     - No other extra text should be included in your response ever. You CANNOT break this rule.
     - Follow the PEP 8 Style Guide for Python while writing the code
@@ -951,7 +1260,6 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 
             from fastkafka.testing import Tester
             import asyncio
-
 
 The response should be an executable Python script only, with no additional text!!!!!. Do not break this rule.
 
