@@ -181,12 +181,10 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED
         typer.secho(e, err=True, fg=fg)
-        typer.secho(f"\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n", fg=fg)
         raise typer.Exit(code=1)
     except Exception as e:
         fg = typer.colors.RED
         typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
-        typer.secho(f"\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n", fg=fg)
         raise typer.Exit(code=1)
     finally:
         total_tokens_usage = add_tokens_usage(tokens_list)
