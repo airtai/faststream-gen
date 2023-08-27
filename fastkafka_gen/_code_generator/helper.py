@@ -218,8 +218,9 @@ class CustomAIChat:
             A tuple with AI's response message content and the total number of tokens used while generating the response.
         """
         self.messages.append(
-            {"role": "user", "content": f"==== APP DESCRIPTION: ====\n\n{user_prompt}"}
+            {"role": "user", "content": user_prompt}
         )
+                
         response = openai.ChatCompletion.create(
             model=self.model,
             messages=self.messages,

@@ -14,7 +14,7 @@ from typing import Optional
 import pathlib
 
 from ._components.logger import get_logger
-from ._code_generator.app_description_validator import validate_app_description
+from ._code_generator.app_description_validator import validate_app_description, INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
@@ -181,10 +181,12 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED
         typer.secho(e, err=True, fg=fg)
+        typer.secho(f"\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n", fg=fg)
         raise typer.Exit(code=1)
     except Exception as e:
         fg = typer.colors.RED
         typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
+        typer.secho(f"\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n", fg=fg)
         raise typer.Exit(code=1)
     finally:
         total_tokens_usage = add_tokens_usage(tokens_list)
