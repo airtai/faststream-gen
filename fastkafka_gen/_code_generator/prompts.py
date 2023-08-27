@@ -224,7 +224,7 @@ Using this code, messages can be processed end-to-end, allowing you to consume d
 
 # %% ../../nbs/Prompts.ipynb 3
 APP_VALIDATION_PROMPT = """
-You should respond with 0, 1 or 2 and nothing else. Below are your rules:
+You should respond with 0, 1, 2 or 3 and nothing else. Below are your rules:
 
 ==== RULES: ====
 
@@ -232,7 +232,20 @@ If the ==== APP DESCRIPTION: ==== section is not related to FastKafka or contain
 
 If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses on what is it and its general information then you should respond with 1. 
 
-If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses how to use it and instructions to create a new app then you should respond with 2. 
+If from the ==== APP DESCRIPTION: ==== it is NOT possible to infer the topic name you should respond with 2. 
+
+If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses how to use it and instructions to create a new app. Also, if AT LEAST one topic AND AT LEAST one produces/consumes is defined, then you should respond with 3. 
+
+Here are few examples for category 2 and 3:
+Example 1:
+Generate a new fastkafka app, which has a producer function and a consumer function 
+Response 1:
+2
+
+Example 2:
+Fastkafka app with for consuming messages from the hello topic
+Response 2:
+3
 """
 
 # %% ../../nbs/Prompts.ipynb 4
