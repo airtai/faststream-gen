@@ -65,7 +65,7 @@ def generate_test(
     Returns:
         The generated integration test code for the application
     """
-    with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
+    with yaspin(text="Generating tests (usually takes around 10 to 30 seconds)...", color="cyan", spinner="clock") as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 

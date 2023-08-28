@@ -31,7 +31,7 @@ def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]]) -> 
     """
     # TODO: Validate the generated code
     with yaspin(
-        text="Generating FastKafka app...", color="cyan", spinner="clock"
+        text="Generating FastKafka app (usually takes around 15 to 30 seconds)...", color="cyan", spinner="clock"
     ) as sp:
         spec_file_name = f"{code_gen_directory}/{ASYNC_API_SPEC_FILE_NAME}"
         asyncapi_spec = read_file_contents(spec_file_name)
