@@ -232,20 +232,55 @@ If the ==== APP DESCRIPTION: ==== section is not related to FastKafka or contain
 
 If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses on what is it and its general information then you should respond with 1. 
 
-If from the ==== APP DESCRIPTION: ==== it is NOT possible to infer the topic name you should respond with 2. 
+If from the ==== APP DESCRIPTION: ==== it is NOT possible to infer the topic name or there are NOT any produces/consumes functions defined  you should respond with 2. This is realy important!
 
-If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses how to use it and instructions to create a new app. Also, if AT LEAST one topic AND AT LEAST one produces/consumes is defined, then you should respond with 3. 
+If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses how to use it and instructions to create a new app. Also, if AT LEAST one topic AND AT LEAST one produces/consumes functions is defined, then you should respond with 3. 
 
-Here are few examples for category 2 and 3:
-Example 1:
+Here are few examples for categories 2 and 3:
+==== App description 1 ====
 Generate a new fastkafka app, which has a producer function and a consumer function 
-Response 1:
+==== Response 1 ====
 2
+==== Response EXPLAINATION 1 ====
+In the App description 1, user hasn't defined message structure,the names of the consumes and produces functions. Because of this, you should respond with 2 
 
-Example 2:
+==== App description 2 ====
+Create a FastKafka application.
+==== Response 2 ====
+2
+==== Response EXPLAINATION 2 ====
+In the App description 2, user only wrote that he wants a fastkafka app, without any additional information about the logic, messages and the topic to consume/produce. Because of this, you should respond with 2 
+
+==== App description 3 ====
+create fastkafka app where message has user_data attribute.
+==== Response 3 ====
+2
+==== Response EXPLAINATION 3 ====
+In the App description 3, user wrote that he wants a fastkafka app and defined messages structure, without any additional information about the logic, and the topic to consume/produce. Because of this, you should respond with 2 
+
+==== App description 4 ====
 Fastkafka app with for consuming messages from the hello topic
-Response 2:
+==== Response 4 ====
 3
+
+==== App description 5 ====
+Write a fastkafka application with with one consumer function and two producer functions. The consumer function should receive the a message posted on "new_joinee" topic. The message should contain "employee_name", "age", "location" and "experience" attributes. After consuming the consumer function should send the details to the "project_team" and "admin_team" topics. Use only localhost broker==== Response 5 ====
+==== Response 5 ====
+3
+
+==== App description 6 ====
+Develop a new FastKafka application that consumes JSON-encoded objects from the "receive_order" topic. These objects include attributes like "name" and "quantity." Upon consumption, enhance the message by adding a "location" attribute set to "Zagreb." Subsequently, forward the modified message to the "place_order" topic. After this, send another message to the "update_inventory" topic. This message should include a "quantity" attribute that corresponds to the received quantity value. No authentication is required.==== Response 6 ====
+==== Response 6 ====
+3
+
+==== App description 7 ====
+Generate FastKafka application.
+==== Response 7 ====
+2
+==== Response EXPLAINATION 7 ====
+In the App description 7, user only wrote that he wants a fastkafka app, without any additional information about the logic, messages and the topic to consume/produce. Because of this, you should respond with 2 
+
+Please respond only with numbers 0, 1, 2 or 3 (WITH NO ADDITIONAL TEXT!)
 """
 
 # %% ../../nbs/Prompts.ipynb 4
@@ -412,29 +447,7 @@ Instructions you must follow while generating the AsyncAPI specification:
 - Do not apply security to the localhost server; security is not needed for localhost server.
 - The localhost server uses only 'kafka' protocol, never 'kafka-secure'.
 
-If the application description is missing any required information for constructing the AsyncAPI spec - at least one produces or consumes function, defined message structure and application logic. Please enclose it in the ==== INCOMPLETE APP DESCRIPTION ==== section. 
-Please DON'T generate AsyncAPI specification for cases like this, just return ==== INCOMPLETE APP DESCRIPTION ==== and write which details are missing in the users app description.
-Refer to the examples below:
-
-==== EXAMPLE ASYNCAPI SPEC 3 ====
-Create a FastKafka application.
-
-==== INCOMPLETE APP DESCRIPTION ====
-The app description is missing the below details:
-- Message structure - define the structure of messages which will be consumed/produced
-- Topics to consume and produce
-- Business logic to implement
-
-
-==== EXAMPLE ASYNCAPI SPEC 4 ====
-create fastkafka app where message has user_data attribute
-
-==== INCOMPLETE APP DESCRIPTION ====
-The app description is missing the below details:
-- Topics to consume and produce
-- Business logic to implement
-
-Otherwise, if the app description contains all the required information. Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
+Please respond with a valid AsyncAPI spec only in YAML format. No other text should be included in the response.
 
 ==== APP DESCRIPTION: ====
 """

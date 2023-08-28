@@ -14,7 +14,7 @@ from typing import Optional
 import pathlib
 
 from ._components.logger import get_logger
-from ._code_generator.app_description_validator import validate_app_description, INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
+from ._code_generator.app_description_validator import validate_app_description
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
