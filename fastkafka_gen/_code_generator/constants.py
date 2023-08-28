@@ -35,7 +35,7 @@ MODEL_PRICING = {
 }
 
 # %% ../../nbs/Constants.ipynb 8
-INCOMPLETE_DESCRIPTION = "Please check if your application description is missing some crutial information:\n - Description of the messages which will be produced/consumed\n - At least one topic\n - At least one produces or consumes method\n"
+INCOMPLETE_DESCRIPTION = "Please check if your application description is missing some crutial information:\n - Description of the messages which will be produced/consumed\n - At least one topic\n - The business logic to implement while consuming/producing the messages\n"
 DESCRIPTION_EXAMPLE = """
 If you're unsure about how to construct the app description, consider the following example for guidance
 

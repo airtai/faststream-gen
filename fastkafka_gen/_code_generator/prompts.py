@@ -249,14 +249,14 @@ Create a FastKafka application.
 ==== Response 2 ====
 2
 ==== Response EXPLAINATION 2 ====
-In the App description 2, user only wrote that he wants a fastkafka app, without any additional information about the logic, messages and consumes/produces function. Because of this, you should respond with 2 
+In the App description 2, user only wrote that he wants a fastkafka app, without any additional information about the logic, messages and the topic to consume/produce. Because of this, you should respond with 2 
 
 ==== App description 3 ====
 create fastkafka app where message has user_data attribute.
 ==== Response 3 ====
 2
 ==== Response EXPLAINATION 3 ====
-In the App description 3, user wrote that he wants a fastkafka app and defined messages structure, without any additional information about the logic, and consumes/produces function. Because of this, you should respond with 2 
+In the App description 3, user wrote that he wants a fastkafka app and defined messages structure, without any additional information about the logic, and the topic to consume/produce. Because of this, you should respond with 2 
 
 ==== App description 4 ====
 Fastkafka app with for consuming messages from the hello topic
