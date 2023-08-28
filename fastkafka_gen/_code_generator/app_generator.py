@@ -29,7 +29,6 @@ def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]]) -> 
     Returns:
         The total token used to generate the FastKafka code
     """
-    # TODO: Validate the generated code
     with yaspin(
         text="Generating FastKafka app (usually takes around 15 to 30 seconds)...", color="cyan", spinner="clock"
     ) as sp:
