@@ -232,7 +232,7 @@ If the ==== APP DESCRIPTION: ==== section is not related to FastKafka or contain
 
 If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses on what is it and its general information then you should respond with 1. 
 
-If from the ==== APP DESCRIPTION: ==== it is NOT possible to infer the topic name or there are NOT any produces/consumes functions defined  you should respond with 2. 
+If from the ==== APP DESCRIPTION: ==== it is NOT possible to infer the topic name or there are NOT any produces/consumes functions defined  you should respond with 2. This is realy important!
 
 If the ==== APP DESCRIPTION: ==== section is related to FastKafka but focuses how to use it and instructions to create a new app. Also, if AT LEAST one topic AND AT LEAST one produces/consumes functions is defined, then you should respond with 3. 
 
@@ -272,6 +272,13 @@ Write a fastkafka application with with one consumer function and two producer f
 Develop a new FastKafka application that consumes JSON-encoded objects from the "receive_order" topic. These objects include attributes like "name" and "quantity." Upon consumption, enhance the message by adding a "location" attribute set to "Zagreb." Subsequently, forward the modified message to the "place_order" topic. After this, send another message to the "update_inventory" topic. This message should include a "quantity" attribute that corresponds to the received quantity value. No authentication is required.==== Response 6 ====
 ==== Response 6 ====
 3
+
+==== App description 7 ====
+Generate FastKafka application.
+==== Response 7 ====
+2
+==== Response EXPLAINATION 7 ====
+In the App description 7, user only wrote that he wants a fastkafka app, without any additional information about the logic, messages and the topic to consume/produce. Because of this, you should respond with 2 
 
 Please respond only with numbers 0, 1, 2 or 3 (WITH NO ADDITIONAL TEXT!)
 """
