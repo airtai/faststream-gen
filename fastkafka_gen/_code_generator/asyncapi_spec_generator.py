@@ -176,13 +176,13 @@ def _optimize_asyncapi_file(asyncapi_yaml_path: str) -> None:
         logger.info(f"Issues while executing 'asyncapi optimize' command: {p.stdout.decode()}")
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 21
-def _generate_asyncapi_spec(description: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
+def _generate_asyncapi_spec(description: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
     async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
     async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response, max_attempts=3)
     validated_async_spec, total_usage = async_spec_validator.fix(description, total_usage)
     return validated_async_spec, total_usage
 
-def generate_asyncapi_spec(description: str, output_path: str, total_usage: List[Dict[str, int]], max_attempts: Optional[int] = MAX_ASYNC_SPEC_RETRIES) -> List[Dict[str, int]]:
+def generate_asyncapi_spec(description: str, output_path: str, total_usage: List[Dict[str, int]], max_attempts: int = MAX_ASYNC_SPEC_RETRIES) -> List[Dict[str, int]]:
     """Generate a AsyncAPI spec from the user's application description
 
     Args:
@@ -198,7 +198,7 @@ def generate_asyncapi_spec(description: str, output_path: str, total_usage: List
         color="cyan",
         spinner="clock",
     ) as sp:
-        iterations = 0
+        iterations: int = 0
         while True:
             logger.info(f"\nGenerating AsyncAPI specification - {iterations + 1}. attempt")      
             try:
