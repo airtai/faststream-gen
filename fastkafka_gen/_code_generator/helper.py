@@ -23,7 +23,7 @@ from fastcore.foundation import patch
 
 from .._components.logger import get_logger, set_level
 from .prompts import SYSTEM_PROMPT, DEFAULT_FASTKAFKA_PROMPT
-from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME, TOKEN_TYPES
+from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME, TOKEN_TYPES, MAX_NUM_FIXES_MSG, INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
 
 # %% ../../nbs/Helper.ipynb 3
 logger = get_logger(__name__)
@@ -367,7 +367,7 @@ def fix(
             iterations += 1
             if self.max_attempts is not None and iterations >= self.max_attempts:
                 raise ValueError(
-                    f"Maximum number of retries ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n"
+                    f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
                 )
     except:
         total_usage.append(total_tokens_usage)

@@ -20,7 +20,7 @@ from fastkafka._components.docs_dependencies import _check_npm_with_local, npm_r
 from .._components.logger import get_logger
 from .helper import CustomAIChat, ValidateAndFixResponse, write_file_contents
 from .prompts import ASYNCAPI_SPEC_GENERATION_PROMPT
-from .constants import ASYNC_API_SPEC_FILE_NAME
+from .constants import ASYNC_API_SPEC_FILE_NAME, MAX_ASYNC_SPEC_RETRIES, MAX_NUM_FIXES_MSG
 
 # %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 3
 logger = get_logger(__name__)
@@ -54,12 +54,7 @@ def _validate_response(response: str) -> List[str]:
 
     Raises:
         json.JSONDecodeError: If the response is not a valid JSON.
-    """
-    incomplete_app_description = "==== INCOMPLETE APP DESCRIPTION ===="
-    
-    if incomplete_app_description in response.upper():
-        raise ValueError(response)
-    
+    """    
     # check if nmp is installed
     try:
         _check_npm_with_local()
@@ -180,13 +175,20 @@ def _optimize_asyncapi_file(asyncapi_yaml_path: str) -> None:
     else:   
         logger.info(f"Issues while executing 'asyncapi optimize' command: {p.stdout.decode()}")
 
-# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 20
-def generate_asyncapi_spec(description: str, output_path: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
+# %% ../../nbs/AsyncAPI_Spec_Generator.ipynb 21
+def _generate_asyncapi_spec(description: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
+    async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
+    async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response, max_attempts=3)
+    validated_async_spec, total_usage = async_spec_validator.fix(description, total_usage)
+    return validated_async_spec, total_usage
+
+def generate_asyncapi_spec(description: str, output_path: str, total_usage: List[Dict[str, int]], max_attempts: Optional[int] = MAX_ASYNC_SPEC_RETRIES) -> List[Dict[str, int]]:
     """Generate a AsyncAPI spec from the user's application description
 
     Args:
         description: Validated User application description
         output_path: The path to the output file where the generated AsyncAPI spec will be saved.
+        max_attempts: An optional integer specifying the maximum number of attempts to generate asyncapi specification (number of fixes are not included in this number).
 
     Returns:
         Appends total token used to generate the AsyncAPI spec to the end of total_usage list
@@ -196,10 +198,17 @@ def generate_asyncapi_spec(description: str, output_path: str, total_usage: List
         color="cyan",
         spinner="clock",
     ) as sp:
-        logger.info("\nGenerating AsyncAPI specification")
-        async_spec_generator = CustomAIChat(user_prompt=ASYNCAPI_SPEC_GENERATION_PROMPT)
-        async_spec_validator = ValidateAndFixResponse(async_spec_generator, _validate_response)
-        validated_async_spec, total_usage = async_spec_validator.fix(description, total_usage)
+        iterations = 0
+        while True:
+            logger.info(f"\nGenerating AsyncAPI specification - {iterations + 1}. attempt")      
+            try:
+                validated_async_spec, total_usage = _generate_asyncapi_spec(description, total_usage)
+                break
+            except ValueError as e:
+                if MAX_NUM_FIXES_MSG not in str(e) or iterations >= max_attempts:
+                    raise e
+                # Try to generate specifiction from the beginning
+                iterations += 1
 
         output_file = f"{output_path}/{ASYNC_API_SPEC_FILE_NAME}"
         write_file_contents(output_file, validated_async_spec)
