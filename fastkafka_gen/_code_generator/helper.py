@@ -276,7 +276,7 @@ class ValidateAndFixResponse:
         return prompt_with_errors
 
     def fix(
-        self, prompt: str, total_usage: List[Dict[str, int]], use_prompt_in_validation: bool = False
+        self, prompt: str, total_usage: List[Dict[str, int]], **kwargs: str
     ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
@@ -301,7 +301,7 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
 # %% ../../nbs/Helper.ipynb 29
 @patch  # type: ignore
 def fix(
-    self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], **kwargs: Dict[str, Any]
+    self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], **kwargs: str
 ) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 

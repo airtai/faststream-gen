@@ -32,10 +32,9 @@ from fastkafka_gen._code_generator.constants import (
 logger = get_logger(__name__)
 
 # %% ../../nbs/Test_Generator.ipynb 5
-def _validate_response(test_code: str, **kwargs: Dict[str, Any]) -> List[str]:
-    app_code = kwargs["app_code"]
+def _validate_response(test_code: str, **kwargs: str) -> List[str]:
     with TemporaryDirectory() as d:
-        write_file_contents(f"{d}/{APPLICATION_FILE_NAME}", app_code)
+        write_file_contents(f"{d}/{APPLICATION_FILE_NAME}", kwargs["app_code"])
         
         test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_file, test_code)
@@ -68,7 +67,7 @@ def generate_test(
     """
     with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
-        app_code = read_file_contents(app_file_name)
+        app_code_prompt = read_file_contents(app_file_name)
 
         prompt = TEST_GENERATION_PROMPT.replace(
             "==== REPLACE WITH APP DESCRIPTION ====", description
@@ -76,7 +75,7 @@ def generate_test(
         test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
-            app_code, total_usage=total_usage, app_code=app_code
+            app_code_prompt, total_usage=total_usage, app_code=app_code_prompt
         )
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"
