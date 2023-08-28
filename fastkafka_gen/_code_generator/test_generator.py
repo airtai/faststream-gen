@@ -9,6 +9,8 @@ import time
 import importlib.util
 from tempfile import TemporaryDirectory
 from pathlib import Path
+import platform
+import subprocess  # nosec: B404: Consider possible security implications associated with the subprocess module.
 
 from yaspin import yaspin
 
@@ -19,7 +21,6 @@ from fastkafka_gen._code_generator.helper import (
     write_file_contents,
     read_file_contents,
     validate_python_code,
-    add_dir_to_sys_path,
 )
 from .prompts import TEST_GENERATION_PROMPT
 from fastkafka_gen._code_generator.constants import (
@@ -30,34 +31,31 @@ from fastkafka_gen._code_generator.constants import (
 # %% ../../nbs/Test_Generator.ipynb 3
 logger = get_logger(__name__)
 
-# %% ../../nbs/Test_Generator.ipynb 7
-def _validate_response(test_code: str, app_code: str) -> List[str]:
+# %% ../../nbs/Test_Generator.ipynb 5
+def _validate_response(test_code: str, **kwargs: str) -> List[str]:
     with TemporaryDirectory() as d:
-        try:
-            temp_dir = Path(d)
+        write_file_contents(f"{d}/{APPLICATION_FILE_NAME}", kwargs["app_code"])
+        
+        test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
+        write_file_contents(test_file, test_code)
 
-            # Create a package structure
-            package_dir = temp_dir / "my_temp_package"
-            package_dir.mkdir()
-            (package_dir / "__init__.py").touch()
-
-            temp_file = package_dir / INTEGRATION_TEST_FILE_NAME
-            write_file_contents(str(package_dir / APPLICATION_FILE_NAME), app_code)
-            write_file_contents(str(temp_file), test_code)
-
-            with add_dir_to_sys_path(d):
-                # Import the module using importlib
-                spec = importlib.util.spec_from_file_location("my_temp_package.test", temp_file)
-                module = importlib.util.module_from_spec(spec)  # type: ignore
-                spec.loader.exec_module(module)  # type: ignore
-
-        except Exception as e:
-            return [f"{type(e).__name__}: {e}"]
+        cmd = ["python3", test_file]
+        # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
+        p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
+            cmd,
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            shell=True if platform.system() == "Windows" else False,
+        )
+        if p.returncode != 0:
+            return [str(p.stderr.decode('utf-8')).replace(f"{d}/", "")]
 
         return []
 
 # %% ../../nbs/Test_Generator.ipynb 9
-def generate_test(description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]) -> List[Dict[str, int]]:
+def generate_test(
+    description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]
+) -> List[Dict[str, int]]:
     """Generate integration test for the FastKafka app
 
     Args:
@@ -67,14 +65,18 @@ def generate_test(description: str, code_gen_directory: str, total_usage: List[D
     Returns:
         The generated integration test code for the application
     """
-    with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
+    with yaspin(text="Generating tests (usually takes around 10 to 30 seconds)...", color="cyan", spinner="clock") as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
-        app_code = read_file_contents(app_file_name)
-        
-        prompt = TEST_GENERATION_PROMPT.replace("==== REPLACE WITH APP DESCRIPTION ====", description)
+        app_code_prompt = read_file_contents(app_file_name)
+
+        prompt = TEST_GENERATION_PROMPT.replace(
+            "==== REPLACE WITH APP DESCRIPTION ====", description
+        )
         test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
-        validated_test, total_usage = test_validator.fix(app_code, total_usage=total_usage, use_prompt_in_validation=True)
+        validated_test, total_usage = test_validator.fix(
+            app_code_prompt, total_usage=total_usage, app_code=app_code_prompt
+        )
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(output_file, validated_test)
