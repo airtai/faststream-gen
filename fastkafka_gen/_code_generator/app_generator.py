@@ -54,7 +54,6 @@ def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]], gen
     Returns:
         The total token used to generate the FastKafka code
     """
-    assert generate_key in generate_keys
     additional_text = "skeleton " if generate_key == GENERATE_APP_SKELETON else ""
     
     with yaspin(
