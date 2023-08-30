@@ -10,7 +10,6 @@ import os
 import re
 
 import typer
-from typing import Optional
 import pathlib
 
 from ._components.logger import get_logger
