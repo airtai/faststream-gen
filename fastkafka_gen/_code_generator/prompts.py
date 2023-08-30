@@ -2,7 +2,8 @@
 
 # %% auto 0
 __all__ = ['SYSTEM_PROMPT', 'DEFAULT_FASTKAFKA_PROMPT', 'APP_VALIDATION_PROMPT', 'ASYNCAPI_SPEC_GENERATION_PROMPT',
-           'APP_GENERATION_PROMPT', 'TEST_GENERATION_PROMPT']
+           'APP_SKELETON_GENERATION_PROMPT', 'APP_GENERATION_PROMPT_FROM_SKELETON',
+           'APP_GENERATION_PROMPT_FROM_ASYNCAPI', 'TEST_GENERATION_PROMPT']
 
 # %% ../../nbs/Prompts.ipynb 1
 SYSTEM_PROMPT = """
@@ -453,7 +454,814 @@ Please respond with a valid AsyncAPI spec only in YAML format. No other text sho
 """
 
 # %% ../../nbs/Prompts.ipynb 5
-APP_GENERATION_PROMPT = """
+APP_SKELETON_GENERATION_PROMPT = """
+Generate Python code using the `FastKafka` library based from "APP DESCRIPTION" section.
+Do NOT implement any logic for consumes and produces functions, juste raise NotImplementedError
+
+See examples for generating skeletons of FastKafka apps, "==== EXAMPLE CODE ====" derived from "==== EXAMPLE APP DESCRIPTION ====."
+
+==== EXAMPLE APP DESCRIPTION 1====
+Write a fastkafka application with with one consumer function and two producer functions. The consumer function should receive the a message posted on "new_joinee" topic. The message should contain "employee_name", "age", "location" and "experience" attributes. After consuming the consumer function should send the details to the "project_team" and "admin_team" topics. Use only localhost broker
+
+==== EXAMPLE CODE 1====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the new joinee.")
+    age: int = Field(..., description="Age of the new joinee.")
+    location: str = Field(..., description="Location of the new joinee.")
+    experience: str = Field(..., description="Experience of the new joinee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for managing employee details. It consumes messages from the 'new_joinee' topic, which include attributes like 'employee_name', 'age', 'location', and 'experience'. After consuming, the application sends the employee details to the 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Employee Management',
+)
+
+
+consume_description = "Consume employee details from the 'new_joinee' topic and send to 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    raise NotImplementedError()
+
+
+publish_project_description = "Publish the consumed employee details to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+
+publish_admin_description = "Publish the consumed employee details to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+
+==== EXAMPLE APP DESCRIPTION 2====
+Develop a new FastKafka application that consumes JSON-encoded objects from the "receive_order" topic. These objects include attributes like "name" and "quantity." Upon consumption, enhance the message by adding a "location" attribute set to "Zagreb." Subsequently, forward the modified message to the "place_order" topic. After this, send another message to the "update_inventory" topic. This message should include a "quantity" attribute that corresponds to the received quantity value. No authentication is required.
+
+==== EXAMPLE CODE 2====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Order(BaseModel):
+    name: str = Field(..., description="Name of the order.")
+    quantity: int = Field(..., description="Quantity of the order.")
+    location: str = Field("Zagreb", description="Location of the order.")
+
+class InventoryUpdate(BaseModel):
+    quantity: int = Field(..., description="Quantity of the order to update inventory.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development Kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    }
+}
+
+app_description = "A FastKafka application that consumes JSON-encoded objects from the 'receive_order' topic. Each object includes attributes such as 'name' and 'quantity'. Upon consumption, the application enhances the message by adding a 'location' attribute set to 'Zagreb'. The modified message is then forwarded to the 'place_order' topic. Additionally, a message is sent to the 'update_inventory' topic, including a 'quantity' attribute corresponding to the received quantity value. No authentication is required."
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Enhance and Forward Order',
+)
+
+
+receive_order_description = "Upon consumption, enhance the message by adding a 'location' attribute set to 'Zagreb'. Subsequently, forward the modified message to the 'place_order' topic. Also, send another message to the 'update_inventory' topic, including a 'quantity' attribute that corresponds to the received quantity value."
+@app.consumes(topic="receive_order", description=receive_order_description)
+async def on_receive_order(msg: Order):
+    raise NotImplementedError()
+
+
+place_order_description = "Produce the modified messages to the 'place_order' topic."
+@app.produces(topic="place_order", description=place_order_description)
+async def to_place_order(msg: Order) -> Order:
+    raise NotImplementedError()
+
+
+update_inventory_description = "Produce messages with 'quantity' attribute corresponding to the received quantity value to the 'update_inventory' topic."
+@app.produces(topic="update_inventory", description=update_inventory_description)
+async def to_update_inventory(quantity: int) -> InventoryUpdate:
+    raise NotImplementedError()
+
+
+
+==== EXAMPLE APP DESCRIPTION 3====
+Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use the default port number.
+It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name.
+For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic.
+
+==== EXAMPLE CODE 3====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    title='Greet users',
+)
+
+
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    raise NotImplementedError()
+
+
+send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
+@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    raise NotImplementedError()
+
+
+==== EXAMPLE APP DESCRIPTION 4====
+Generate a new fastkafka app, which has a producer function and a consumer function. The produer function should send a hello world text to the consumer function. Use localhost broker for testing and SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
+
+==== EXAMPLE CODE 4====
+from typing import *
+from pydantic import BaseModel, Field
+from aiokafka.helpers import create_ssl_context
+
+from fastkafka import FastKafka
+
+
+class HelloWorld(BaseModel):
+    message: str = Field(..., description="Hello World message")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+        "security": {"type": "scramSha256"},
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should publish 'Hello World' message to 'hello_world_topic' and consume the same message from 'hello_world_topic'."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='FastKafka App',
+    security_protocol = "SASL_SSL",
+    sasl_mechanism= "SCRAM-SHA-256",
+    sasl_plain_username= "<username>",
+    sasl_plain_password=  "<password>",
+    ssl_context= create_ssl_context(),
+)
+
+
+publish_description = "Producer function sends a 'Hello World' message to the consumer function."
+@app.produces(topic="hello_world_topic", description=publish_description)
+async def produce_hello_world() -> HelloWorld:
+    raise NotImplementedError()
+
+
+subscribe_description = "Consumer function receives a 'Hello World' message from the producer function."
+@app.consumes(topic="hello_world_topic", description=subscribe_description)
+async def consume_hello_world(msg: HelloWorld):
+    raise NotImplementedError()
+
+
+==== COMMON MISTAKES AND HOW TO AVOID IT ====
+
+You have the tendency to make the below common mistakes. Never ever do that.
+
+- You often don't use 'msg' as a first parameter in consumes and produces functions. 
+- Always remember that the first paramete should be 'msg'. Let's look at an example of this issue and learn how to fix it. Below is an example of the ==== EXAMPLE INCORRECT APP CODE ==== generated from the valid specification. 
+
+==== EXAMPLE INCORRECT APP CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+class User(BaseModel):
+    name: str = Field(..., description="User's name")
+    surname: str = Field(..., description="User's surname")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for producing messages to the 'user' topic. Each message should contain attributes like 'name' and 'surname'."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers,
+    description=app_description,
+    title='User Producer',
+)
+
+produce_description = "Produce messages with 'name' and 'surname' attributes to the 'user' topic."
+@app.produces(topic="user", description=produce_description)
+async def produce_user(name: str, surname: str) -> User: # bug in this line: produce functions should have name prefix (DEFAULT is 'to_') + topic i.e. 'to_' + 'user' = 'to_user' and function should only have one input parameter: msg: User
+    raise NotImplementedError()
+
+==== EXAMPLE CORRECT APP CODE ====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+class User(BaseModel):
+    name: str = Field(..., description="User's name")
+    surname: str = Field(..., description="User's surname")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for producing messages to the 'user' topic. Each message should contain attributes like 'name' and 'surname'."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers,
+    description=app_description,
+    title='User Producer',
+)
+
+produce_description = "Produce messages with 'name' and 'surname' attributes to the 'user' topic."
+@app.produces(topic="user", description=produce_description)
+async def to_user(msg: User) -> User:  # bug in this line: produce functions should have name prefix (DEFAULT is 'to_') + topic i.e. 'to_' + 'user' = 'to_user' and function should only have one input parameter: msg: User
+    raise NotImplementedError()
+
+==== BUG EXPLAINATION ====
+
+
+==== INSTRUCTIONS: ====
+
+Instructions you must follow while generating the FastKafka application (without implementing consumes and produces methods) from the ==== APP DESCRIPTION: ==== section
+
+- Extract content within "APP DESCRIPTION:" and use it in the app description section, beginning with "A FastKafka application which" and explain the app's purpose clearly and concisely.
+- For every consumer and producer, carefully review the "APP DESCRIPTION" section step-by-step. Create a clear description outlining the business logic that should be implemented by each consumer and producer. Ensure the description provides sufficient clarity for software developers to effectively implement the required functionality. Exclude redundant details between different producers or consumers. 
+- If the description of consumer/producer requires modifying/updating the object, add the following sentence to the description at the end of the description: "Remember, make a new copy of the message object and only update the necessary parts."
+- Follow the PEP 8 Style Guide for Python while writing the code
+- Write optimised and readable Code
+- Use Pydantic V2! In this version, Pydantic.Field attribute 'regex' is replaced with 'pattern'!
+- Output only a valid executable python code. No other extra text should be included.
+- DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+- Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
+- All the attributes of the Message class should be assigned with an instance of Field class with appropriate values. It cannot be a primitive type (e.g., str, int, float, bool). 
+- Don't ever put "pass" or "#TODO" comments in the implementation. Instead, for each consumes/produces function raise NotImplementedError()
+- VERTY IMPORTANT: ALL consumes function names need to start with the prefix 'on_' !!!
+      e.g.: if you want to consume messages from the 'admin_team' topic, the method needs to start wit the prefix (default prefix is 'on_') so the method will be named: 'on_admin_team'
+      @app.consumes(topic="admin_team", description=publish_admin_description)
+      async def on_admin_team(msg: NewJoinee):
+- VERTY IMPORTANT: ALL produces function names need to start with the prefix 'to_' !!!
+      e.g.: if you want to produce messages to the 'admin_team' topic, the method needs to start wit the prefix (default prefix is 'to_') so the method will be named: 'to_admin_team'
+      @app.produces(topic="admin_team", description=publish_admin_description)
+      async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+- The FIRST parameter in each of the consumes and produces function must be 'msg' and it MUST be a subclass of Pydantic models (usually BaseModel)
+- NEVER use primitive types as a first parameter to consumes and produces functions!!!
+
+You MUST respond ONLY with a valid Python file. No other text should be included in the response!!!!
+I must be able to save your response to a Python .py script!!!! So do NOT add any additional text!!!!
+
+==== APP DESCRIPTION: ====
+
+"""
+
+# %% ../../nbs/Prompts.ipynb 6
+APP_GENERATION_PROMPT_FROM_SKELETON = """
+Implement consumes and produces functions (which currently raise NotImplementedError()) using the `FastKafka` library.
+
+See examples for implementing FastKafka consumes and produces functions,  "==== EXAMPLE CODE ====" derived from "==== EXAMPLE CODE SKELETON ===="
+
+==== EXAMPLE CODE SKELETON 1====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the new joinee.")
+    age: int = Field(..., description="Age of the new joinee.")
+    location: str = Field(..., description="Location of the new joinee.")
+    experience: str = Field(..., description="Experience of the new joinee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for managing employee details. It consumes messages from the 'new_joinee' topic, which include attributes like 'employee_name', 'age', 'location', and 'experience'. After consuming, the application sends the employee details to the 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Employee Management',
+)
+
+
+consume_description = "Consume employee details from the 'new_joinee' topic and send to 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    raise NotImplementedError()
+
+
+publish_project_description = "Publish the consumed employee details to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+
+publish_admin_description = "Publish the consumed employee details to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+
+==== EXAMPLE CODE 1====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the new joinee.")
+    age: int = Field(..., description="Age of the new joinee.")
+    location: str = Field(..., description="Location of the new joinee.")
+    experience: str = Field(..., description="Experience of the new joinee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for managing employee details. It consumes messages from the 'new_joinee' topic, which include attributes like 'employee_name', 'age', 'location', and 'experience'. After consuming, the application sends the employee details to the 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='Employee Management',
+)
+
+
+consume_description = "Consume employee details from the 'new_joinee' topic and send to 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    await to_project_team(msg)
+    await to_admin_team(msg)
+
+
+publish_project_description = "Publish the consumed employee details to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee:
+    return msg
+
+
+publish_admin_description = "Publish the consumed employee details to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+    return msg
+
+
+==== EXAMPLE CODE SKELETON 2====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Order(BaseModel):
+    name: str = Field(..., description="Name of the order.")
+    quantity: int = Field(..., description="Quantity of the order.")
+    location: str = Field("Zagreb", description="Location of the order.")
+
+class InventoryUpdate(BaseModel):
+    quantity: int = Field(..., description="Quantity of the order to update inventory.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development Kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    }
+}
+
+app_description = "A FastKafka application that consumes JSON-encoded objects from the 'receive_order' topic. Each object includes attributes such as 'name' and 'quantity'. Upon consumption, the application enhances the message by adding a 'location' attribute set to 'Zagreb'. The modified message is then forwarded to the 'place_order' topic. Additionally, a message is sent to the 'update_inventory' topic, including a 'quantity' attribute corresponding to the received quantity value. No authentication is required."
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Enhance and Forward Order',
+)
+
+
+receive_order_description = "Upon consumption, enhance the message by adding a 'location' attribute set to 'Zagreb'. Subsequently, forward the modified message to the 'place_order' topic. Also, send another message to the 'update_inventory' topic, including a 'quantity' attribute that corresponds to the received quantity value."
+@app.consumes(topic="receive_order", description=receive_order_description)
+async def on_receive_order(msg: Order):
+    raise NotImplementedError()
+
+
+place_order_description = "Produce the modified messages to the 'place_order' topic."
+@app.produces(topic="place_order", description=place_order_description)
+async def to_place_order(msg: Order) -> Order:
+    raise NotImplementedError()
+
+
+update_inventory_description = "Produce messages with 'quantity' attribute corresponding to the received quantity value to the 'update_inventory' topic."
+@app.produces(topic="update_inventory", description=update_inventory_description)
+async def to_update_inventory(quantity: int) -> InventoryUpdate:
+    raise NotImplementedError()
+
+
+==== EXAMPLE CODE 2====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Order(BaseModel):
+    name: str = Field(..., description="Name of the order.")
+    quantity: int = Field(..., description="Quantity of the order.")
+    location: str = Field("Zagreb", description="Location of the order.")
+
+class InventoryUpdate(BaseModel):
+    quantity: int = Field(..., description="Quantity of the order to update inventory.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development Kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production Kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+    }
+}
+
+app_description = "A FastKafka application that consumes JSON-encoded objects from the 'receive_order' topic. Each object includes attributes such as 'name' and 'quantity'. Upon consumption, the application enhances the message by adding a 'location' attribute set to 'Zagreb'. The modified message is then forwarded to the 'place_order' topic. Additionally, a message is sent to the 'update_inventory' topic, including a 'quantity' attribute corresponding to the received quantity value. No authentication is required."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='Enhance and Forward Order',
+)
+
+
+receive_order_description = "Upon consumption, enhance the message by adding a 'location' attribute set to 'Zagreb'. Subsequently, forward the modified message to the 'place_order' topic. Also, send another message to the 'update_inventory' topic, including a 'quantity' attribute that corresponds to the received quantity value."
+
+@app.consumes(topic="receive_order", description=receive_order_description)
+async def on_receive_order(msg: Order):
+    msg.location = "Zagreb"
+    await to_place_order(msg)
+    await to_update_inventory(msg.quantity)
+
+
+place_order_description = "Produce the modified messages to the 'place_order' topic."
+@app.produces(topic="place_order", description=place_order_description)
+async def to_place_order(msg: Order) -> Order:
+    return msg
+
+
+update_inventory_description = "Produce messages with 'quantity' attribute corresponding to the received quantity value to the 'update_inventory' topic."
+@app.produces(topic="update_inventory", description=update_inventory_description)
+async def to_update_inventory(quantity: int) -> InventoryUpdate:
+    return InventoryUpdate(quantity=quantity)
+
+
+==== EXAMPLE CODE SKELETON 3====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    title='Greet users',
+)
+
+
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    raise NotImplementedError()
+
+
+send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
+@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    raise NotImplementedError()
+
+==== EXAMPLE CODE 3====
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+greetings_app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=greetings_app_description, 
+    version="0.0.1", 
+    title='Greet users',
+)
+
+
+receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
+
+@greetings_app.consumes(topic="receive_name", description=receive_name_description)
+async def on_receive_name(msg: Greetings):
+    msg = Greetings(user_name = f"Hello {msg.user_name}")
+    await to_send_greetings(msg)
+
+
+send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
+@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    return msg
+
+==== EXAMPLE CODE SKELETON 4====
+from typing import *
+from pydantic import BaseModel, Field
+from aiokafka.helpers import create_ssl_context
+
+from fastkafka import FastKafka
+
+
+class HelloWorld(BaseModel):
+    message: str = Field(..., description="Hello World message")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+        "security": {"type": "scramSha256"},
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should publish 'Hello World' message to 'hello_world_topic' and consume the same message from 'hello_world_topic'."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='FastKafka App',
+    security_protocol = "SASL_SSL",
+    sasl_mechanism= "SCRAM-SHA-256",
+    sasl_plain_username= "<username>",
+    sasl_plain_password=  "<password>",
+    ssl_context= create_ssl_context(),
+)
+
+
+publish_description = "Producer function sends a 'Hello World' message to the consumer function."
+@app.produces(topic="hello_world_topic", description=publish_description)
+async def produce_hello_world() -> HelloWorld:
+    raise NotImplementedError()
+
+
+subscribe_description = "Consumer function receives a 'Hello World' message from the producer function."
+@app.consumes(topic="hello_world_topic", description=subscribe_description)
+async def consume_hello_world(msg: HelloWorld):
+    raise NotImplementedError()
+
+==== EXAMPLE CODE 4====
+from typing import *
+from pydantic import BaseModel, Field
+from aiokafka.helpers import create_ssl_context
+
+from fastkafka import FastKafka
+
+
+class HelloWorld(BaseModel):
+    message: str = Field(..., description="Hello World message")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+        "protocol": "kafka-secure",
+        "security": {"type": "scramSha256"},
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should publish 'Hello World' message to 'hello_world_topic' and consume the same message from 'hello_world_topic'."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    version="0.0.1", 
+    title='FastKafka App',
+    security_protocol = "SASL_SSL",
+    sasl_mechanism= "SCRAM-SHA-256",
+    sasl_plain_username= "<username>",
+    sasl_plain_password=  "<password>",
+    ssl_context= create_ssl_context(),
+)
+
+
+publish_description = "Producer function sends a 'Hello World' message to the consumer function."
+@app.produces(topic="hello_world_topic", description=publish_description)
+async def produce_hello_world() -> HelloWorld:
+    return HelloWorld(message="Hello World")
+
+
+subscribe_description = "Consumer function receives a 'Hello World' message from the producer function."
+@app.consumes(topic="hello_world_topic", description=subscribe_description)
+async def consume_hello_world(msg: HelloWorld):
+    print(msg.message)
+
+==== INSTRUCTIONS: ====
+
+Instructions you must follow while implementing FastKafka consumes and produces functions from the app skeleton ==== APP SKELETON: ====
+
+- implement ONLY consumes an produces functions, do NOT change other parts of code
+- Follow the PEP 8 Style Guide for Python while writing the code
+- Write optimised and readable Code
+- Output only a valid executable python code. No other extra text should be included.
+- DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+- Don't ever put "pass" or "#TODO" comments in the implementation. Instead, for each consumes/produces function raise NotImplementedError()
+- You must implement the whole logic, there can NOT be any: raise NotImplementedError()
+- Do NOT change enything except the implementation of the consumes and produces functions - functions which currently raise NotImplementedError()
+- Never ever update or modify the msg object directly in the consumes or produces function. Always create a new instance of the msg object and make only necessary updates. Example:
+    ```python
+        @greetings_app.consumes(topic="receive_name", description=receive_name_description)
+        async def on_receive_name(msg: Greetings):
+            msg = Greetings(user_name = f"Hello {msg.user_name}") # always create a new instance of the msg class and do not modify the msg parameter directly.
+            await to_send_greetings(msg)
+
+You MUST respond ONLY with a valid Python file. No other text should be included in the response!!!!
+I must be able to save your response to a Python .py script!!!! So do NOT add any additional text!!!!
+
+==== APP SKELETON: ====
+"""
+
+# %% ../../nbs/Prompts.ipynb 7
+APP_GENERATION_PROMPT_FROM_ASYNCAPI = """
 Generate Python code using the `FastKafka` library based on contents in the "==== INPUT ASYNC SPECIFICATION: ====" section.
 
 Here's an example of how the produced code "==== EXAMPLE CODE 1====", generated from "==== ASYNC SPECIFICATION 1====."
@@ -838,7 +1646,7 @@ Instructions you must follow while generating the FastKafka code from the AsyncA
 
 """
 
-# %% ../../nbs/Prompts.ipynb 6
+# %% ../../nbs/Prompts.ipynb 8
 TEST_GENERATION_PROMPT = '''
 Testing FastKafka apps:
 In order to speed up development and make testing easier, we have implemented the Tester class.
