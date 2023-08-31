@@ -17,8 +17,9 @@ from ._code_generator.app_description_validator import validate_app_description
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
-from ._code_generator.helper import set_logger_level, add_tokens_usage
-from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES
+from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents
+from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
+                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_FROM_SKELETON, GENERATE_APP_SKELETON
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -171,9 +172,13 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         
         cleaned_description = _strip_white_spaces(description)
         validated_description, tokens_list = validate_app_description(cleaned_description, tokens_list)
-
-        tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
-        tokens_list = generate_app(output_path, tokens_list)
+        write_file_contents(f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description)
+        
+#         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
+#         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_ASYNCAPI)      
+        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_SKELETON)
+        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_SKELETON)
+        
         tokens_list = generate_test(validated_description, output_path, tokens_list)
         
         fg = typer.colors.CYAN
