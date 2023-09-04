@@ -20,23 +20,25 @@ from langchain.embeddings import OpenAIEmbeddings
 import typer
 
 
-from .._code_generator.constants import FASTKAFKA_DOCS_MD_ARCHIVE_URL, DEFAULT_VECTOR_DB_PATH
+from .._code_generator.constants import FASTKAFKA_DOCS_MD_ARCHIVE_URL
+from .package_data import get_root_data_path
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
-def _fetch_content(url: str) -> str:
+def _fetch_content(url: str) -> requests.models.Response:
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()  # Raise an exception for HTTP errors
-        return response.content
     except requests.exceptions.Timeout:
         print(
             "Request timed out. Please check your internet connection or try again later."
         )
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
+        
+    return response
 
 # %% ../../nbs/Embeddings_CLI.ipynb 5
-def _download_and_extract_website_archive(func):
+def _download_and_extract_website_archive(func: Callable) -> Callable:
     """Download the archive from the given url, extract the contents, and yields the extraction path.
 
     Args:
@@ -46,15 +48,15 @@ def _download_and_extract_website_archive(func):
         A decorator function that downloads the archive, extracts the contents, and yields the extraction path.
     """
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs): # type: ignore
         with TemporaryDirectory() as d:            
             input_path = Path(f"{d}/archive.tar.gz")
             extrated_md_files_path = Path(f"{d}/extrated_md_files_path")
             
-            content = _fetch_content(FASTKAFKA_DOCS_MD_ARCHIVE_URL)
+            response = _fetch_content(FASTKAFKA_DOCS_MD_ARCHIVE_URL)
             
             with open(input_path, "wb") as f:
-                f.write(content)
+                f.write(response.content)
 
             with tarfile.open(input_path, "r:gz") as tar: # nosemgrep
                 # nosemgrep
@@ -135,18 +137,22 @@ def _delete_directory(directory_path: Path) -> None:
             print(f"Error deleting directory: {e}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 13
+def _get_default_vector_db_path() -> Path:
+    return get_root_data_path() / "docs"
+
+# %% ../../nbs/Embeddings_CLI.ipynb 15
 app = typer.Typer(
     short_help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
 )
 
-# %% ../../nbs/Embeddings_CLI.ipynb 14
+# %% ../../nbs/Embeddings_CLI.ipynb 16
 @app.command(
     "generate",
     help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
 )
 def generate(
     db_path: str = typer.Option(
-        DEFAULT_VECTOR_DB_PATH, 
+        _get_default_vector_db_path(), 
         "--db_path",
         "-p",
         help="The path to save the vector database."
