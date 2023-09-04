@@ -201,10 +201,6 @@ class CustomAIChat:
         initial_user_prompt: Initial user prompt to the AI model.
         params: Parameters to use while initiating the OpenAI chat model. DEFAULT_PARAMS used if not provided.
     """
-    
-    fastKafka_basics_prompt = _get_relevant_document(
-        get_root_data_path() / "docs", "What is FastKafka?"
-    )
 
     def __init__(
         self,
@@ -224,7 +220,12 @@ class CustomAIChat:
             {"role": role, "content": content}
             for role, content in [
                 ("system", SYSTEM_PROMPT),
-                ("user", CustomAIChat.fastKafka_basics_prompt),
+                (
+                    "user",
+                    _get_relevant_document(
+                        get_root_data_path() / "docs", "What is FastKafka?"
+                    ),
+                ),
                 ("user", user_prompt),
             ]
             if content is not None

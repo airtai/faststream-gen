@@ -251,7 +251,7 @@ Please respond with a valid AsyncAPI spec only in YAML format. No other text sho
 # %% ../../nbs/Prompts.ipynb 4
 APP_SKELETON_GENERATION_PROMPT = """
 Generate Python code using the `FastKafka` library based from "APP DESCRIPTION" section.
-Do NOT implement any logic for consumes and produces functions, juste raise NotImplementedError
+Do NOT implement any logic for consumes and produces functions, just raise NotImplementedError
 
 See examples for generating skeletons of FastKafka apps, "==== EXAMPLE CODE ====" derived from "==== EXAMPLE APP DESCRIPTION ====."
 
