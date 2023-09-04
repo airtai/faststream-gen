@@ -32,7 +32,7 @@ def suppress_timestamps(flag: bool = True) -> None:
     should_suppress_timestamps = flag
 
 
-def get_default_logger_configuration(level: int = logging.INFO) -> Dict[str, Any]:
+def get_default_logger_configuration(level: int = logging.WARNING) -> Dict[str, Any]:
     """Return the common configurations for the logger
 
     Args:
@@ -76,13 +76,13 @@ logger_spaces_added: List[str] = []
 
 
 def get_logger(
-    name: str, *, level: int = logging.INFO, add_spaces: bool = True
+    name: str, *, level: int = logging.WARNING, add_spaces: bool = True
 ) -> logging.Logger:
     """Return the logger class with default logging configuration.
 
     Args:
         name: Pass the __name__ variable as name while calling
-        level: Used to configure logging, default value `logging.INFO` logs
+        level: Used to configure logging, default value `logging.WARNING` logs
             info messages and up.
         add_spaces:
 
