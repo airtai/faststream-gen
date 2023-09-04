@@ -20,10 +20,14 @@ from collections import defaultdict
 
 import openai
 from fastcore.foundation import patch
+from langchain.schema.document import Document
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
 
 from .._components.logger import get_logger, set_level
-from .prompts import SYSTEM_PROMPT, DEFAULT_FASTKAFKA_PROMPT
+from .prompts import SYSTEM_PROMPT
 from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPEC_FILE_NAME, APPLICATION_FILE_NAME, TOKEN_TYPES, MAX_NUM_FIXES_MSG, INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
+from .._components.package_data import get_root_data_path
 
 # %% ../../nbs/Helper.ipynb 3
 logger = get_logger(__name__)
@@ -172,6 +176,22 @@ def _retry_with_exponential_backoff(
     return decorator
 
 # %% ../../nbs/Helper.ipynb 20
+def _get_relevant_document(db_path: Path, query: str) -> str:
+    """Load the vector database and retrieve the most relevant document based on the given query.
+
+    Args:
+        db_path: The file path to the vector database.
+        query: The query for relevance-based document retrieval.
+
+    Returns:
+        The content of the most relevant document as a string.
+    """
+    db = FAISS.load_local(db_path, OpenAIEmbeddings()) # type: ignore
+    results = db.max_marginal_relevance_search(query, k=1, fetch_k=3)
+    results_str = "\n".join([result.page_content for result in results])
+    return results_str
+
+# %% ../../nbs/Helper.ipynb 22
 class CustomAIChat:
     """Custom class for interacting with OpenAI
 
@@ -181,6 +201,10 @@ class CustomAIChat:
         initial_user_prompt: Initial user prompt to the AI model.
         params: Parameters to use while initiating the OpenAI chat model. DEFAULT_PARAMS used if not provided.
     """
+    
+    fastKafka_basics_prompt = _get_relevant_document(
+        get_root_data_path() / "docs", "What is FastKafka?"
+    )
 
     def __init__(
         self,
@@ -200,7 +224,7 @@ class CustomAIChat:
             {"role": role, "content": content}
             for role, content in [
                 ("system", SYSTEM_PROMPT),
-                ("user", DEFAULT_FASTKAFKA_PROMPT),
+                ("user", CustomAIChat.fastKafka_basics_prompt),
                 ("user", user_prompt),
             ]
             if content is not None
@@ -217,22 +241,20 @@ class CustomAIChat:
         Returns:
             A tuple with AI's response message content and the total number of tokens used while generating the response.
         """
-        self.messages.append(
-            {"role": "user", "content": user_prompt}
-        )
-                
+        self.messages.append({"role": "user", "content": user_prompt})
+
         response = openai.ChatCompletion.create(
             model=self.model,
             messages=self.messages,
             temperature=self.params["temperature"],
         )
-        
+
         return (
             response["choices"][0]["message"]["content"],
             response["usage"],
         )
 
-# %% ../../nbs/Helper.ipynb 24
+# %% ../../nbs/Helper.ipynb 26
 class ValidateAndFixResponse:
     """Generates and validates response from OpenAI
 
@@ -280,7 +302,7 @@ class ValidateAndFixResponse:
     ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
-# %% ../../nbs/Helper.ipynb 26
+# %% ../../nbs/Helper.ipynb 28
 def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
     """Add list of OpenAI "usage" dictionaries by categories defined in TOKEN_TYPES (prompt_tokens, completion_tokens and total_tokens).
 
@@ -298,7 +320,7 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
             
     return added_tokens
 
-# %% ../../nbs/Helper.ipynb 29
+# %% ../../nbs/Helper.ipynb 31
 @patch  # type: ignore
 def fix(
     self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], **kwargs: str

@@ -4,7 +4,8 @@
 __all__ = ['DESCRIPTION_FILE_NAME', 'APPLICATION_SKELETON_FILE_NAME', 'ASYNC_API_SPEC_FILE_NAME', 'APPLICATION_FILE_NAME',
            'INTEGRATION_TEST_FILE_NAME', 'GENERATE_APP_FROM_ASYNCAPI', 'GENERATE_APP_FROM_SKELETON',
            'GENERATE_APP_SKELETON', 'DEFAULT_PARAMS', 'DEFAULT_MODEL', 'MAX_RETRIES', 'MAX_ASYNC_SPEC_RETRIES',
-           'TOKEN_TYPES', 'MODEL_PRICING', 'INCOMPLETE_DESCRIPTION', 'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG']
+           'TOKEN_TYPES', 'MODEL_PRICING', 'INCOMPLETE_DESCRIPTION', 'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG',
+           'FASTKAFKA_DOCS_MD_ARCHIVE_URL']
 
 # %% ../../nbs/Constants.ipynb 2
 DESCRIPTION_FILE_NAME = "app_description.txt"
@@ -54,3 +55,6 @@ After consuming the consumer function should send the details to the "project_te
 Use only localhost broker."""
 
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
+
+# %% ../../nbs/Constants.ipynb 10
+FASTKAFKA_DOCS_MD_ARCHIVE_URL = "https://github.com/airtai/fastkafka/raw/main/.fastkafka_gen/site_md_archive.tar.gz"

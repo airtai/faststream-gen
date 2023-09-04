@@ -113,7 +113,7 @@ def _get_description(input_path: str) -> str:
 # %% ../nbs/CLI.ipynb 18
 @app.command(
     "generate",
-    help="Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description.",
+    help="Effortlessly generate FastKafka application code and integration tests from the app description.",
 )
 @set_logger_level
 def generate_fastkafka_app(
