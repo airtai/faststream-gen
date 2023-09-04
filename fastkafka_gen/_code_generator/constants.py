@@ -57,4 +57,4 @@ Use only localhost broker."""
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
 
 # %% ../../nbs/Constants.ipynb 10
-FASTKAFKA_DOCS_MD_ARCHIVE_URL = "https://github.com/airtai/fastkafka/raw/486-store-the-generated-docs-md-files-in-the-git-repository/.fastkafka_gen/site_md_archive.tar.gz"
+FASTKAFKA_DOCS_MD_ARCHIVE_URL = "https://github.com/airtai/fastkafka/raw/main/.fastkafka_gen/site_md_archive.tar.gz"
