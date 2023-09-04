@@ -10,13 +10,12 @@ repos:
       #    -   id: end-of-file-fixer
       #    -   id: check-yaml
     -   id: check-added-large-files
-        args: ['--maxkb=1200']
 
 - repo: https://github.com/PyCQA/bandit
   rev: '1.7.5'
   hooks:
   - id: bandit
-    #args: ["-r", "nbdev_mkdocs"]
+    args: ["-r", "fastkafka_gen"]
 
 - repo: https://github.com/returntocorp/semgrep
   rev: "v1.14.0"
