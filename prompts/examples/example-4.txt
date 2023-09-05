@@ -1,0 +1,131 @@
+==== EXAMPLE APP DESCRIPTION ====
+
+Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use the default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic.
+
+==== EXAMPLE SKELETON CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application that consumes messages from the 'receive_name' topic. Each message is a JSON-encoded object with only one attribute: 'user_name'. For each consumed message, the application constructs a new message object and appends 'Hello ' in front of the 'user_name' attribute. Finally, the application publishes the modified message to the 'send_greetings' topic."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Greet users',
+)
+
+
+consume_description = "The application consumes messages from the 'receive_name' topic and constructs a new message object with 'Hello ' appended to the 'user_name' attribute."
+@app.consumes(topic="receive_name", description=consume_description)
+async def on_receive_name(msg: Greetings):
+    raise NotImplementedError()
+
+
+publish_description = "The application publishes the modified messages to the 'send_greetings' topic."
+@app.produces(topic="send_greetings", description=publish_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    raise NotImplementedError()
+
+==== EXAMPLE APPLICATION CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class Greetings(BaseModel):
+    user_name: str = Field(..., description="Name of the user.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    },
+    "staging": {
+        "url": "staging.airt.ai",
+        "description": "staging kafka broker",
+        "port": 9092,
+    },
+    "production": {
+        "url": "prod.airt.ai",
+        "description": "production kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application that consumes messages from the 'receive_name' topic. Each message is a JSON-encoded object with only one attribute: 'user_name'. For each consumed message, the application constructs a new message object and appends 'Hello ' in front of the 'user_name' attribute. Finally, the application publishes the modified message to the 'send_greetings' topic."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Greet users',
+)
+
+
+consume_description = "The application consumes messages from the 'receive_name' topic and constructs a new message object with 'Hello ' appended to the 'user_name' attribute."
+@app.consumes(topic="receive_name", description=consume_description)
+async def on_receive_name(msg: Greetings):
+    msg = Greetings(user_name=f"Hello {msg.user_name}")
+    await to_send_greetings(msg)
+
+
+publish_description = "The application publishes the modified messages to the 'send_greetings' topic."
+@app.produces(topic="send_greetings", description=publish_description)
+async def to_send_greetings(msg: Greetings) -> Greetings:
+    return msg
+
+==== EXAMPLE TEST CODE ====
+
+import asyncio
+from fastkafka.testing import Tester
+try:
+    from .application import *
+except ImportError as e:
+    from application import *
+
+async def async_tests():
+    async with Tester(app) as tester:
+        input_msg = Greetings(user_name="John")
+
+        # tester produces message to the receive_name topic
+        await tester.to_receive_name(input_msg)
+
+        # assert that app consumed from the receive_name topic and it was called with the accurate argument
+        await app.awaited_mocks.on_receive_name.assert_called_with(
+            input_msg, timeout=5
+        )
+
+        # assert that tester consumed from the send_greetings topic and it was called with the accurate argument
+        await tester.awaited_mocks.on_send_greetings.assert_called_with(
+            Greetings(user_name="Hello John"), timeout=5
+        )
+    print("ok")
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(async_tests())

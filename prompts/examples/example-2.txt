@@ -1,0 +1,137 @@
+==== EXAMPLE APP DESCRIPTION ====
+
+Write a fastkafka application with with one consumer function and two producer functions. The consumer function should receive a message posted on "new_joinee" topic. The message should contain "employee_name", "age", "location" and "experience" attributes. After consuming the consumer function should send the details to the "project_team" and "admin_team" topics. Use only localhost broker
+
+==== EXAMPLE SKELETON CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the new joinee.")
+    age: int = Field(..., description="Age of the new joinee.")
+    location: str = Field(..., description="Location of the new joinee.")
+    experience: str = Field(..., description="Experience of the new joinee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for managing employee details. It consumes messages from the 'new_joinee' topic, which include attributes like 'employee_name', 'age', 'location', and 'experience'. After consuming, the application sends the employee details to the 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Employee Management',
+)
+
+
+consume_description = "Consume employee details from the 'new_joinee' topic and send to 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    raise NotImplementedError()
+
+
+publish_project_description = "Publish the consumed employee details to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+
+publish_admin_description = "Publish the consumed employee details to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+    raise NotImplementedError()
+
+==== EXAMPLE APPLICATION CODE ====
+
+from typing import *
+from pydantic import BaseModel, Field
+from fastkafka import FastKafka
+
+
+class NewJoinee(BaseModel):
+    employee_name: str = Field(..., description="Name of the new joinee.")
+    age: int = Field(..., description="Age of the new joinee.")
+    location: str = Field(..., description="Location of the new joinee.")
+    experience: str = Field(..., description="Experience of the new joinee.")
+
+kafka_brokers = {
+    "localhost": {
+        "url": "localhost",
+        "description": "local development kafka broker",
+        "port": 9092,
+    }
+}
+
+app_description = "A FastKafka application for managing employee details. It consumes messages from the 'new_joinee' topic, which include attributes like 'employee_name', 'age', 'location', and 'experience'. After consuming, the application sends the employee details to the 'project_team' and 'admin_team' topics."
+
+app = FastKafka(
+    kafka_brokers=kafka_brokers, 
+    description=app_description, 
+    title='Employee Management',
+)
+
+
+consume_description = "Consume employee details from the 'new_joinee' topic and send to 'project_team' and 'admin_team' topics."
+
+@app.consumes(topic="new_joinee", description=consume_description)
+async def on_new_joinee(msg: NewJoinee):
+    await to_project_team(msg)
+    await to_admin_team(msg)
+
+
+publish_project_description = "Publish the consumed employee details to the 'project_team' topic."
+@app.produces(topic="project_team", description=publish_project_description)
+async def to_project_team(msg: NewJoinee) -> NewJoinee:
+    return msg
+
+
+publish_admin_description = "Publish the consumed employee details to the 'admin_team' topic."
+@app.produces(topic="admin_team", description=publish_admin_description)
+async def to_admin_team(msg: NewJoinee) -> NewJoinee:
+    return msg
+
+==== EXAMPLE TEST CODE ====
+
+import asyncio
+from fastkafka.testing import Tester
+try:
+    from .application import *
+except ImportError as e:
+    from application import *
+
+async def async_tests():
+    async with Tester(app) as tester:
+        input_msg = NewJoinee(
+            employee_name="John Doe",
+            age=30,
+            location="New York",
+            experience="5 years"
+        )
+
+        await tester.to_new_joinee(input_msg)
+
+        await app.awaited_mocks.on_new_joinee.assert_called_with(
+            input_msg, timeout=5
+        )
+
+        await tester.awaited_mocks.on_project_team.assert_called_with(
+            input_msg, timeout=5
+        )
+
+        await tester.awaited_mocks.on_admin_team.assert_called_with(
+            input_msg, timeout=5
+        )
+    print("ok")
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(async_tests())
