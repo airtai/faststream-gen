@@ -1,34 +1,25 @@
+import pytest
 import asyncio
-from fastkafka.testing import Tester
+
+from faststream.kafka import TestKafkaBroker
+
 from application import *
 
-async def async_tests():
-#     async with Tester(store_product_app).using_inmemory_broker() as tester:
-    async with Tester(store_product_app) as tester:
-        input_msg = StoreProduct(
-            product_name="Mobile Phone",
-            currency="HRK",
-            price=750.0
-        )
 
-        # tester produces message to the store_product topic
-        await tester.to_store_product(input_msg)
+@pytest.mark.asyncio
+async def test_base_app():
+    @broker.subscriber("output_data")
+    async def on_output_data(msg: DataBasic):
+        pass
 
-         # assert that app consumed from the store_product topic and it was called with the accurate argument
-        await store_product_app.awaited_mocks.on_store_product.assert_called_with(
-            input_msg, timeout=5
-        )
+    async with TestKafkaBroker(broker) as tester:
+        await tester.publish(DataBasic(data=0.2), "input_data")
 
-        # assert that tester consumed from the change_currency topic and it was called with the accurate argument
-        await tester.awaited_mocks.on_change_currency.assert_called_with(
-            StoreProduct(
-                product_name="Mobile Phone",
-                currency="EUR",
-                price=100.0
-            ), timeout=5
-        )
-    print("ok")
+        on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
+
+        on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2)))
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(async_tests())
+    loop.run_until_complete(test_base_app())
