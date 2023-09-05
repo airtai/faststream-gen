@@ -1,5 +1,4 @@
 import pytest
-import asyncio
 
 from faststream.kafka import TestKafkaBroker
 
@@ -18,8 +17,3 @@ async def test_base_app():
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
 
         on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2)))
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(test_base_app())
