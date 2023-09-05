@@ -172,14 +172,14 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         
         cleaned_description = _strip_white_spaces(description)
         validated_description, tokens_list = validate_app_description(cleaned_description, tokens_list)
-        write_file_contents(f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description)
+#         write_file_contents(f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description)
         
 #         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
 #         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_ASYNCAPI)      
-        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_SKELETON)
-        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_SKELETON)
+#         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_SKELETON)
+#         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_SKELETON)
         
-        tokens_list = generate_test(validated_description, output_path, tokens_list)
+#         tokens_list = generate_test(validated_description, output_path, tokens_list)
         
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
@@ -191,18 +191,19 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
         raise typer.Exit(code=1)
     finally:
-        total_tokens_usage = add_tokens_usage(tokens_list)
-        price = _calculate_price(total_tokens_usage)
+        pass
+#         total_tokens_usage = add_tokens_usage(tokens_list)
+#         price = _calculate_price(total_tokens_usage)
         
-        typer.secho(f" Tokens used: {total_tokens_usage['total_tokens']}", fg=fg)
-        logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")
-        logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
-        typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
+#         typer.secho(f" Tokens used: {total_tokens_usage['total_tokens']}", fg=fg)
+#         logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")
+#         logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
+#         typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
         
-        phases = ["validation", "specification generation", "app generation", "test generation"]
-        logger.info("Number of tokens per phase:")
-        for i, token in enumerate(tokens_list):
-            logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
+#         phases = ["validation", "specification generation", "app generation", "test generation"]
+#         logger.info("Number of tokens per phase:")
+#         for i, token in enumerate(tokens_list):
+#             logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
         
     typer.secho("✨  All files were successfully generated!", fg=fg)
         

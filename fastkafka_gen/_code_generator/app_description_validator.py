@@ -18,8 +18,8 @@ from .constants import INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Description_Validator.ipynb 5
-ERROR_RESPONSE = "I apologize, but I can only respond to queries related to FastKafka code generation. Feel free to ask me about using FastKafka, and I'll do my best to help you with that!"
-GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastKafka! Unfortunately, I can only generate FastKafka code and offer assistance in that area. For general information about FastKafka, please visit https://fastkafka.airt.ai/"
+ERROR_RESPONSE = "I apologize, but I can only respond to queries related to FastStream code generation. Feel free to ask me about using FastStream, and I'll do my best to help you with that!"
+GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastStream! Unfortunately, I can only generate FastStream code and offer assistance in that area. For general information about FastStream, please visit https://fastkafka.airt.ai/"
 
 # %% ../../nbs/App_Description_Validator.ipynb 6
 def validate_app_description(description: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
