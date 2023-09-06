@@ -30,7 +30,7 @@ from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPE
 from .._components.package_data import get_root_data_path
 
 # %% ../../nbs/Helper.ipynb 3
-logger = get_logger(__name__)
+logger = get_logger(__name__, level=logging.WARNING)
 
 # %% ../../nbs/Helper.ipynb 5
 def write_file_contents(output_file: str, contents: str) -> None:
