@@ -1120,13 +1120,7 @@ The FastStream apps can be tested using the TestBroker context managers which, b
 
 The Tester will redirect your subscriber and publisher decorated functions to the InMemory brokers so that you can quickly test your app without the need for a running broker and all its dependencies.
 
-Generate test code for FastStream application based on provided application code in the "==== APP IMPLEMENTATION ====" section, adhering to these guidelines:
-
-    - You need to generate test code for the application code mentioned in ==== APP IMPLEMENTATION ====
-    - Your response must contain only valid Python code, saveable as a .py script; no additional text is allowed.
-    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
-
-
+First lets understand the relationship between the application code and the test code with an example. in the below example the application code is mentioned in the ==== EXAMPLE APP CODE ==== section and the test code is mentioned in the ==== EXAMPLE TEST CODE ====.
 
 ==== EXAMPLE APP CODE ====
 
@@ -1152,7 +1146,11 @@ async def on_input_data(msg: DataBasic, logger: Logger) -> DataBasic:
     logger.info(msg)
     return DataBasic(data=msg.data + 1.0)
 
-==== YOUR RESPONSE ====
+
+For the above ==== EXAMPLE APP CODE ==== below is how the generated ==== EXAMPLE TEST CODE ==== will look like:
+
+
+==== EXAMPLE TEST CODE ====
 
 import pytest
 
@@ -1174,6 +1172,28 @@ async def test_base_app():
 
         on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2)))
 
+
+
+Now let's understand the ==== EXAMPLE TEST CODE ==== step by step:
+
+    - This test suite utilizes the pytest library.
+    - Initially, all symbols from the application module is imported to facilitate testing.
+    - After importing the application module, an asynchronous test function, "test_base_app," is declared using the @pytest.mark.asyncio decorator.
+    - A test-specific function, "on_output_data," is created and annotated with @broker.subscriber("output_data"). This function acts as a callback for the "output_data" topic. Meaning this function will
+    be called whenever there is a messaage that is posted to "output_data" topic in the tests.
+    - The TestKafkaBroker context manager is utilized to simulate Kafka interactions.
+    - A message with data 0.2 is published to the "input_data" topic via "await tester.publish(DataBasic(data=0.2), "input_data")".
+    - Assertions validate that the message sent to "input_data" is accurately received via "on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))".
+    - Additionally, the test confirms that, as per the application's logic, a message with an incremented data attribute (1.2) is posted to the "output_data" topic by executing "on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2)))".
+
+
+Now, Generate test code for FastStream application based on provided application code in the "==== APP IMPLEMENTATION ====" section, adhering to these guidelines:
+
+    - You need to generate test code for the application code mentioned in ==== APP IMPLEMENTATION ====
+    - Your response must contain only valid Python code, saveable as a .py script; no additional text is allowed.
+    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
+
+Below are few examples for your understanding:
 
 ==== EXAMPLE APP CODE ====
 
@@ -1305,6 +1325,11 @@ AssertionError: Expected 'mock' to not have been called. Called 2 times.
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
         on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2))) # ERROR FIXED IN THIS LINE
 
+
+Now, understand the ==== APP DESCRIPTION: ==== section clearly and step by step and use this information while writing the test
+
+==== APP DESCRIPTION: ====
+==== REPLACE WITH APP DESCRIPTION ====
 
 ==== APP IMPLEMENTATION: ====
 

@@ -70,10 +70,10 @@ def generate_test(
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 
-#         prompt = TEST_GENERATION_PROMPT.replace(
-#             "==== REPLACE WITH APP DESCRIPTION ====", description
-#         )
-        test_generator = CustomAIChat(user_prompt=TEST_GENERATION_PROMPT)
+        prompt = TEST_GENERATION_PROMPT.replace(
+            "==== REPLACE WITH APP DESCRIPTION ====", description
+        )
+        test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
              f"{TEST_GENERATION_PROMPT}\n{app_code_prompt}", total_usage=total_usage, app_code=app_code_prompt
