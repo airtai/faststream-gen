@@ -15,7 +15,7 @@ import subprocess  # nosec: B404: Consider possible security implications associ
 from yaspin import yaspin
 
 from .._components.logger import get_logger
-from fastkafka_gen._code_generator.helper import (
+from faststream_gen._code_generator.helper import (
     CustomAIChat,
     ValidateAndFixResponse,
     write_file_contents,
@@ -23,7 +23,7 @@ from fastkafka_gen._code_generator.helper import (
     validate_python_code,
 )
 from .prompts import TEST_GENERATION_PROMPT
-from fastkafka_gen._code_generator.constants import (
+from faststream_gen._code_generator.constants import (
     APPLICATION_FILE_NAME,
     INTEGRATION_TEST_FILE_NAME,
 )
