@@ -39,7 +39,8 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
         test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_file, test_code)
 
-        cmd = ["python3", test_file]
+#         cmd = ["python3", test_file]
+        cmd = ["pytest", test_file, "--tb=short"]
         # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
             cmd,
@@ -48,7 +49,7 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
             shell=True if platform.system() == "Windows" else False,
         )
         if p.returncode != 0:
-            return [str(p.stderr.decode('utf-8')).replace(f"{d}/", "")]
+            return [str(p.stdout.decode('utf-8'))]
 
         return []
 
@@ -69,13 +70,13 @@ def generate_test(
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 
-        prompt = TEST_GENERATION_PROMPT.replace(
-            "==== REPLACE WITH APP DESCRIPTION ====", description
-        )
-        test_generator = CustomAIChat(user_prompt=prompt)
+#         prompt = TEST_GENERATION_PROMPT.replace(
+#             "==== REPLACE WITH APP DESCRIPTION ====", description
+#         )
+        test_generator = CustomAIChat(user_prompt=TEST_GENERATION_PROMPT)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
-            app_code_prompt, total_usage=total_usage, app_code=app_code_prompt
+             f"{TEST_GENERATION_PROMPT}\n{app_code_prompt}", total_usage=total_usage, app_code=app_code_prompt
         )
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"

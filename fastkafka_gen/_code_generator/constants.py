@@ -48,11 +48,10 @@ DESCRIPTION_EXAMPLE = """
 If you're unsure about how to construct the app description, consider the following example for guidance
 
 APPLICATION DESCRIPTION EXAMPLE:
-Write a fastkafka application with with one consumer function and two producer functions. 
-The consumer function should receive the a message posted on "new_joinee" topic. 
-The message should contain "employee_name", "age", "location" and "experience" attributes. 
-After consuming the consumer function should send the details to the "project_team" and "admin_team" topics. 
-Use only localhost broker."""
+Create a FastStream application using localhost broker for testing and use the default port number. 
+It should consume messages from the "input_data" topic, where each message is a JSON encoded object containing a single attribute: 'data'. 
+For each consumed message, create a new message object and increment the value of the data attribute by 1. Finally, send the modified message to the 'output_data' topic.
+"""
 
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
 

@@ -44,7 +44,11 @@ generate_keys = {
 }
 
 # %% ../../nbs/App_Generator.ipynb 6
-def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]], generate_key:str = GENERATE_APP_FROM_ASYNCAPI) -> List[Dict[str, int]]:
+def generate_app(
+    code_gen_directory: str,
+    total_usage: List[Dict[str, int]],
+    generate_key: str = GENERATE_APP_FROM_ASYNCAPI,
+) -> List[Dict[str, int]]:
     """Generate code for the new FastKafka app from the validated plan
 
     Args:
@@ -55,16 +59,16 @@ def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]], gen
         The total token used to generate the FastKafka code
     """
     additional_text = "skeleton " if generate_key == GENERATE_APP_SKELETON else ""
-    
+
     with yaspin(
-        text=f"Generating FastKafka app {additional_text}(usually takes around 15 to 30 seconds)...", color="cyan", spinner="clock"
+        text=f"Generating FastKafka app {additional_text}(usually takes around 15 to 30 seconds)...",
+        color="cyan",
+        spinner="clock",
     ) as sp:
         file_name = f"{code_gen_directory}/{generate_keys[generate_key]['input_file']}"
         file_content = read_file_contents(file_name)
 
         prompt = generate_keys[generate_key]["prompt"]
-        # Without the following line, GPT sometimes returns text instead of python script
-        prompt += "\n==== YOUR RESPONSE ====\n"
         app_generator = CustomAIChat(
             params={
                 "temperature": 0.5,
@@ -74,9 +78,13 @@ def generate_app(code_gen_directory: str, total_usage: List[Dict[str, int]], gen
         app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
         validated_app, total_usage = app_validator.fix(file_content, total_usage)
 
-        output_file = f"{code_gen_directory}/{generate_keys[generate_key]['output_file']}"
+        output_file = (
+            f"{code_gen_directory}/{generate_keys[generate_key]['output_file']}"
+        )
         write_file_contents(output_file, validated_app)
 
         sp.text = ""
-        sp.ok(f" ✔ FastKafka app {additional_text}generated and saved at: {output_file}")
+        sp.ok(
+            f" ✔ FastKafka app {additional_text}generated and saved at: {output_file}"
+        )
         return total_usage
