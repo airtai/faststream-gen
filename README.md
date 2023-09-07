@@ -8,8 +8,134 @@ documentation.
 ## Install
 
 ``` sh
-pip install fastkafka_gen
+pip install faststream_gen
 ```
+
+``` sh
+faststream_gen --help
+```
+
+                                                                                    
+     Usage: faststream_gen [OPTIONS] [DESCRIPTION]                                  
+                                                                                    
+     Effortlessly generate FastStream application code and integration tests from   
+     the app description.                                                           
+                                                                                    
+    ╭─ Arguments ──────────────────────────────────────────────────────────────────╮
+    │   description      [DESCRIPTION]  Summarize your FastStream app in a few     │
+    │                                   sentences!                                 │
+    │                                                                              │
+    │                                   Include details about messages, topics,    │
+    │                                   servers, and a brief overview of the       │
+    │                                   intended business logic.                   │
+    │                                                                              │
+    │                                   The simpler and more specific the app      │
+    │                                   description is, the better the generated   │
+    │                                   app will be. Please refer to the below     │
+    │                                   example for inspiration:                   │
+    │                                                                              │
+    │                                   Create a FastStream application using      │
+    │                                   localhost broker for testing and use the   │
+    │                                   default port number.  It should consume    │
+    │                                   messages from the "input_data" topic,      │
+    │                                   where each message is a JSON encoded       │
+    │                                   object containing a single attribute:      │
+    │                                   'data'.  For each consumed message, create │
+    │                                   a new message object and increment the     │
+    │                                   value of the data attribute by 1. Finally, │
+    │                                   send the modified message to the           │
+    │                                   'output_data' topic.                       │
+    │                                   [default: None]                            │
+    ╰──────────────────────────────────────────────────────────────────────────────╯
+    ╭─ Options ────────────────────────────────────────────────────────────────────╮
+    │ --input_file          -i      TEXT  The path to the file with the app        │
+    │                                     desription. This path should be relative │
+    │                                     to the current working directory.        │
+    │                                     If the app description is passed via     │
+    │                                     both a --input_file and a command line   │
+    │                                     argument, the description from the       │
+    │                                     command line will be used to create the  │
+    │                                     application.                             │
+    │                                     [default: None]                          │
+    │ --output_path         -o      TEXT  The path to the output directory where   │
+    │                                     the generated files will be saved. This  │
+    │                                     path should be relative to the current   │
+    │                                     working directory.                       │
+    │                                     [default: ./faststream-gen]              │
+    │ --verbose             -v            Enable verbose logging by setting the    │
+    │                                     logger level to INFO.                    │
+    │ --install-completion                Install completion for the current       │
+    │                                     shell.                                   │
+    │ --show-completion                   Show completion for the current shell,   │
+    │                                     to copy it or customize the              │
+    │                                     installation.                            │
+    │ --help                              Show this message and exit.              │
+    ╰──────────────────────────────────────────────────────────────────────────────╯
+
+## Example
+
+``` sh
+faststream_gen  "Write a faststream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on 'new_joinee' topic. The message should contain 'employee_name', 'age', 'location' and 'experience' attributes. After consuming the consumer function should send the details to the 'project_team' and 'admin_team' topics." 
+✨  Generating a new FastStream application!
+ ✔ Application description validated 
+ ✔ FastStream app skeleton generated and saved at: ./faststream-gen/application_skeleton.py 
+ ✔ FastStream app generated and saved at: ./faststream-gen/application.py 
+ ✔ Tests are generated and saved at: ./faststream-gen/test.py 
+ Tokens used: 18572
+ Total Cost (USD): $0.05635
+✨  All files were successfully generated!
+```
+
+**Note**: If you have longer application description, it is easier to
+save description to file and use:
+
+``` sh
+faststream_gen  -i path_to_app_description/description.txt
+```
+
+`faststream_gen` CLI will create `faststream-gen` folder and save
+generated FastStream `application.py` inside the folder. We know that no
+one likes code full of errors, that’s why we generate and run tests
+along with the generated application! Next to `application.py` you will
+find the `test.py` script for testing your FastStream application!
+
+`faststream-gen/application.py`:
+
+``` python
+from pydantic import BaseModel, Field
+
+from faststream import FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+
+class Employee(BaseModel):
+    employee_name: str = Field(
+        ..., examples=["John Doe"], description="Employee name"
+    )
+    age: int = Field(
+        ..., examples=[30], description="Age"
+    )
+    location: str = Field(
+        ..., examples=["New York"], description="Location"
+    )
+    experience: int = Field(
+        ..., examples=[5], description="Experience in years"
+    )
+
+
+broker = KafkaBroker("localhost:9092")
+app = FastStream(broker)
+
+
+@broker.subscriber("new_joinee")
+@broker.publisher("project_team")
+@broker.publisher("admin_team")
+async def on_new_joinee(msg: Employee, logger: Logger):
+    logger.info(msg)
+    return msg
+```
+
+`faststream-gen/test.py`:
 
 ## How to use
 
