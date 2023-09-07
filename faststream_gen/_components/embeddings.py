@@ -14,18 +14,36 @@ from pathlib import Path
 
 from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader
 from langchain.schema.document import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 from yaspin import yaspin
 import typer
 
 
-from .._code_generator.constants import FASTSTREAM_REPO_ZIP_URL, FASTSTREAM_DOCS_DIR_SUFFIX, FASTSTREAM_EXAMPLES_DIR_SUFFIX
+from faststream_gen._code_generator.constants import (
+    FASTSTREAM_REPO_ZIP_URL,
+    FASTSTREAM_DOCS_DIR_SUFFIX,
+    FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+    FASTSTREAM_EXAMPLE_FILES,
+    FASTSTREAM_TMP_DIR_PREFIX
+)
 from .package_data import get_root_data_path
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
 def _fetch_content(url: str) -> requests.models.Response:
+    """Fetch content from a URL using an HTTP GET request.
+
+    Args:
+        url (str): The URL to fetch content from.
+
+    Returns:
+        Response: The response object containing the content and HTTP status.
+
+    Raises:
+        requests.exceptions.Timeout: If the request times out.
+        requests.exceptions.RequestException: If an error occurs during the request.
+    """
     try:
         response = requests.get(url, timeout=50)
         response.raise_for_status()  # Raises an exception for HTTP errors
@@ -38,11 +56,50 @@ def _fetch_content(url: str) -> requests.models.Response:
         raise requests.exceptions.RequestException(f"An error occurred: {e}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 5
-def _create_documents(extrated_path: Path, extension: str = "**/*.md") -> List[Document]:
+def _create_documents(
+    extrated_path: Path, extension: str = "**/*.md"
+) -> List[Document]:
+    """Create a List of document objects from Files.
+
+    Args:
+        extracted_path (Path): The path to the directory containing the files to be
+            loaded as documents.
+        extension (str, optional): The file extension pattern to match. Defaults to
+            "**/*.md" to match Markdown files in all subdirectories.
+
+    Returns:
+        List[Document]: A list of documents created from the loaded files.
+    """
     loader = DirectoryLoader(
         str(extrated_path), glob=extension, loader_cls=UnstructuredMarkdownLoader
     )
     return loader.load()
+
+# %% ../../nbs/Embeddings_CLI.ipynb 7
+def _split_document_into_chunks(
+    documents: List[Document],
+    separator: str,
+    chunk_size: int = 500,
+    chunk_overlap: int = 0,
+) -> List[Document]:
+    """Split the list of documents into chunks
+
+    Args:
+        documents: List of documents to be split into chunks.
+        separators: List of separator patterns used for chunking.
+        chunk_size: The maximum size of each chunk in characters. Defaults to 1500.
+        chunk_overlap: The overlap between consecutive chunks in characters. Defaults to 150.
+
+    Returns:
+        A list of documents where each document represents a chunk.
+    """
+    text_splitter = CharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separator=separator
+    )
+    chunks = text_splitter.split_documents(documents)
+    return chunks
 
 # %% ../../nbs/Embeddings_CLI.ipynb 9
 def _save_embeddings_db(doc_chunks: List[Document], db_path: str) -> None:
@@ -70,25 +127,129 @@ def _delete_directory(directory_path: Path) -> None:
 
 # %% ../../nbs/Embeddings_CLI.ipynb 13
 def _generate_docs_db(input_path: Path, output_path: Path) -> None:
+    """Generate Document Embeddings Database.
+
+    This function creates document embeddings for a collection of documents
+    located in the specified input directory and saves the embeddings database
+    to the specified output directory.
+
+    Args:
+        input_path (Path): The path to the directory containing input documents.
+        output_path (Path): The path to the directory where the embeddings
+            database will be saved.
+    """
     with yaspin(
         text="Creating embeddings for the docs...", color="cyan", spinner="clock"
     ) as sp:
         docs = _create_documents(input_path)
         _save_embeddings_db(docs, output_path)
-        
+
         sp.text = ""
         sp.ok(f" ✔ Docs embeddings created and saved to: {output_path}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 15
-def _generate_examples_db(input_path: Path, output_path: Path) -> None:
-    pass
+def _check_all_files_exist(d: Path, required_files: List[str]) -> bool:
+    """Check if all required files exist in a directory.
 
-# %% ../../nbs/Embeddings_CLI.ipynb 17
+    Args:
+        d (Path): The path to the directory where the existence of files will
+            be checked.
+        required_files (List[str]): A list of filenames that should exist in
+            the directory.
+
+    Returns:
+        True if all required files exist in the directory, False otherwise.
+    """
+    return all((d / file_name).exists() for file_name in required_files)
+
+# %% ../../nbs/Embeddings_CLI.ipynb 18
+def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]):
+    """Append contents of specified files to a result file.
+
+    This function appends the contents of the specified list of files to a
+    result file in a designated directory.
+
+    Args:
+        d (Path): The path to the directory containing the files to be appended.
+        parent_d (Path): The parent directory where the result file will be created.
+        required_files (List[str]): A list of filenames to be appended.
+    """
+    appended_examples_dir = parent_d / FASTSTREAM_TMP_DIR_PREFIX
+    appended_examples_dir.mkdir(parents=True, exist_ok=True)
+
+    result_file_name = appended_examples_dir / f"{d.name}.txt"
+
+    with result_file_name.open("a") as result_file:
+        for file_name in required_files:
+            with (d / file_name).open("r") as file:
+                result_file.write(
+                    f"==== {file_name} starts ====\n{file.read()}\n==== {file_name} ends ====\n"
+                )
+
+# %% ../../nbs/Embeddings_CLI.ipynb 20
+def _format_examples(input_path: Path, required_files: List[str]) -> None:
+    """Format Examples by Appending File Contents.
+
+    This function iterates through directories in the specified input path and checks
+    if all the required files exist in each directory. If the required files are present,
+    it appends their contents to a result file within the input path. If any of the
+    required files are missing, it skips the directory and logs a message.
+
+    Args:
+        input_path (Path): The path to the directory containing example directories
+            with files to be appended.
+        required_files (List[str]): A list of filenames that must exist in each example
+            directory.
+    """
+    for directory in input_path.iterdir():
+        if directory.is_dir() and _check_all_files_exist(directory, required_files):
+            _append_file_contents(directory, input_path, required_files)
+        else:
+            typer.echo(f"\nRequired files are missing. Skipping directory: {directory}")
+
+
+def _generate_examples_db(
+    input_path: Path,
+    output_path: Path,
+    required_files: List[str] = FASTSTREAM_EXAMPLE_FILES,
+) -> None:
+    """Generate Example Embeddings Database.
+
+    This function creates embeddings for a collection of example documents located in
+    the specified input directory and saves the embeddings database to the specified
+    output directory. It appends the contents of specified files in each example
+    directory, splits the concatenated document into chunks based on specified
+    separators, and saves the embeddings for each chunk in the output database.
+
+    Args:
+        input_path (Path): The path to the directory containing example documents.
+        output_path (Path): The path to the directory where the embeddings database
+            will be saved.
+        required_files (List[str]): A list of filenames that must exist in each
+            example directory. Defaults to FASTSTREAM_EXAMPLE_FILES.
+    """
+    with yaspin(
+        text="Creating embeddings for the examples...", color="cyan", spinner="clock"
+    ) as sp:
+        
+        _format_examples(input_path, required_files)
+        docs = _create_documents(
+            input_path / FASTSTREAM_TMP_DIR_PREFIX, extension="*.txt"
+        )
+        doc_chunks = _split_document_into_chunks(
+            docs, separator="==== description.txt ends ===="
+        )
+        _save_embeddings_db(doc_chunks, output_path)
+
+        sp.text = ""
+        sp.ok(f" ✔ Examples embeddings created and saved to: {output_path}")
+
+# %% ../../nbs/Embeddings_CLI.ipynb 22
 app = typer.Typer(
     short_help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
 )
 
-# %% ../../nbs/Embeddings_CLI.ipynb 18
+# %% ../../nbs/Embeddings_CLI.ipynb 23
 @contextmanager
 def _download_and_extract_faststream_archive():
     with TemporaryDirectory() as d:
@@ -114,7 +275,7 @@ def _download_and_extract_faststream_archive():
             typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
             raise typer.Exit(code=1)
 
-# %% ../../nbs/Embeddings_CLI.ipynb 19
+# %% ../../nbs/Embeddings_CLI.ipynb 24
 @app.command(
     "generate",
     help="Download the docs and examples from FastStream repo, generate embeddings, and save them in a vector database.",
