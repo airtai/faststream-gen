@@ -45,14 +45,14 @@ def _ensure_openai_api_key_set() -> None:
 
 # %% ../nbs/CLI.ipynb 10
 app = typer.Typer(
-    short_help="Commands for accelerating FastKafka app creation using advanced AI technology",
-     help="""Commands for accelerating FastKafka app creation using advanced AI technology.
+    short_help="Commands for accelerating FastStream app creation using advanced AI technology",
+     help="""Commands for accelerating FastStream app creation using advanced AI technology.
 
-These commands use a combination of OpenAI's gpt-3.5-turbo and gpt-3.5-turbo-16k models to generate FastKafka code. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+These commands use a combination of OpenAI's gpt-3.5-turbo and gpt-3.5-turbo-16k models to generate FastStream code. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
 
 Once you have the key, please set it in the OPENAI_API_KEY environment variable before executing the code generation commands.
 
-Note: Accessing OpenAI API incurs charges. However, when you sign up for the first time, you usually get free credits that are more than enough to generate multiple FastKafka apps. For further information on pricing and free credicts, check this link: https://openai.com/pricing
+Note: Accessing OpenAI API incurs charges. However, when you sign up for the first time, you usually get free credits that are more than enough to generate multiple FastStream apps. For further information on pricing and free credicts, check this link: https://openai.com/pricing
     """,
 )
 
@@ -113,13 +113,13 @@ def _get_description(input_path: str) -> str:
 # %% ../nbs/CLI.ipynb 18
 @app.command(
     "generate",
-    help="Effortlessly generate FastKafka application code and integration tests from the app description.",
+    help="Effortlessly generate FastStream application code and integration tests from the app description.",
 )
 @set_logger_level
 def generate_fastkafka_app(
     description: Optional[str] = typer.Argument(
         None,
-        help="""Summarize your FastKafka app in a few sentences!
+        help="""Summarize your FastStream app in a few sentences!
 
 
 \nInclude details about messages, topics, servers, and a brief overview of the intended business logic.
@@ -128,14 +128,9 @@ def generate_fastkafka_app(
 \nThe simpler and more specific the app description is, the better the generated app will be. Please refer to the below example for inspiration:
 
 
-\nCreate a FastKafka app using localhost broker for testing, staging.example-domain.ai for staging and prod.example-domain.ai for production. Use default port number.
-
-It should consume from 'store_product' topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. 'EUR'.
-For each consumed message, check if the currency attribute is set to 'HRK'. If it is then change the currency to 'EUR' and divide the price by 7.5, if the currency is not set to 'HRK' don't change the original message. Finally, publish the consumed message to 'change_currency' topic.
-
-Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
-
-
+\nCreate a FastStream application using localhost broker for testing and use the default port number. 
+It should consume messages from the "input_data" topic, where each message is a JSON encoded object containing a single attribute: 'data'. 
+For each consumed message, create a new message object and increment the value of the data attribute by 1. Finally, send the modified message to the 'output_data' topic.
 \n"""
     ),
     input_path: str = typer.Option(
@@ -149,7 +144,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         """,
     ),
     output_path: str = typer.Option(
-        "./fastkafka-gen",
+        "./faststream-gen",
         "--output_path",
         "-o",
         help="The path to the output directory where the generated files will be saved. This path should be relative to the current working directory.",
@@ -161,7 +156,7 @@ Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.
         help="Enable verbose logging by setting the logger level to INFO.",
     ),
 ) -> None:
-    """Effortlessly generate an AsyncAPI specification, FastKafka application code, and integration tests from the app description."""
+    """Effortlessly generate an AsyncAPI specification, FastStream application code, and integration tests from the app description."""
     try:
         tokens_list: List[Dict[str, int]] = []
         _ensure_openai_api_key_set()

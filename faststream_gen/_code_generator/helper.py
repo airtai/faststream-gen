@@ -30,7 +30,7 @@ from .constants import DEFAULT_PARAMS, DEFAULT_MODEL, MAX_RETRIES, ASYNC_API_SPE
 from .._components.package_data import get_root_data_path
 
 # %% ../../nbs/Helper.ipynb 3
-logger = get_logger(__name__)
+logger = get_logger(__name__, level=logging.WARNING)
 
 # %% ../../nbs/Helper.ipynb 5
 def write_file_contents(output_file: str, contents: str) -> None:
@@ -201,6 +201,9 @@ class CustomAIChat:
         initial_user_prompt: Initial user prompt to the AI model.
         params: Parameters to use while initiating the OpenAI chat model. DEFAULT_PARAMS used if not provided.
     """
+    fastKafka_basics_prompt = _get_relevant_document(
+        get_root_data_path() / "docs", "What is FastKafka?"
+    )
 
     def __init__(
         self,
@@ -220,12 +223,7 @@ class CustomAIChat:
             {"role": role, "content": content}
             for role, content in [
                 ("system", SYSTEM_PROMPT),
-                (
-                    "user",
-                    _get_relevant_document(
-                        get_root_data_path() / "docs", "What is FastKafka?"
-                    ),
-                ),
+                ("user", CustomAIChat.fastKafka_basics_prompt),
                 ("user", user_prompt),
             ]
             if content is not None
@@ -242,7 +240,7 @@ class CustomAIChat:
         Returns:
             A tuple with AI's response message content and the total number of tokens used while generating the response.
         """
-        self.messages.append({"role": "user", "content": user_prompt})
+        self.messages.append({"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"})
 
         response = openai.ChatCompletion.create(
             model=self.model,
@@ -293,8 +291,8 @@ class ValidateAndFixResponse:
         """
         prompt_with_errors = (
             prompt
-            + f"\n\n==== RESPONSE WITH ISSUES ====\n\n{response}"
-            + f"\n\nRead the contents of ==== RESPONSE WITH ISSUES ==== section and fix the below mentioned issues:\n\n{errors}"
+            + f"\n\n==== YOUR RESPONSE (WITH ISSUES) ====\n\n{response}"
+            + f"\n\nRead the contents of ==== YOUR RESPONSE (WITH ISSUES) ==== section and fix the below mentioned issues:\n\n{errors}"
         )
         return prompt_with_errors
 
