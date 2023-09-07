@@ -57,7 +57,7 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
 def generate_test(
     description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]
 ) -> List[Dict[str, int]]:
-    """Generate integration test for the FastKafka app
+    """Generate integration test for the FastStream app
 
     Args:
         description: Validated User application description
@@ -66,7 +66,7 @@ def generate_test(
     Returns:
         The generated integration test code for the application
     """
-    with yaspin(text="Generating tests (usually takes around 10 to 30 seconds)...", color="cyan", spinner="clock") as sp:
+    with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 

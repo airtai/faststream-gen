@@ -49,19 +49,19 @@ def generate_app(
     total_usage: List[Dict[str, int]],
     generate_key: str = GENERATE_APP_FROM_ASYNCAPI,
 ) -> List[Dict[str, int]]:
-    """Generate code for the new FastKafka app from the validated plan
+    """Generate code for the new FastStream app from the validated plan
 
     Args:
         code_gen_directory: The directory containing the generated files.
         total_usage: list of token usage
         generate_key: key which indicates which prompt will be used for the app creation
     Returns:
-        The total token used to generate the FastKafka code
+        The total token used to generate the FastStream code
     """
     additional_text = "skeleton " if generate_key == GENERATE_APP_SKELETON else ""
 
     with yaspin(
-        text=f"Generating FastKafka app {additional_text}(usually takes around 15 to 30 seconds)...",
+        text=f"Generating FastStream app {additional_text}",
         color="cyan",
         spinner="clock",
     ) as sp:
@@ -85,6 +85,6 @@ def generate_app(
 
         sp.text = ""
         sp.ok(
-            f" ✔ FastKafka app {additional_text}generated and saved at: {output_file}"
+            f" ✔ FastStream app {additional_text}generated and saved at: {output_file}"
         )
         return total_usage

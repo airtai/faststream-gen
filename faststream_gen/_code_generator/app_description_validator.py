@@ -25,7 +25,7 @@ GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastStream! Unfortun
 def validate_app_description(description: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
     """Validate the user's application description
 
-    If the description is unrelated to FastKafka or contains insensitive/inappropriate language, show an error
+    If the description is unrelated to FastStream or contains insensitive/inappropriate language, show an error
     message and exit the program. Otherwise, display the success message in the terminal.
 
     Args:
@@ -35,7 +35,7 @@ def validate_app_description(description: str, total_usage: List[Dict[str, int]]
         ValueError: If the application description is invalid
     """
     
-    print("✨  Generating a new FastKafka application!")
+    print("✨  Generating a new FastStream application!")
     with yaspin(
         text="Validating the application description...", color="cyan", spinner="clock"
     ) as sp:

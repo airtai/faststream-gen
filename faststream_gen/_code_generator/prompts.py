@@ -76,7 +76,7 @@ Who are you
 0
 
 ==== EXAMPLE APP DESCRIPTION ====
-What is the latest vesion of FastKafka
+What is the latest vesion of FastStream
 ==== YOUR RESPONSE ====
 1
 
@@ -727,7 +727,7 @@ async def on_new_pet(msg: Pet, logger: Logger) -> Pet:
 
 # %% ../../nbs/Prompts.ipynb 6
 APP_GENERATION_PROMPT_FROM_ASYNCAPI = """
-Generate Python code using the `FastKafka` library based on contents in the "==== INPUT ASYNC SPECIFICATION: ====" section.
+Generate Python code using the `FastStream` library based on contents in the "==== INPUT ASYNC SPECIFICATION: ====" section.
 
 Here's an example of how the produced code "==== EXAMPLE CODE 1====", generated from "==== ASYNC SPECIFICATION 1====."
 
@@ -737,7 +737,7 @@ asyncapi: 2.5.0
 info:
   title: Greet users
   version: 0.0.1
-  description: "A FastKafka application which consumes JSON-encoded messages from the 'receive_name' topic. For each consumed message, it constructs a new message object by appending 'Hello ' to the user_name attribute and publishes the modified message to the 'send_greetings' topic. The application utilizes localhost broker for testing, staging.airt.ai for staging, and prod.airt.ai for production."
+  description: "A FastStream application which consumes JSON-encoded messages from the 'receive_name' topic. For each consumed message, it constructs a new message object by appending 'Hello ' to the user_name attribute and publishes the modified message to the 'send_greetings' topic. The application utilizes localhost broker for testing, staging.airt.ai for staging, and prod.airt.ai for production."
   contact:
     name: Author
     url: https://www.google.com/
