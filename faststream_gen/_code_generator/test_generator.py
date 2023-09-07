@@ -15,7 +15,7 @@ import subprocess  # nosec: B404: Consider possible security implications associ
 from yaspin import yaspin
 
 from .._components.logger import get_logger
-from fastkafka_gen._code_generator.helper import (
+from faststream_gen._code_generator.helper import (
     CustomAIChat,
     ValidateAndFixResponse,
     write_file_contents,
@@ -23,7 +23,7 @@ from fastkafka_gen._code_generator.helper import (
     validate_python_code,
 )
 from .prompts import TEST_GENERATION_PROMPT
-from fastkafka_gen._code_generator.constants import (
+from faststream_gen._code_generator.constants import (
     APPLICATION_FILE_NAME,
     INTEGRATION_TEST_FILE_NAME,
 )
@@ -39,7 +39,8 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
         test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_file, test_code)
 
-        cmd = ["python3", test_file]
+#         cmd = ["python3", test_file]
+        cmd = ["pytest", test_file, "--tb=short"]
         # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
             cmd,
@@ -48,7 +49,7 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
             shell=True if platform.system() == "Windows" else False,
         )
         if p.returncode != 0:
-            return [str(p.stderr.decode('utf-8')).replace(f"{d}/", "")]
+            return [str(p.stdout.decode('utf-8'))]
 
         return []
 
@@ -56,7 +57,7 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
 def generate_test(
     description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]
 ) -> List[Dict[str, int]]:
-    """Generate integration test for the FastKafka app
+    """Generate integration test for the FastStream app
 
     Args:
         description: Validated User application description
@@ -65,7 +66,7 @@ def generate_test(
     Returns:
         The generated integration test code for the application
     """
-    with yaspin(text="Generating tests (usually takes around 10 to 30 seconds)...", color="cyan", spinner="clock") as sp:
+    with yaspin(text="Generating tests...", color="cyan", spinner="clock") as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 
@@ -75,7 +76,7 @@ def generate_test(
         test_generator = CustomAIChat(user_prompt=prompt)
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
-            app_code_prompt, total_usage=total_usage, app_code=app_code_prompt
+             f"{TEST_GENERATION_PROMPT}\n{app_code_prompt}", total_usage=total_usage, app_code=app_code_prompt
         )
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"

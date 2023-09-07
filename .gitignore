@@ -174,5 +174,5 @@ mkdocs/site/
 mkdocs/docs/
 mkdocs/site/
 
-# fastkafka-gen
-fastkafka-gen/
+# faststream-gen
+faststream-gen/
