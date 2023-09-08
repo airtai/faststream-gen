@@ -23,7 +23,7 @@ it out, but didn’t have time to go through the documentation, no
 problem, `faststream_gen` will generate your `FastStream` application.
 Also, to make sure that the generated application really works, we will
 also generate tests for you. All you need to do is provide the
-desription of the application you want add `faststream_gen` will
+desription of the application you want and `faststream_gen` will
 generate it for you!
 
 ## Set up your OPENAI_API_KEY
