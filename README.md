@@ -126,7 +126,7 @@ faststream_gen "your_app_description"
 ### Example
 
 ``` sh
-faststream_gen  "Write a faststream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on 'new_joinee' topic. The message should contain 'employee_name', 'age', 'location' and 'experience' attributes. After consuming the consumer function should send the details to the 'project_team' and 'admin_team' topics." 
+faststream_gen  "Write a faststream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on 'new_joinee' topic. The message should contain 'employee_name', 'age', 'location' and 'experience' attributes. After consuming the consumer function should send the details to the 'project_team' and 'admin_team' topics. Use only localhost broker" 
 ✨  Generating a new FastStream application!
  ✔ Application description validated 
  ✔ FastStream app skeleton generated and saved at: ./faststream-gen/application_skeleton.py 
@@ -142,7 +142,7 @@ writing a detailed description), it is easier to save description into
 the file and use:
 
 ``` sh
-faststream_gen  -i path_to_app_description/description.txt
+faststream_gen -i path_to_app_description/description.txt
 ```
 
 `faststream_gen` CLI will create `faststream-gen` folder and save
