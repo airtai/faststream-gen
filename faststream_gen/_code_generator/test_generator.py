@@ -54,13 +54,17 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
 
 # %% ../../nbs/Test_Generator.ipynb 9
 def generate_test(
-    description: str, code_gen_directory: str, total_usage: List[Dict[str, int]]
+    description: str,
+    code_gen_directory: str,
+    total_usage: List[Dict[str, int]],
+    relevant_prompt_examples: str,
 ) -> List[Dict[str, int]]:
     """Generate integration test for the FastStream app
 
     Args:
         description: Validated User application description
         code_gen_directory: The directory containing the generated files.
+        relevant_prompt_examples: Relevant examples to add in the prompts.
 
     Returns:
         The generated integration test code for the application
@@ -69,13 +73,22 @@ def generate_test(
         app_file_name = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         app_code_prompt = read_file_contents(app_file_name)
 
-        prompt = TEST_GENERATION_PROMPT.replace(
-            "==== REPLACE WITH APP DESCRIPTION ====", description
+        prompt = (
+            TEST_GENERATION_PROMPT.replace(
+                "==== REPLACE WITH APP DESCRIPTION ====", description
+            )
+            .replace("==== RELEVANT EXAMPLES GOES HERE ====", relevant_prompt_examples)
+            .replace("from .app import", "from application import")
         )
-        test_generator = CustomAIChat(user_prompt=prompt, semantic_search_query="How to test FastStream applications? Explain in detail.")
+        test_generator = CustomAIChat(
+            user_prompt=prompt,
+            semantic_search_query="How to test FastStream applications? Explain in detail.",
+        )
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
-             f"{TEST_GENERATION_PROMPT}\n{app_code_prompt}", total_usage=total_usage, app_code=app_code_prompt
+            f"{prompt}\n{app_code_prompt}",
+            total_usage=total_usage,
+            app_code=app_code_prompt,
         )
 
         output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"

@@ -17,7 +17,7 @@ from ._code_generator.app_description_validator import validate_app_description
 from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_generator import generate_app
 from ._code_generator.test_generator import generate_test
-from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents
+from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents, get_relevant_prompt_examples
 from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
                                                     GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_FROM_SKELETON, GENERATE_APP_SKELETON
 
@@ -131,7 +131,7 @@ def generate_fastkafka_app(
 \nCreate a FastStream application using localhost broker for testing and use the default port number. 
 It should consume messages from the "input_data" topic, where each message is a JSON encoded object containing a single attribute: 'data'. 
 For each consumed message, create a new message object and increment the value of the data attribute by 1. Finally, send the modified message to the 'output_data' topic.
-\n"""
+\n""",
     ),
     input_path: str = typer.Option(
         None,
@@ -162,20 +162,41 @@ For each consumed message, create a new message object and increment the value o
         _ensure_openai_api_key_set()
         if not description:
             if not input_path:
-                raise ValueError(EMPTY_DESCRIPTION_ERROR)             
+                raise ValueError(EMPTY_DESCRIPTION_ERROR)
             description = _get_description(input_path)
-        
+
         cleaned_description = _strip_white_spaces(description)
-        validated_description, tokens_list = validate_app_description(cleaned_description, tokens_list)
-        write_file_contents(f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description)
-        
-#         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
-#         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_ASYNCAPI)      
-        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_SKELETON)
-        tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_SKELETON)
-        
-        tokens_list = generate_test(validated_description, output_path, tokens_list)
-        
+        validated_description, tokens_list = validate_app_description(
+            cleaned_description, tokens_list
+        )
+        write_file_contents(
+            f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description
+        )
+
+        #         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
+        #         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_ASYNCAPI)
+
+        prompt_examples = get_relevant_prompt_examples(validated_description)
+        tokens_list = generate_app(
+            output_path,
+            tokens_list,
+            prompt_examples["description_to_skeleton"],
+            GENERATE_APP_SKELETON,
+        )
+        tokens_list = generate_app(
+            output_path,
+            tokens_list,
+            prompt_examples["skeleton_to_app"],
+            GENERATE_APP_FROM_SKELETON,
+        )
+
+        tokens_list = generate_test(
+            validated_description,
+            output_path,
+            tokens_list,
+            prompt_examples["app_to_test"],
+        )
+
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED
@@ -188,16 +209,20 @@ For each consumed message, create a new message object and increment the value o
     finally:
         total_tokens_usage = add_tokens_usage(tokens_list)
         price = _calculate_price(total_tokens_usage)
-        
+
         typer.secho(f" Tokens used: {total_tokens_usage['total_tokens']}", fg=fg)
         logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")
         logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
         typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
-        
-        phases = ["validation", "specification generation", "app generation", "test generation"]
+
+        phases = [
+            "validation",
+            "specification generation",
+            "app generation",
+            "test generation",
+        ]
         logger.info("Number of tokens per phase:")
         for i, token in enumerate(tokens_list):
             logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
-        
+
     typer.secho("✨  All files were successfully generated!", fg=fg)
-        

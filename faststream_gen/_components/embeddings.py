@@ -12,7 +12,7 @@ import requests
 from contextlib import contextmanager
 from pathlib import Path
 
-from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader
+from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader, TextLoader
 from langchain.schema.document import Document
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
@@ -78,15 +78,17 @@ def _create_documents(
     if api_directory.exists() and api_directory.is_dir():
         shutil.rmtree(api_directory)
 
-    loader = DirectoryLoader(
-        str(extrated_path), glob=extension, loader_cls=UnstructuredMarkdownLoader
-    )
+    loader_cls = TextLoader if extension == "*.txt" else UnstructuredMarkdownLoader
+    loader = DirectoryLoader(str(extrated_path), glob=extension, loader_cls=loader_cls) # type: ignore
     docs = loader.load()
 
     typer.echo("\nBelow files are included in the embeddings:")
     typer.echo(
         "\n".join(
-            [f'    - {d.metadata["source"].replace(f"{extrated_path}/", "")}' for d in docs]
+            [
+                f'    - {d.metadata["source"].replace(f"{extrated_path}/", "")}'
+                for d in docs
+            ]
         )
     )
     return docs
