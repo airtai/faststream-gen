@@ -40,7 +40,7 @@ def validate_app_description(description: str, total_usage: List[Dict[str, int]]
         text="Validating the application description...", color="cyan", spinner="clock"
     ) as sp:
         
-        ai = CustomAIChat(user_prompt=APP_VALIDATION_PROMPT)
+        ai = CustomAIChat(user_prompt=APP_VALIDATION_PROMPT, semantic_search_query="What is FastStream?")
         response, usage = ai(description)
         total_usage.append(usage)
         

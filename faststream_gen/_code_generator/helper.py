@@ -201,15 +201,13 @@ class CustomAIChat:
         initial_user_prompt: Initial user prompt to the AI model.
         params: Parameters to use while initiating the OpenAI chat model. DEFAULT_PARAMS used if not provided.
     """
-    fastKafka_basics_prompt = _get_relevant_document(
-        get_root_data_path() / "docs", "What is FastKafka?"
-    )
 
     def __init__(
         self,
         model: Optional[str] = DEFAULT_MODEL,
         user_prompt: Optional[str] = None,
         params: Dict[str, float] = DEFAULT_PARAMS,
+        semantic_search_query: Optional[str] = None,
     ):
         """Instantiates a new CustomAIChat object.
 
@@ -217,18 +215,27 @@ class CustomAIChat:
             model: The OpenAI model to use. If not passed, defaults to gpt-3.5-turbo-16k.
             user_prompt: The user prompt to the AI model.
             params: Parameters to use while initiating the OpenAI chat model. DEFAULT_PARAMS used if not provided.
+            semantic_search_query: A query string to fetch relevant documents from the database
         """
         self.model = model
         self.messages = [
             {"role": role, "content": content}
             for role, content in [
                 ("system", SYSTEM_PROMPT),
-                ("user", CustomAIChat.fastKafka_basics_prompt),
+                ("user", self._get_doc(semantic_search_query)),
                 ("user", user_prompt),
             ]
             if content is not None
         ]
         self.params = params
+
+    @staticmethod
+    def _get_doc(semantic_search_query: Optional[str] = None) -> str:
+        if semantic_search_query is None:
+            return ""
+        return _get_relevant_document(
+            get_root_data_path() / "docs", semantic_search_query
+        )
 
     @_retry_with_exponential_backoff()
     def __call__(self, user_prompt: str) -> Tuple[str, Dict[str, int]]:
@@ -240,7 +247,9 @@ class CustomAIChat:
         Returns:
             A tuple with AI's response message content and the total number of tokens used while generating the response.
         """
-        self.messages.append({"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"})
+        self.messages.append(
+            {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
+        )
 
         response = openai.ChatCompletion.create(
             model=self.model,

@@ -68,12 +68,16 @@ def generate_app(
         file_name = f"{code_gen_directory}/{generate_keys[generate_key]['input_file']}"
         file_content = read_file_contents(file_name)
 
+        app_description_file_name = f"{code_gen_directory}/{DESCRIPTION_FILE_NAME}"
+        app_description_content = read_file_contents(file_name)
+
         prompt = generate_keys[generate_key]["prompt"]
         app_generator = CustomAIChat(
             params={
                 "temperature": 0.5,
             },
             user_prompt=prompt,
+            semantic_search_query=app_description_content,
         )
         app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
         validated_app, total_usage = app_validator.fix(file_content, total_usage)

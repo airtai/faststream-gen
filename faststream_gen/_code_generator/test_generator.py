@@ -39,7 +39,6 @@ def _validate_response(test_code: str, **kwargs: str) -> List[str]:
         test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_file, test_code)
 
-#         cmd = ["python3", test_file]
         cmd = ["pytest", test_file, "--tb=short"]
         # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
@@ -73,7 +72,7 @@ def generate_test(
         prompt = TEST_GENERATION_PROMPT.replace(
             "==== REPLACE WITH APP DESCRIPTION ====", description
         )
-        test_generator = CustomAIChat(user_prompt=prompt)
+        test_generator = CustomAIChat(user_prompt=prompt, semantic_search_query="How to test FastStream applications? Explain in detail.")
         test_validator = ValidateAndFixResponse(test_generator, _validate_response)
         validated_test, total_usage = test_validator.fix(
              f"{TEST_GENERATION_PROMPT}\n{app_code_prompt}", total_usage=total_usage, app_code=app_code_prompt

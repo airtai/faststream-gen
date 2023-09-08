@@ -26,7 +26,8 @@ from faststream_gen._code_generator.constants import (
     FASTSTREAM_DOCS_DIR_SUFFIX,
     FASTSTREAM_EXAMPLES_DIR_SUFFIX,
     FASTSTREAM_EXAMPLE_FILES,
-    FASTSTREAM_TMP_DIR_PREFIX
+    FASTSTREAM_TMP_DIR_PREFIX,
+    FASTSTREAM_DIR_TO_EXCLUDE
 )
 from .package_data import get_root_data_path
 
@@ -57,23 +58,38 @@ def _fetch_content(url: str) -> requests.models.Response:
 
 # %% ../../nbs/Embeddings_CLI.ipynb 5
 def _create_documents(
-    extrated_path: Path, extension: str = "**/*.md"
+    extrated_path: Path,
+    extension: str = "**/*.md",
+    dir_to_exclude: str = FASTSTREAM_DIR_TO_EXCLUDE,
 ) -> List[Document]:
-    """Create a List of document objects from Files.
+    """Create a List of Document objects from files.
 
     Args:
         extracted_path (Path): The path to the directory containing the files to be
             loaded as documents.
         extension (str, optional): The file extension pattern to match. Defaults to
             "**/*.md" to match Markdown files in all subdirectories.
+        dir_to_exclude (str, optional): Directory to exclude while creating the document object
 
     Returns:
         List[Document]: A list of documents created from the loaded files.
     """
+    api_directory = extrated_path / dir_to_exclude
+    if api_directory.exists() and api_directory.is_dir():
+        shutil.rmtree(api_directory)
+
     loader = DirectoryLoader(
         str(extrated_path), glob=extension, loader_cls=UnstructuredMarkdownLoader
     )
-    return loader.load()
+    docs = loader.load()
+
+    typer.echo("\nBelow files are included in the embeddings:")
+    typer.echo(
+        "\n".join(
+            [f'    - {d.metadata["source"].replace(f"{extrated_path}/", "")}' for d in docs]
+        )
+    )
+    return docs
 
 # %% ../../nbs/Embeddings_CLI.ipynb 7
 def _split_document_into_chunks(
@@ -102,7 +118,7 @@ def _split_document_into_chunks(
     return chunks
 
 # %% ../../nbs/Embeddings_CLI.ipynb 9
-def _save_embeddings_db(doc_chunks: List[Document], db_path: str) -> None:
+def _save_embeddings_db(doc_chunks: List[Document], db_path: Path) -> None:
     """Save the embeddings in a FAISS db
     
     Args:
@@ -110,18 +126,19 @@ def _save_embeddings_db(doc_chunks: List[Document], db_path: str) -> None:
         db_path: Path to save the FAISS db.
     """
     db = FAISS.from_documents(doc_chunks, OpenAIEmbeddings()) # type: ignore
-    db.save_local(db_path)
+    db.save_local(str(db_path))
 
 # %% ../../nbs/Embeddings_CLI.ipynb 11
-def _delete_directory(directory_path: Path) -> None:
+def _delete_directory(d: str) -> None:
     """Delete a directory and its contents if it exists.
 
     Args:
         directory_path: The path to the directory to be deleted.
     """
-    if directory_path.exists():
+    d_path = Path(d)
+    if d_path.exists():
         try:
-            shutil.rmtree(directory_path)
+            shutil.rmtree(d_path)
         except Exception as e:
             print(f"Error deleting directory: {e}")
 
@@ -163,7 +180,7 @@ def _check_all_files_exist(d: Path, required_files: List[str]) -> bool:
     return all((d / file_name).exists() for file_name in required_files)
 
 # %% ../../nbs/Embeddings_CLI.ipynb 18
-def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]):
+def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]) -> None:
     """Append contents of specified files to a result file.
 
     This function appends the contents of the specified list of files to a
@@ -251,10 +268,12 @@ app = typer.Typer(
 
 # %% ../../nbs/Embeddings_CLI.ipynb 23
 @contextmanager
-def _download_and_extract_faststream_archive():
+def _download_and_extract_faststream_archive() -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
         try:
-            typer.echo(f"Downloading docs and examples from FastStream repo and generating embeddings.")
+            typer.echo(
+                f"Downloading docs and examples from FastStream repo and generating embeddings."
+            )
             input_path = Path(f"{d}/archive.zip")
             extrated_path = Path(f"{d}/extrated_path")
             extrated_path.mkdir(parents=True, exist_ok=True)
@@ -282,20 +301,26 @@ def _download_and_extract_faststream_archive():
 )
 def generate(
     db_path: str = typer.Option(
-        get_root_data_path(), 
+        get_root_data_path(),
         "--db_path",
         "-p",
-        help="The path to save the vector database."
+        help="The path to save the vector database.",
     )
 ) -> None:
     with _download_and_extract_faststream_archive() as extracted_path:
         try:
-            db_path = Path(db_path)
             _delete_directory(db_path)
-            _generate_docs_db(extracted_path/FASTSTREAM_DOCS_DIR_SUFFIX, db_path/"docs")
-            _generate_examples_db(extracted_path/FASTSTREAM_EXAMPLES_DIR_SUFFIX, db_path/"examples")
+            _generate_docs_db(
+                extracted_path / FASTSTREAM_DOCS_DIR_SUFFIX, Path(db_path) / "docs"
+            )
+            _generate_examples_db(
+                extracted_path / FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+                Path(db_path) / "examples",
+            )
 
-            typer.echo(f"\nSuccessfully generated all the embeddings and saved to: {db_path}")
+            typer.echo(
+                f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
+            )
         except Exception as e:
             fg = typer.colors.RED
             typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
