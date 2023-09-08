@@ -21,15 +21,15 @@ Status](https://img.shields.io/github/actions/workflow/status/airtai/fastkafka-g
 If you’ve heard about the `FastStream` library and maybe wanted to try
 it out, but didn’t have time to go through the documentation, no
 problem, `faststream_gen` will generate your `FastStream` application.
-Also, to make sure that the generated application really works, we will
+Also, to make sure that the generated application really works, it will
 also generate tests for you. All you need to do is provide the
 desription of the application you want and `faststream_gen` will
 generate it for you!
 
 ## Set up your OPENAI_API_KEY
 
-For generating `FastStream` applications, we are using `OPENAI` models.
-So the first step is exporting your `OPENAI_API_KEY`.
+For generating `FastStream` applications, `faststream_gen` is using
+`OPENAI` models. So the first step is exporting your `OPENAI_API_KEY`.
 
 ``` sh
 export OPENAI_API_KEY="your_openai_api_key"
@@ -147,9 +147,10 @@ faststream_gen -i path_to_app_description/description.txt
 
 `faststream_gen` CLI will create `faststream-gen` folder and save
 generated FastStream `application.py` inside the folder. We know that no
-one likes code full of errors, that’s why we generate and run tests
-along with the generated application! Next to `application.py` you will
-find the `test.py` script for testing your FastStream application!
+one likes code full of errors, that’s why `faststream_gen` generates and
+run tests along with the generated application! Next to `application.py`
+you will find the `test.py` script for testing your FastStream
+application!
 
 In the `faststream-gen` folder you will find following files:
 
