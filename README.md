@@ -26,18 +26,6 @@ also generate tests for you. All you need to do is provide the
 desription of the application you want and `faststream_gen` will
 generate it for you!
 
-## Set up your OPENAI_API_KEY
-
-For generating `FastStream` applications, `faststream_gen` is using
-`OPENAI` models. So the first step is exporting your `OPENAI_API_KEY`.
-
-``` sh
-export OPENAI_API_KEY="your_openai_api_key"
-```
-
-If you don’t already have `OPENAI_API_KEY`, you can create one at
-[OPENAI API keys](https://platform.openai.com/account/api-keys)
-
 ## Install
 
 faststream_gen is published as a Python package and can be installed
@@ -114,6 +102,20 @@ faststream_gen --help
 
 ## How to use
 
+### Setup
+
+For generating `FastStream` applications, `faststream_gen` is using
+`OPENAI` models. So the first step is exporting your `OPENAI_API_KEY`.
+
+``` sh
+export OPENAI_API_KEY="your_openai_api_key"
+```
+
+If you don’t already have `OPENAI_API_KEY`, you can create one at
+[OPENAI API keys](https://platform.openai.com/account/api-keys)
+
+### Code generation
+
 This library is very easy to use. The only thing you need to do is
 prepare a description of your `FastStream` application, i.e. write what
 your application should do and pass it to the `faststrem_gen` command as
@@ -123,7 +125,7 @@ a `string`:
 faststream_gen "your_app_description"
 ```
 
-### Example
+#### Example
 
 ``` sh
 faststream_gen  "Write a faststream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on 'new_joinee' topic. The message should contain 'employee_name', 'age', 'location' and 'experience' attributes. After consuming the consumer function should send the details to the 'project_team' and 'admin_team' topics. Use only localhost broker" 
@@ -145,12 +147,13 @@ the file and use:
 faststream_gen -i path_to_app_description/description.txt
 ```
 
-`faststream_gen` CLI will create `faststream-gen` folder and save
-generated FastStream `application.py` inside the folder. We know that no
-one likes code full of errors, that’s why `faststream_gen` generates and
-run tests along with the generated application! Next to `application.py`
-you will find the `test.py` script for testing your FastStream
-application!
+`faststream_gen` CLI will create `faststream-gen` folder (you can set
+different output folder by providing `--output_path` option in the CLI)
+and save generated FastStream `application.py` inside the folder. We
+know that no one likes code full of errors, that’s why `faststream_gen`
+generates and run tests along with the generated application! Next to
+`application.py` you will find the `test.py` script for testing your
+FastStream application!
 
 In the `faststream-gen` folder you will find following files:
 
