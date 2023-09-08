@@ -6,114 +6,121 @@ __all__ = ['app', 'generate']
 # %% ../../nbs/Embeddings_CLI.ipynb 1
 from typing import *
 import shutil
-import tarfile
+import zipfile
 from tempfile import TemporaryDirectory
 import requests
-import functools
+from contextlib import contextmanager
 from pathlib import Path
 
-from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader
+from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader, TextLoader
 from langchain.schema.document import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
+from yaspin import yaspin
 import typer
 
 
-from .._code_generator.constants import FASTKAFKA_DOCS_MD_ARCHIVE_URL
+from faststream_gen._code_generator.constants import (
+    FASTSTREAM_REPO_ZIP_URL,
+    FASTSTREAM_DOCS_DIR_SUFFIX,
+    FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+    FASTSTREAM_EXAMPLE_FILES,
+    FASTSTREAM_TMP_DIR_PREFIX,
+    FASTSTREAM_DIR_TO_EXCLUDE
+)
 from .package_data import get_root_data_path
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
 def _fetch_content(url: str) -> requests.models.Response:
+    """Fetch content from a URL using an HTTP GET request.
+
+    Args:
+        url (str): The URL to fetch content from.
+
+    Returns:
+        Response: The response object containing the content and HTTP status.
+
+    Raises:
+        requests.exceptions.Timeout: If the request times out.
+        requests.exceptions.RequestException: If an error occurs during the request.
+    """
     try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Raise an exception for HTTP errors
+        response = requests.get(url, timeout=50)
+        response.raise_for_status()  # Raises an exception for HTTP errors
+        return response
     except requests.exceptions.Timeout:
-        print(
+        raise requests.exceptions.Timeout(
             "Request timed out. Please check your internet connection or try again later."
         )
     except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-        
-    return response
+        raise requests.exceptions.RequestException(f"An error occurred: {e}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 5
-def _download_and_extract_website_archive(func: Callable) -> Callable:
-    """Download the archive from the given url, extract the contents, and yields the extraction path.
+def _create_documents(
+    extrated_path: Path,
+    extension: str = "**/*.md",
+    dir_to_exclude: str = FASTSTREAM_DIR_TO_EXCLUDE,
+) -> List[Document]:
+    """Create a List of Document objects from files.
 
     Args:
-        func: The function to be wrapped.
+        extracted_path (Path): The path to the directory containing the files to be
+            loaded as documents.
+        extension (str, optional): The file extension pattern to match. Defaults to
+            "**/*.md" to match Markdown files in all subdirectories.
+        dir_to_exclude (str, optional): Directory to exclude while creating the document object
 
     Returns:
-        A decorator function that downloads the archive, extracts the contents, and yields the extraction path.
+        List[Document]: A list of documents created from the loaded files.
     """
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs): # type: ignore
-        with TemporaryDirectory() as d:            
-            input_path = Path(f"{d}/archive.tar.gz")
-            extrated_md_files_path = Path(f"{d}/extrated_md_files_path")
-            
-            response = _fetch_content(FASTKAFKA_DOCS_MD_ARCHIVE_URL)
-            
-            with open(input_path, "wb") as f:
-                f.write(response.content)
+    api_directory = extrated_path / dir_to_exclude
+    if api_directory.exists() and api_directory.is_dir():
+        shutil.rmtree(api_directory)
 
-            with tarfile.open(input_path, "r:gz") as tar: # nosemgrep
-                # nosemgrep
-                tar.extractall(path=extrated_md_files_path) # nosec
+    loader_cls = TextLoader if extension == "*.txt" else UnstructuredMarkdownLoader
+    loader = DirectoryLoader(str(extrated_path), glob=extension, loader_cls=loader_cls) # type: ignore
+    docs = loader.load()
 
-            return func(extrated_md_files_path, *args, **kwargs)
-
-    return wrapper
-
-
-@_download_and_extract_website_archive
-def _create_documents(extrated_md_files_path: Path) -> List[Document]:
-    """Create Document objects from markdown files in the given path.
-
-    Args:
-        extracted_md_files_path: Path to the extracted markdown files.
-
-    Returns:
-        A list of Document objects, one for each extracted markdown file.
-    """
-    loader = DirectoryLoader(
-        str(extrated_md_files_path), glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
+    typer.echo("\nBelow files are included in the embeddings:")
+    typer.echo(
+        "\n".join(
+            [
+                f'    - {d.metadata["source"].replace(f"{extrated_path}/", "")}'
+                for d in docs
+            ]
+        )
     )
-    return loader.load()
+    return docs
 
 # %% ../../nbs/Embeddings_CLI.ipynb 7
 def _split_document_into_chunks(
     documents: List[Document],
-    # Limiting the max token(input) limit to 8k to be on safer side. 1 token ~= 4 chars in English. We would like to retreive top 2 matches. 
-    # so each matches can only have 8k / 2 = 4k tokens (~ 4 * 4 = 16,000 characters)    
-    # Note: chunk_size is the maximum allowed characters in each chunk. In reality not all the chunks will have 16k tokens, some will be much less than 16k.
-    # Reference: https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/recursive_text_splitter
-    chunk_size: int = 16000,
-    chunk_overlap: int = 200, # 50 tokens
-    separators: List[str] = ["\n\n", "\n", "(?<=\. )", " ", ""],
+    separator: str,
+    chunk_size: int = 500,
+    chunk_overlap: int = 0,
 ) -> List[Document]:
     """Split the list of documents into chunks
 
     Args:
         documents: List of documents to be split into chunks.
+        separators: List of separator patterns used for chunking.
         chunk_size: The maximum size of each chunk in characters. Defaults to 1500.
         chunk_overlap: The overlap between consecutive chunks in characters. Defaults to 150.
-        separators: List of separator patterns used for chunking. Defaults to ["\n\n", "\n", "(?<=\. )", " ", ""].
 
     Returns:
         A list of documents where each document represents a chunk.
     """
-    text_splitter = RecursiveCharacterTextSplitter(
+    text_splitter = CharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        separators=separators
+        separator=separator
     )
     chunks = text_splitter.split_documents(documents)
     return chunks
 
 # %% ../../nbs/Embeddings_CLI.ipynb 9
-def _save_embeddings_db(doc_chunks: List[Document], db_path: str) -> None:
+def _save_embeddings_db(doc_chunks: List[Document], db_path: Path) -> None:
     """Save the embeddings in a FAISS db
     
     Args:
@@ -121,55 +128,202 @@ def _save_embeddings_db(doc_chunks: List[Document], db_path: str) -> None:
         db_path: Path to save the FAISS db.
     """
     db = FAISS.from_documents(doc_chunks, OpenAIEmbeddings()) # type: ignore
-    db.save_local(db_path)
+    db.save_local(str(db_path))
 
 # %% ../../nbs/Embeddings_CLI.ipynb 11
-def _delete_directory(directory_path: Path) -> None:
+def _delete_directory(d: str) -> None:
     """Delete a directory and its contents if it exists.
 
     Args:
         directory_path: The path to the directory to be deleted.
     """
-    if directory_path.exists():
+    d_path = Path(d)
+    if d_path.exists():
         try:
-            shutil.rmtree(directory_path)
+            shutil.rmtree(d_path)
         except Exception as e:
             print(f"Error deleting directory: {e}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 13
-def _get_default_vector_db_path() -> Path:
-    return get_root_data_path() / "docs"
+def _generate_docs_db(input_path: Path, output_path: Path) -> None:
+    """Generate Document Embeddings Database.
+
+    This function creates document embeddings for a collection of documents
+    located in the specified input directory and saves the embeddings database
+    to the specified output directory.
+
+    Args:
+        input_path (Path): The path to the directory containing input documents.
+        output_path (Path): The path to the directory where the embeddings
+            database will be saved.
+    """
+    with yaspin(
+        text="Creating embeddings for the docs...", color="cyan", spinner="clock"
+    ) as sp:
+        docs = _create_documents(input_path)
+        _save_embeddings_db(docs, output_path)
+
+        sp.text = ""
+        sp.ok(f" ✔ Docs embeddings created and saved to: {output_path}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 15
+def _check_all_files_exist(d: Path, required_files: List[str]) -> bool:
+    """Check if all required files exist in a directory.
+
+    Args:
+        d (Path): The path to the directory where the existence of files will
+            be checked.
+        required_files (List[str]): A list of filenames that should exist in
+            the directory.
+
+    Returns:
+        True if all required files exist in the directory, False otherwise.
+    """
+    return all((d / file_name).exists() for file_name in required_files)
+
+# %% ../../nbs/Embeddings_CLI.ipynb 18
+def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]) -> None:
+    """Append contents of specified files to a result file.
+
+    This function appends the contents of the specified list of files to a
+    result file in a designated directory.
+
+    Args:
+        d (Path): The path to the directory containing the files to be appended.
+        parent_d (Path): The parent directory where the result file will be created.
+        required_files (List[str]): A list of filenames to be appended.
+    """
+    appended_examples_dir = parent_d / FASTSTREAM_TMP_DIR_PREFIX
+    appended_examples_dir.mkdir(parents=True, exist_ok=True)
+
+    result_file_name = appended_examples_dir / f"{d.name}.txt"
+
+    with result_file_name.open("a") as result_file:
+        for file_name in required_files:
+            with (d / file_name).open("r") as file:
+                result_file.write(
+                    f"==== {file_name} starts ====\n{file.read()}\n==== {file_name} ends ====\n"
+                )
+
+# %% ../../nbs/Embeddings_CLI.ipynb 20
+def _format_examples(input_path: Path, required_files: List[str]) -> None:
+    """Format Examples by Appending File Contents.
+
+    This function iterates through directories in the specified input path and checks
+    if all the required files exist in each directory. If the required files are present,
+    it appends their contents to a result file within the input path. If any of the
+    required files are missing, it skips the directory and logs a message.
+
+    Args:
+        input_path (Path): The path to the directory containing example directories
+            with files to be appended.
+        required_files (List[str]): A list of filenames that must exist in each example
+            directory.
+    """
+    for directory in input_path.iterdir():
+        if directory.is_dir() and _check_all_files_exist(directory, required_files):
+            _append_file_contents(directory, input_path, required_files)
+        else:
+            typer.echo(f"\nRequired files are missing. Skipping directory: {directory}")
+
+
+def _generate_examples_db(
+    input_path: Path,
+    output_path: Path,
+    required_files: List[str] = FASTSTREAM_EXAMPLE_FILES,
+) -> None:
+    """Generate Example Embeddings Database.
+
+    This function creates embeddings for a collection of example documents located in
+    the specified input directory and saves the embeddings database to the specified
+    output directory. It appends the contents of specified files in each example
+    directory, splits the concatenated document into chunks based on specified
+    separators, and saves the embeddings for each chunk in the output database.
+
+    Args:
+        input_path (Path): The path to the directory containing example documents.
+        output_path (Path): The path to the directory where the embeddings database
+            will be saved.
+        required_files (List[str]): A list of filenames that must exist in each
+            example directory. Defaults to FASTSTREAM_EXAMPLE_FILES.
+    """
+    with yaspin(
+        text="Creating embeddings for the examples...", color="cyan", spinner="clock"
+    ) as sp:
+        
+        _format_examples(input_path, required_files)
+        docs = _create_documents(
+            input_path / FASTSTREAM_TMP_DIR_PREFIX, extension="*.txt"
+        )
+        doc_chunks = _split_document_into_chunks(
+            docs, separator="==== description.txt ends ===="
+        )
+        _save_embeddings_db(doc_chunks, output_path)
+
+        sp.text = ""
+        sp.ok(f" ✔ Examples embeddings created and saved to: {output_path}")
+
+# %% ../../nbs/Embeddings_CLI.ipynb 22
 app = typer.Typer(
     short_help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
 )
 
-# %% ../../nbs/Embeddings_CLI.ipynb 16
+# %% ../../nbs/Embeddings_CLI.ipynb 23
+@contextmanager
+def _download_and_extract_faststream_archive() -> Generator[Path, None, None]:
+    with TemporaryDirectory() as d:
+        try:
+            typer.echo(
+                f"Downloading docs and examples from FastStream repo and generating embeddings."
+            )
+            input_path = Path(f"{d}/archive.zip")
+            extrated_path = Path(f"{d}/extrated_path")
+            extrated_path.mkdir(parents=True, exist_ok=True)
+
+            response = _fetch_content(FASTSTREAM_REPO_ZIP_URL)
+
+            with open(input_path, "wb") as f:
+                f.write(response.content)
+
+            with zipfile.ZipFile(input_path, "r") as zip_ref:
+                for member in zip_ref.namelist():
+                    zip_ref.extract(member, extrated_path)
+
+            yield extrated_path
+
+        except Exception as e:
+            fg = typer.colors.RED
+            typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
+            raise typer.Exit(code=1)
+
+# %% ../../nbs/Embeddings_CLI.ipynb 24
 @app.command(
     "generate",
-    help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
+    help="Download the docs and examples from FastStream repo, generate embeddings, and save them in a vector database.",
 )
 def generate(
     db_path: str = typer.Option(
-        _get_default_vector_db_path(), 
+        get_root_data_path(),
         "--db_path",
         "-p",
-        help="The path to save the vector database."
+        help="The path to save the vector database.",
     )
 ) -> None:
-    try:
-        _delete_directory(Path(db_path))
-        
-        typer.echo(f"Downloading the zipped FastKafka documentation markdown files and generating embeddings.")
-        docs = _create_documents()
-        # Experimenting by commenting out chunking, so each guide will be treated as a single document and will be sent in its entirety along with the prompt.
-        # doc_chunks = _split_document_into_chunks(docs)
-        # _save_embeddings_db(doc_chunks, db_path)
-        _save_embeddings_db(docs, db_path)
-        
-        typer.echo(f"\nSuccessfully generated the embeddings and saved to: {db_path}")
-    except Exception as e:
-        fg = typer.colors.RED
-        typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
-        raise typer.Exit(code=1)
+    with _download_and_extract_faststream_archive() as extracted_path:
+        try:
+            _delete_directory(db_path)
+            _generate_docs_db(
+                extracted_path / FASTSTREAM_DOCS_DIR_SUFFIX, Path(db_path) / "docs"
+            )
+            _generate_examples_db(
+                extracted_path / FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+                Path(db_path) / "examples",
+            )
+
+            typer.echo(
+                f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
+            )
+        except Exception as e:
+            fg = typer.colors.RED
+            typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
+            raise typer.Exit(code=1)

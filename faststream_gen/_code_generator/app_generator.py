@@ -47,14 +47,17 @@ generate_keys = {
 def generate_app(
     code_gen_directory: str,
     total_usage: List[Dict[str, int]],
+    relevant_prompt_examples: str,
     generate_key: str = GENERATE_APP_FROM_ASYNCAPI,
 ) -> List[Dict[str, int]]:
     """Generate code for the new FastStream app from the validated plan
 
     Args:
         code_gen_directory: The directory containing the generated files.
-        total_usage: list of token usage
-        generate_key: key which indicates which prompt will be used for the app creation
+        total_usage: list of token usage.
+        relevant_prompt_examples: Relevant examples to add in the prompts.
+        generate_key: key which indicates which prompt will be used for the app creation.
+
     Returns:
         The total token used to generate the FastStream code
     """
@@ -68,12 +71,18 @@ def generate_app(
         file_name = f"{code_gen_directory}/{generate_keys[generate_key]['input_file']}"
         file_content = read_file_contents(file_name)
 
-        prompt = generate_keys[generate_key]["prompt"]
+        app_description_file_name = f"{code_gen_directory}/{DESCRIPTION_FILE_NAME}"
+        app_description_content = read_file_contents(file_name)
+
+        prompt = generate_keys[generate_key]["prompt"].replace(
+            "==== RELEVANT EXAMPLES GOES HERE ====", f"\n{relevant_prompt_examples}"
+        )
         app_generator = CustomAIChat(
             params={
                 "temperature": 0.5,
             },
             user_prompt=prompt,
+            semantic_search_query=app_description_content,
         )
         app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
         validated_app, total_usage = app_validator.fix(file_content, total_usage)

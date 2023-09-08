@@ -5,7 +5,8 @@ __all__ = ['DESCRIPTION_FILE_NAME', 'APPLICATION_SKELETON_FILE_NAME', 'ASYNC_API
            'INTEGRATION_TEST_FILE_NAME', 'GENERATE_APP_FROM_ASYNCAPI', 'GENERATE_APP_FROM_SKELETON',
            'GENERATE_APP_SKELETON', 'DEFAULT_PARAMS', 'DEFAULT_MODEL', 'MAX_RETRIES', 'MAX_ASYNC_SPEC_RETRIES',
            'TOKEN_TYPES', 'MODEL_PRICING', 'INCOMPLETE_DESCRIPTION', 'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG',
-           'FASTKAFKA_DOCS_MD_ARCHIVE_URL']
+           'FASTSTREAM_REPO_ZIP_URL', 'FASTSTREAM_DOCS_DIR_SUFFIX', 'FASTSTREAM_EXAMPLES_DIR_SUFFIX',
+           'FASTSTREAM_EXAMPLE_FILES', 'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE']
 
 # %% ../../nbs/Constants.ipynb 2
 DESCRIPTION_FILE_NAME = "app_description.txt"
@@ -56,4 +57,9 @@ For each consumed message, create a new message object and increment the value o
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
 
 # %% ../../nbs/Constants.ipynb 10
-FASTKAFKA_DOCS_MD_ARCHIVE_URL = "https://github.com/airtai/fastkafka/raw/main/.fastkafka_gen/site_md_archive.tar.gz"
+FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/fastkafka/archive/FastStream.zip"
+FASTSTREAM_DOCS_DIR_SUFFIX = "fastkafka-FastStream/.faststream_gen"
+FASTSTREAM_EXAMPLES_DIR_SUFFIX = "fastkafka-FastStream/faststream_gen_examples"
+FASTSTREAM_EXAMPLE_FILES = ['description.txt', 'app_skeleton.py', 'app.py', 'test_app.py']
+FASTSTREAM_TMP_DIR_PREFIX = "appended_examples"
+FASTSTREAM_DIR_TO_EXCLUDE = "api"
