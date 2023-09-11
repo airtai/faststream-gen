@@ -4,6 +4,6 @@ project:
 website:
   title: "fastkafka-gen"
   site-url: "https://airtai.github.io/fastkafka-gen"
-  description: "The FastKafka-gen library uses advanced AI to generate FastKafka code from user descriptions, speeding up FastKafka app development."
+  description: "The FastStream-gen library uses advanced AI to generate FastStream code from user descriptions, speeding up FastStream app development."
   repo-branch: main
   repo-url: "https://github.com/airtai/fastkafka-gen"
