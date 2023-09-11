@@ -1,13 +1,13 @@
 # Site
 site_name: faststream-gen
-site_url: https://airtai.github.io/fastkafka-gen
+site_url: https://airtai.github.io/faststream-gen
 site_author: airt
 site_description: The faststream-gen library uses advanced AI to generate FastStream
-  code from user descriptions, speeding up FastStream app development.
+  code from application descriptions, speeding up FastStream app development.
 
 # Repository
-repo_name: fastkafka-gen
-repo_url: https://github.com/airtai/fastkafka-gen
+repo_name: faststream-gen
+repo_url: https://github.com/airtai/faststream-gen
 edit_uri: ""
 
 copyright: 2023 onwards, airt
@@ -103,4 +103,4 @@ extra_javascript:
 extra:
   version:
     provider: mike
-  social_image: "https://opengraph.githubassets.com/1691483169.608266/airtai/fastkafka-gen"
+  social_image: "https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen"

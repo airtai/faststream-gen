@@ -2,8 +2,8 @@ project:
   output-dir: _docs
 
 website:
-  title: "fastkafka-gen"
-  site-url: "https://airtai.github.io/fastkafka-gen"
-  description: "The FastStream-gen library uses advanced AI to generate FastStream code from user descriptions, speeding up FastStream app development."
+  title: "faststream-gen"
+  site-url: "https://airtai.github.io/faststream-gen"
+  description: "The faststream-gen library uses advanced AI to generate FastStream code from user descriptions, speeding up FastStream app development."
   repo-branch: main
-  repo-url: "https://github.com/airtai/fastkafka-gen"
+  repo-url: "https://github.com/airtai/faststream-gen"

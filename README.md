@@ -119,8 +119,8 @@ If you don’t already have `OPENAI_API_KEY`, you can create one at
 
 This library is very easy to use. The only thing you need to do is
 prepare a description of your `FastStream` application, i.e. write what
-your application should do and pass it to the `faststrem_gen` command as
-a string:
+your application should do and pass it to the `faststream_gen` command
+as a string:
 
 ``` sh
 faststream_gen "<your_app_description>"
