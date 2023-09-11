@@ -783,6 +783,12 @@ Now, Generate test code for FastStream application based on provided application
     - Your response must contain only valid Python code, saveable as a .py script; no additional text is allowed.
     - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
     - IMPORT ALL NECESSARY DEPENDENCIES FROM THE application in the test code, this is realy important!
+    - YOU NEED TO IMPORT ALL NECESSARY DEPENDENCIES FROM THE 'application.py' in the test code, this is realy important!
+    - Follow the PEP 8 Style Guide for Python while writing the code
+    - Write optimised and readable Code
+    - Output only a valid executable python code. No other extra text should be included in your response.
+    - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
+    - Always start tests with: 'async with TestKafkaBroker(broker):'
 
 Below are few examples for your understanding:
 
@@ -795,16 +801,16 @@ Here are common issues and their potential fixes. You can use this information a
 AssertionError: Expected 'mock' to not have been called. Called 2 times.
 
 ==== ERROR CODE ==== 
-    async with TestKafkaBroker(broker) as tester:
-        await tester.publish(DataBasic(data=0.2), "input_data")
+    async with TestKafkaBroker(broker):
+        await broker.publish(DataBasic(data=0.2), "input_data")
 
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
         on_output_data.mock.assert_not_called() # ERROR IN THIS LINE
 
 ==== FIXED CODE ==== 
 
-    async with TestKafkaBroker(broker) as tester:
-        await tester.publish(DataBasic(data=0.2), "input_data")
+    async with TestKafkaBroker(broker):
+        await broker.publish(DataBasic(data=0.2), "input_data")
 
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
         on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2))) # ERROR FIXED IN THIS LINE
