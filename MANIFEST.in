@@ -4,4 +4,4 @@ include CONTRIBUTING.md
 include README.md
 recursive-exclude * __pycache__
 
-graft fastkafka_gen/package_data
+graft faststream_gen/package_data
