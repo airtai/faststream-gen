@@ -14,12 +14,12 @@ import pathlib
 
 from ._components.logger import get_logger
 from ._code_generator.app_description_validator import validate_app_description
-from ._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
-from ._code_generator.app_generator import generate_app
-from ._code_generator.test_generator import generate_test
+# from faststream_gen._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
+from ._code_generator.app_skeleton_generator import generate_app_skeleton
+from ._code_generator.app_and_test_generator import generate_app_and_test
 from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents, get_relevant_prompt_examples
 from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
-                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_FROM_SKELETON, GENERATE_APP_SKELETON
+                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_SKELETON
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -177,24 +177,17 @@ For each consumed message, create a new message object and increment the value o
         #         tokens_list = generate_app(output_path, tokens_list, GENERATE_APP_FROM_ASYNCAPI)
 
         prompt_examples = get_relevant_prompt_examples(validated_description)
-        tokens_list = generate_app(
+        tokens_list = generate_app_skeleton(
             output_path,
             tokens_list,
             prompt_examples["description_to_skeleton"],
-            GENERATE_APP_SKELETON,
-        )
-        tokens_list = generate_app(
-            output_path,
-            tokens_list,
-            prompt_examples["skeleton_to_app"],
-            GENERATE_APP_FROM_SKELETON,
         )
 
-        tokens_list = generate_test(
+        tokens_list = generate_app_and_test(
             validated_description,
             output_path,
             tokens_list,
-            prompt_examples["app_to_test"],
+             prompt_examples["skeleton_to_app_and_test"],
         )
 
         fg = typer.colors.CYAN

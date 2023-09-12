@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['SYSTEM_PROMPT', 'APP_VALIDATION_PROMPT', 'ASYNCAPI_SPEC_GENERATION_PROMPT', 'APP_SKELETON_GENERATION_PROMPT',
-           'APP_GENERATION_PROMPT_FROM_SKELETON', 'APP_GENERATION_PROMPT_FROM_ASYNCAPI', 'TEST_GENERATION_PROMPT']
+           'APP_AND_TEST_GENERATION_PROMPT']
 
 # %% ../../nbs/Prompts.ipynb 1
 SYSTEM_PROMPT = """
@@ -364,450 +364,63 @@ The goal is to offer developers a structured starting point that matches the exa
 """
 
 # %% ../../nbs/Prompts.ipynb 5
-APP_GENERATION_PROMPT_FROM_SKELETON = """
-Implement the business logic specified in the docstrings of the @broker.subscriber and @broker.publisher decorated functions in the provided skeleton code from the "==== APP SKELETON ====" section, adhering to these guidelines:
+APP_AND_TEST_GENERATION_PROMPT = """
+You will be provided with a description about FastStream application in ==== APP DESCRIPTION ==== section and the skeleton code in ==== APP SKELETON ==== section. Your goal is to generate both the application and the test code based on the provided ==== APP SKELETON ==== section and the description ==== APP DESCRIPTION ==== in a single Python file. Your response will be split the application.py and the test.py files and saved to the disc.
 
-    - For methods decorated with @broker.subscriber and @broker.publisher, strictly adhere to the instructions within the docstring when implementing business logic. Do not modify other parts of the code.
+Input:
 
-    - Write Python code that is both optimized and easily readable.
+You will be given skeleton code and the description for a FastStream application in ==== APP SKELETON ==== section and ==== APP DESCRIPTION ==== section respectively. The skeleton code and the description will have implementation details.
 
-    - Your response should consist solely of valid Python code, capable of being saved as a .py script, with no accompanying text.
+Output:
 
+You need to understand the business logic mentioned in in ==== APP SKELETON ==== section and ==== APP DESCRIPTION ==== sections and generate the following:
 
-Your task is to execute the specified logic within the given decorators while preserving the existing code structure. Follow the example patterns provided for reference.
+    - The application code by implementing the methods decorated with @broker.subscriber and @broker.publisher in the docstring
+    - The test code which tests the functionality of the generated application file
 
-==== RELEVANT EXAMPLES GOES HERE ====
+You need to generate a single valid Python file containing both the application and the test code. Remember that the application and the test code will be split into two and saved to the disc as application.py and test.py. So while writing the test code, make sure to import all the necessary symbols from the application.py
 
-==== APP SKELETON: ====
+Application Code:
 
-"""
+Generate the entire application code from the provided skeleton. You must implement all of the business logic specified in the docstrings of the @broker.subscriber and @broker.publisher decorated functions in the skeleton code provided in the "==== APP SKELETON ====" section. When implementing business logic for methods decorated with @broker.subscriber and @broker.publisher, strictly follow the instructions in the docstring. Other parts of the code should not be changed.
 
-# %% ../../nbs/Prompts.ipynb 6
-APP_GENERATION_PROMPT_FROM_ASYNCAPI = """
-Generate Python code using the `FastStream` library based on contents in the "==== INPUT ASYNC SPECIFICATION: ====" section.
+Test Code:
 
-Here's an example of how the produced code "==== EXAMPLE CODE 1====", generated from "==== ASYNC SPECIFICATION 1====."
+Create test code using the TestBroker context managers to validate the functionality of the application code.
 
-==== EXAMPLE SPECIFICATION 1====
+The FastStream apps can be tested using the TestBroker context managers which, by default, puts the Broker into "testing mode". The Tester will redirect your subscriber and publisher decorated functions to the InMemory brokers so that you can quickly test your app without the need for a running broker and all its dependencies.
 
-asyncapi: 2.5.0
-info:
-  title: Greet users
-  version: 0.0.1
-  description: "A FastStream application which consumes JSON-encoded messages from the 'receive_name' topic. For each consumed message, it constructs a new message object by appending 'Hello ' to the user_name attribute and publishes the modified message to the 'send_greetings' topic. The application utilizes localhost broker for testing, staging.airt.ai for staging, and prod.airt.ai for production."
-  contact:
-    name: Author
-    url: https://www.google.com/
-    email: noreply@gmail.com
-servers:
-  localhost:
-    url: localhost
-    description: local development kafka broker
-    protocol: kafka
-    variables:
-      port:
-        default: '9092'
-  staging:
-    url: staging.airt.ai
-    description: staging kafka broker
-    protocol: kafka
-    variables:
-      port:
-        default: '9092'
-  production:
-    url: prod.airt.ai
-    description: production kafka broker
-    protocol: kafka
-    variables:
-      port:
-        default: '9092'
-channels:
-  receive_name:
-    subscribe:
-      message:
-        $ref: '#/components/messages/Greetings'
-      description: For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic.
-  send_greetings:
-    publish:
-      message:
-        $ref: '#/components/messages/Greetings'
-      description: Produce the incoming messages to the 'send_greetings' topic as it is.
-components:
-  messages:
-    Greetings:
-      payload:
-        properties:
-          user_name:
-            description: Name of the user.
-            title: User Name
-            type: string
-        required:
-          - user_name
-        title: Greetings
-        type: object
-  schemas: {}
-  securitySchemes: {}
+While generating the application and the test code for FastStream application based on provided application code in the ==== APP SKELETON: ==== section, adhering to these guidelines:
 
-==== EXAMPLE CODE 1====
-
-from typing import *
-from pydantic import BaseModel, Field
-from fastkafka import FastKafka
-
-
-class Greetings(BaseModel):
-    user_name: str = Field(..., description="Name of the user.")
-
-kafka_brokers = {
-    "localhost": {
-        "url": "localhost",
-        "description": "local development kafka broker",
-        "port": 9092,
-    },
-    "staging": {
-        "url": "staging.airt.ai",
-        "description": "staging kafka broker",
-        "port": 9092,
-    },
-    "production": {
-        "url": "prod.airt.ai",
-        "description": "production kafka broker",
-        "port": 9092,
-    }
-}
-
-greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
-
-greetings_app = FastKafka(
-    kafka_brokers=kafka_brokers, 
-    description=greetings_app_description, 
-    version="0.0.1", 
-    title='Greet users',
-)
-
-
-receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
-
-@greetings_app.consumes(topic="receive_name", description=receive_name_description)
-async def on_receive_name(msg: Greetings):
-    msg = Greetings(user_name = f"Hello {msg.user_name}")
-    await to_send_greetings(msg)
-
-
-send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
-@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
-async def to_send_greetings(msg: Greetings) -> Greetings:
-    return msg
-
-
-Here's another illustrative example with authentication and encryption:
-
-==== EXAMPLE SPECIFICATION 2====
-
-asyncapi: 2.5.0
-info:
-  title: Greet users
-  version: 0.0.1
-  description: "A FastKafka application which employs localhost, staging, and production brokers with default port number. It consumes JSON-encoded messages from the 'receive_name' topic, adds 'Hello ' to the user_name attribute, and publishes the modified message to 'send_greetings'. It uses SASL_SSL with SCRAM-SHA-256 for authentication, requiring username and password."
-  contact:
-    name: Author
-    url: https://www.google.com/
-    email: noreply@gmail.com
-servers:
-  localhost:
-    url: localhost
-    description: local development kafka broker
-    protocol: kafka
-    variables:
-      port:
-        default: '9092'
-  staging:
-    url: staging.airt.ai
-    description: staging kafka broker
-    protocol: kafka-secure
-    security:
-    - staging_default_security: []
-    variables:
-      port:
-        default: '9092'
-  production:
-    url: prod.airt.ai
-    description: production kafka broker
-    protocol: kafka-secure
-    security:
-    - production_default_security: []
-    variables:
-      port:
-        default: '9092'
-channels:
-  receive_name:
-    subscribe:
-      message:
-        $ref: '#/components/messages/Greetings'
-      description: For each consumed message, construct a new message object and append
-        'Hello ' in front of the name attribute. Finally, publish the consumed message
-        to 'send_greetings' topic.
-  send_greetings:
-    publish:
-      message:
-        $ref: '#/components/messages/Greetings'
-      description: Produce the incoming messages to the 'send_greetings' as it is.
-components:
-  messages:
-    Greetings:
-      payload:
-        properties:
-          user_name:
-            description: Name of the user.
-            title: User Name
-            type: string
-        required:
-        - user_name
-        title: Greetings
-        type: object
-  schemas: {}
-  securitySchemes:
-    staging_default_security:
-      type: scramSha256
-    production_default_security:
-      type: scramSha256
-
-==== EXAMPLE CODE 2====
-
-from typing import *
-from pydantic import BaseModel, Field
-from aiokafka.helpers import create_ssl_context
-
-from fastkafka import FastKafka
-
-
-class Greetings(BaseModel):
-    user_name: str = Field(..., description="Name of the user.")
-
-kafka_brokers = {
-    "localhost": {
-        "url": "localhost",
-        "description": "local development kafka broker",
-        "port": 9092,
-    },
-    "staging": {
-        "url": "staging.airt.ai",
-        "description": "staging kafka broker",
-        "port": 9092,
-        "protocol": "kafka-secure",
-        "security": {"type": "scramSha256"},
-    },
-    "production": {
-        "url": "prod.airt.ai",
-        "description": "production kafka broker",
-        "port": 9092,
-        "protocol": "kafka-secure",
-        "security": {"type": "scramSha256"},
-    }
-}
-
-greetings_app_description = "Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number. It should consume messages from 'receive_name' topic and the message will be a JSON encoded object with only one attribute: user_name. For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
-
-greetings_app = FastKafka(
-    kafka_brokers=kafka_brokers, 
-    description=greetings_app_description, 
-    version="0.0.1", 
-    title='Greet users',
-    security_protocol = "SASL_SSL",
-    sasl_mechanism= "SCRAM-SHA-256",
-    sasl_plain_username= "<username>",
-    sasl_plain_password=  "<password>",
-    ssl_context= create_ssl_context(),
-)
-
-
-receive_name_description = "For each consumed message, construct a new message object and append 'Hello ' in front of the name attribute. Finally, publish the consumed message to 'send_greetings' topic."
-
-@greetings_app.consumes(topic="receive_name", description=receive_name_description)
-async def on_receive_name(msg: Greetings):
-    msg = Greetings(user_name = f"Hello {msg.user_name}")
-    await to_send_greetings(msg)
-
-
-send_greetings_description = "Produce the incoming messages to the 'send_greetings' topic as it is."
-@greetings_app.produces(topic="send_greetings", description=send_greetings_description)
-async def to_send_greetings(msg: Greetings) -> Greetings:
-    return msg
-
-
-
-==== COMMON MISTAKES AND HOW TO AVOID IT ====
-
-You have the tendency to make the below common mistakes. Never ever do that.
-
-- You often miss to add return annotation for producer functions. Always remember the producer function should have return annotation. Let's look at an example of this issue and learn how to fix it. Below is an example of the ==== EXAMPLE INCORRECT APP CODE ==== generated from the valid specification. 
-
-==== EXAMPLE INCORRECT APP CODE ====
-
-from typing import *
-from pydantic import BaseModel, Field
-from fastkafka import FastKafka
-
-
-class NewJoinee(BaseModel):
-    employee_name: str = Field(..., description="Name of the employee.")
-    age: int = Field(..., description="Age of the employee.")
-    location: str = Field(..., description="Location of the employee.")
-    experience: str = Field(..., description="Experience of the employee.")
-
-kafka_brokers = {
-    "localhost": {
-        "url": "localhost",
-        "description": "local development kafka broker",
-        "port": 9092,
-    }
-}
-
-app_description = "Create a FastKafka application using localhost broker for testing. Use default port number. It should consume messages from 'new_joinee' topic and the message will be a JSON encoded object with attributes: employee_name, age, location, and experience. The consumed message should be published to 'project_team' and 'admin_team' topics."
-
-app = FastKafka(
-    kafka_brokers=kafka_brokers, 
-    description=app_description, 
-    version="0.0.1", 
-    title='FastKafka Application',
-)
-
-
-consume_description = "Consume messages from the 'new_joinee' topic and send the details to the 'project_team' and 'admin_team' topics."
-
-@app.consumes(topic="new_joinee", description=consume_description)
-async def on_new_joinee(msg: NewJoinee):
-    await to_project_team(msg)
-    await to_admin_team(msg)
-
-
-publish_project_description = "Publish the consumed message to the 'project_team' topic."
-@app.produces(topic="project_team", description=publish_project_description)
-async def to_project_team(msg: NewJoinee): # bug in this line: Missing return type annotation
-    return msg
-
-
-publish_admin_description = "Publish the consumed message to the 'admin_team' topic."
-@app.produces(topic="admin_team", description=publish_admin_description)
-async def to_admin_team(msg: NewJoinee): # bug in this line: Missing return type annotation
-    return msg
-
-==== EXAMPLE CORRECT APP CODE ====
-
-from typing import *
-from pydantic import BaseModel, Field
-from fastkafka import FastKafka
-
-
-class NewJoinee(BaseModel):
-    employee_name: str = Field(..., description="Name of the employee.")
-    age: int = Field(..., description="Age of the employee.")
-    location: str = Field(..., description="Location of the employee.")
-    experience: str = Field(..., description="Experience of the employee.")
-
-kafka_brokers = {
-    "localhost": {
-        "url": "localhost",
-        "description": "local development kafka broker",
-        "port": 9092,
-    }
-}
-
-app_description = "Create a FastKafka application using localhost broker for testing. Use default port number. It should consume messages from 'new_joinee' topic and the message will be a JSON encoded object with attributes: employee_name, age, location, and experience. The consumed message should be published to 'project_team' and 'admin_team' topics."
-
-app = FastKafka(
-    kafka_brokers=kafka_brokers, 
-    description=app_description, 
-    version="0.0.1", 
-    title='FastKafka Application',
-)
-
-
-consume_description = "Consume messages from the 'new_joinee' topic and send the details to the 'project_team' and 'admin_team' topics."
-
-@app.consumes(topic="new_joinee", description=consume_description)
-async def on_new_joinee(msg: NewJoinee):
-    await to_project_team(msg)
-    await to_admin_team(msg)
-
-
-publish_project_description = "Publish the consumed message to the 'project_team' topic."
-@app.produces(topic="project_team", description=publish_project_description)
-async def to_project_team(msg: NewJoinee) -> NewJoinee: # bug fixed in this line: added correct return annotation
-    return msg
-
-
-publish_admin_description = "Publish the consumed message to the 'admin_team' topic."
-@app.produces(topic="admin_team", description=publish_admin_description)
-async def to_admin_team(msg: NewJoinee)  -> NewJoinee: # bug fixed in this line: added correct return annotation
-    return msg
-
-
-==== INSTRUCTIONS: ====
-
-Instructions you must follow while generating the FastKafka code from the AsyncAPI specification:
-
-- Follow the PEP 8 Style Guide for Python while writing the code
-- Write optimised ans readable Code
-- Use Pydantic V2! In this version, Pydantic.Field attribute 'regex' is replaced with 'pattern'!
-- Output only a valid executable python code. No other extra text should be included in your response.
-- DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
-- Make sure to import create_ssl_context from aiokafka.helpers while implementing "SASL_SSL" security protocol
-- All the attributes of the Message class should be assigned with an instance of Field class with appropriate values. It cannot be a primitive type (e.g., str, int, float, bool). 
-- Don't ever put "pass" or "#TODO" comments in the implementation. Instead, always write real implementation!
-- Never ever update or modify the msg object directly in the consumes or produces function. Always create a new instance of the msg object and make only necessary updates. Example:
-    ```python
-        @greetings_app.consumes(topic="receive_name", description=receive_name_description)
-        async def on_receive_name(msg: Greetings):
-            msg = Greetings(user_name = f"Hello {msg.user_name}") # always create a new instance of the msg class and do not modify the msg parameter directly.
-            await to_send_greetings(msg)
-    ```
-    
-
-==== INPUT ASYNC SPECIFICATION: ====
-
-"""
-
-# %% ../../nbs/Prompts.ipynb 7
-TEST_GENERATION_PROMPT = '''
-
-Testing FastStream apps:
-
-The FastStream apps can be tested using the TestBroker context managers which, by default, puts the Broker into "testing mode".
-
-The Tester will redirect your subscriber and publisher decorated functions to the InMemory brokers so that you can quickly test your app without the need for a running broker and all its dependencies.
-
-Now, Generate test code for FastStream application based on provided application code in the "==== APP IMPLEMENTATION ====" section, adhering to these guidelines:
-
-    - You need to generate test code for the application code mentioned in ==== APP IMPLEMENTATION ====
-    - Your response must contain only valid Python code, saveable as a .py script; no additional text is allowed.
-    - Output only the test code. DO not repeat the code in "==== APP IMPLEMENTATION: ====" section.
-    - IMPORT ALL NECESSARY DEPENDENCIES FROM THE application in the test code, this is realy important!
-    - YOU NEED TO IMPORT ALL NECESSARY DEPENDENCIES FROM THE 'application.py' in the test code, this is realy important!
+    - You need to generate the app code and the test code for the application code mentioned in ==== APP SKELETON: ==== in a single valid python file
     - Follow the PEP 8 Style Guide for Python while writing the code
     - Write optimised and readable Code
     - Output only a valid executable python code. No other extra text should be included in your response.
     - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
-    - Always start tests with: 'async with TestKafkaBroker(broker):'
+    - Never try to explain and reason your answers. Only return a valid python code.
+
+Guidelines for writing tests: - When a function is decorated @broker.publisher in the application code, remember that this function will always publish the message irrespective of the conditions mentioned in the "==== APP SKELETON ====" section. In such cases, never use mock.assert_not_called() while testing the function. For example:
+
+    When you test a function in the application which is decorated with @broker.publisher("output_data"), you should never use on_output_data.mock.assert_not_called() in your tests. Never ever break this rule. Because the decorator @broker.publisher will always publish the message irrespective of the conditions mentioned in the decorated function.
 
 Below are few examples for your understanding:
 
 ==== RELEVANT EXAMPLES GOES HERE ====
 
-Here are common issues and their potential fixes. You can use this information as an additional reference while fixing the code.:
+You need to avoid the below common issues while generating the test code. The potential fixes for the common issues are also given for your reference. You should use this information as an additional reference while generating the test:
 
-==== Error ==== 
+==== Error ====
 
 AssertionError: Expected 'mock' to not have been called. Called 2 times.
 
-==== ERROR CODE ==== 
-    async with TestKafkaBroker(broker):
-        await broker.publish(DataBasic(data=0.2), "input_data")
+==== ERROR CODE ====
+async with TestKafkaBroker(broker):
+await broker.publish(DataBasic(data=0.2), "input_data")
 
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
         on_output_data.mock.assert_not_called() # ERROR IN THIS LINE
 
-==== FIXED CODE ==== 
+==== FIXED CODE ====
 
     async with TestKafkaBroker(broker):
         await broker.publish(DataBasic(data=0.2), "input_data")
@@ -815,12 +428,27 @@ AssertionError: Expected 'mock' to not have been called. Called 2 times.
         on_input_data.mock.assert_called_with(dict(DataBasic(data=0.2)))
         on_output_data.mock.assert_called_once_with(dict(DataBasic(data=1.2))) # ERROR FIXED IN THIS LINE
 
+==== Error ====
 
-Now, understand the ==== APP DESCRIPTION: ==== section clearly and step by step and use this information while writing the test
+pydantic_core.\_pydantic_core.ValidationError: 1 validation error for ResponseModel
 
-==== APP DESCRIPTION: ====
+==== ERROR CODE ====
+@broker.subscriber("output_data")
+async def on_output_data(msg: DataBasic) -> DataBasic: # ERROR IN THIS LINE
+pass
+
+==== FIXED CODE ====
+
+@broker.subscriber("output_data")
+async def on_output_data(msg: DataBasic): # ERROR FIXED IN THIS LINE
+pass
+
+
+==== APP DESCRIPTION ====
+
 ==== REPLACE WITH APP DESCRIPTION ====
 
-==== APP IMPLEMENTATION: ====
 
-'''
+==== APP SKELETON ====
+
+"""
