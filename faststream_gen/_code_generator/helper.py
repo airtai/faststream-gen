@@ -205,7 +205,7 @@ examples_delimiter = {
     "test_app": {
         "start": "==== test_app.py starts ====",
         "end": "==== test_app.py ends ====",
-    }
+    },
 }
 
 
@@ -222,7 +222,7 @@ def _format_examples(parent_docs_str: List[str]) -> Dict[str, str]:
     Returns:
         Dict[str, List[str]]: A dictionary with sections as keys and lists of formatted examples as values.
     """
-    ret_val = {"description_to_skeleton": "", "skeleton_to_app": "", "app_to_test": ""}
+    ret_val = {"description_to_skeleton": "", "skeleton_to_app_and_test": ""}
     for d in parent_docs_str:
         description = d.split("==== description.txt starts ====")[-1]
         skeleton = _split_text(d, examples_delimiter["skeleton"])
@@ -233,11 +233,8 @@ def _format_examples(parent_docs_str: List[str]) -> Dict[str, str]:
             "description_to_skeleton"
         ] += f"\n==== EXAMPLE APP DESCRIPTION ====\n{description}\n\n==== YOUR RESPONSE ====\n\n{skeleton}"
         ret_val[
-            "skeleton_to_app"
-        ] += f"\n==== EXAMPLE APP SKELETON ====\n{skeleton}\n==== YOUR RESPONSE ====\n\n{app}"
-        ret_val[
-            "app_to_test"
-        ] += f"\n==== EXAMPLE APP CODE ====\n{app}\n==== YOUR RESPONSE ====\n\n{test_app}"
+            "skeleton_to_app_and_test"
+        ] += f"\n==== EXAMPLE APP DESCRIPTION ====\n{description}\n\n==== EXAMPLE APP SKELETON ====\n{skeleton}\n==== YOUR RESPONSE ====\n\n### application.py ###\n{app}\n### test.py ###\n{test_app}"
 
     return ret_val
 
@@ -432,7 +429,7 @@ def fix(
                 initial_prompt, response, error_str
             )
             logger.info(
-                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the updated prompt message along with the previously generated invalid response:\n{prompt}"
+                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the prompt we are sending on this retry:\n{prompt}"
             )
             iterations += 1
             if self.max_attempts is not None and iterations >= self.max_attempts:
