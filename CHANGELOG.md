@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091201
+
+### Bugs Squashed
+
+- Generate app code and the test code together ([#86](https://github.com/airtai/faststream-gen/pull/86)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091101
 
 ### New Features
