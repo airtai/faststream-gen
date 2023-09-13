@@ -24,6 +24,7 @@ logger = get_logger(__name__)
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
 def generate_app_skeleton(
     code_gen_directory: str,
+    model: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
 ) -> List[Dict[str, int]]:
@@ -39,7 +40,7 @@ def generate_app_skeleton(
     """
 
     with yaspin(
-        text=f"Generating FastStream app skeleton code",
+        text=f"Generating FastStream app skeleton code (usually takes around 15 to 30 seconds)...",
         color="cyan",
         spinner="clock",
     ) as sp:
@@ -53,6 +54,7 @@ def generate_app_skeleton(
             params={
                 "temperature": 0.5,
             },
+            model=model,
             user_prompt=prompt,
             semantic_search_query=app_description_content,
         )
@@ -65,5 +67,5 @@ def generate_app_skeleton(
         write_file_contents(output_file, validated_app)
 
         sp.text = ""
-        sp.ok(f" ✔ FastStream app skeleton code generated and saved at: {output_file}")
+        sp.ok(f" ✔ FastStream app skeleton code generated.")
         return total_usage

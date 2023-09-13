@@ -67,9 +67,10 @@ def _validate_response(response: str) -> List[str]:
 
         return []
 
-# %% ../../nbs/App_And_Test_Generator.ipynb 10
+# %% ../../nbs/App_And_Test_Generator.ipynb 9
 def generate_app_and_test(
     description: str,
+    model: str,
     code_gen_directory: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
@@ -85,7 +86,7 @@ def generate_app_and_test(
         The generated integration test code for the application
     """
     with yaspin(
-        text="Generating application and tests...", color="cyan", spinner="clock"
+        text="Generating application and tests (usually takes around 30 to 40 seconds)...", color="cyan", spinner="clock"
     ) as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
         app_skeleton = read_file_contents(app_file_name)
@@ -101,6 +102,7 @@ def generate_app_and_test(
             params={
                 "temperature": 0.5,
             },
+            model=model,
             user_prompt=prompt,
             semantic_search_query="How to test FastStream applications? Explain in detail.",  # todo: experiment without this query
         )
@@ -119,5 +121,5 @@ def generate_app_and_test(
         write_file_contents(test_output_file, test_code)
 
         sp.text = ""
-        sp.ok(f" ✔ The app and the tests are generated and saved at: {app_output_file} and {test_output_file}")
+        sp.ok(f" ✔ The app and the tests are generated.")
         return total_usage

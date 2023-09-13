@@ -351,6 +351,8 @@ Generate skeleton code for FastStream applications based on provided app descrip
     - Provide a clear and organized starting point for developers.
 
     - Your response must contain only valid Python code, saveable as a .py script; no additional text is allowed.
+    
+    - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
 
 
 The goal is to offer developers a structured starting point that matches the example app descriptions, aiding in FastStream application development. Follow the example patterns provided for reference.
