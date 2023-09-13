@@ -47,12 +47,11 @@ faststream_gen --help
                                                                                     
      Usage: faststream_gen [OPTIONS] [DESCRIPTION]                                  
                                                                                     
-     Effortlessly generate FastStream application code and integration tests from   
-     the app description.                                                           
+     Effortlessly create a new FastStream project based on the app description.     
                                                                                     
     ╭─ Arguments ──────────────────────────────────────────────────────────────────╮
-    │   description      [DESCRIPTION]  Summarize your FastStream app in a few     │
-    │                                   sentences!                                 │
+    │   description      [DESCRIPTION]  Summarize your FastStream application in a │
+    │                                   few sentences!                             │
     │                                                                              │
     │                                   Include details about messages, topics,    │
     │                                   servers, and a brief overview of the       │
@@ -77,28 +76,50 @@ faststream_gen --help
     │                                   [default: None]                            │
     ╰──────────────────────────────────────────────────────────────────────────────╯
     ╭─ Options ────────────────────────────────────────────────────────────────────╮
-    │ --input_file          -i      TEXT  The path to the file with the app        │
-    │                                     desription. This path should be relative │
-    │                                     to the current working directory.        │
-    │                                     If the app description is passed via     │
-    │                                     both a --input_file and a command line   │
-    │                                     argument, the description from the       │
-    │                                     command line will be used to create the  │
-    │                                     application.                             │
-    │                                     [default: None]                          │
-    │ --output_path         -o      TEXT  The path to the output directory where   │
-    │                                     the generated files will be saved. This  │
-    │                                     path should be relative to the current   │
-    │                                     working directory.                       │
-    │                                     [default: ./faststream-gen]              │
-    │ --verbose             -v            Enable verbose logging by setting the    │
-    │                                     logger level to INFO.                    │
-    │ --install-completion                Install completion for the current       │
-    │                                     shell.                                   │
-    │ --show-completion                   Show completion for the current shell,   │
-    │                                     to copy it or customize the              │
-    │                                     installation.                            │
-    │ --help                              Show this message and exit.              │
+    │ --input_file          -i      TEXT                   The path to the file    │
+    │                                                      with the app            │
+    │                                                      desription. This path   │
+    │                                                      should be relative to   │
+    │                                                      the current working     │
+    │                                                      directory.              │
+    │                                                      If the app description  │
+    │                                                      is passed via both a    │
+    │                                                      --input_file and a      │
+    │                                                      command line argument,  │
+    │                                                      the description from    │
+    │                                                      the command line will   │
+    │                                                      be used to create the   │
+    │                                                      application.            │
+    │                                                      [default: None]         │
+    │ --output_path         -o      TEXT                   The path to the output  │
+    │                                                      directory where the     │
+    │                                                      generated project files │
+    │                                                      will be saved. This     │
+    │                                                      path should be relative │
+    │                                                      to the current working  │
+    │                                                      directory.              │
+    │                                                      [default: .]            │
+    │ --model               -m      [gpt-3.5-turbo-16k|gp  The OpenAI model that   │
+    │                               t-4]                   will be used to create  │
+    │                                                      the FastStream project. │
+    │                                                      For better results, we  │
+    │                                                      recommend using         │
+    │                                                      'gpt-4'.                │
+    │                                                      [default: gpt-4]        │
+    │ --verbose             -v                             Enable verbose logging  │
+    │                                                      by setting the logger   │
+    │                                                      level to INFO.          │
+    │ --dev                 -d                             Save the intermediate   │
+    │                                                      faststream-gen files    │
+    │                                                      within the output_path. │
+    │ --install-completion                                 Install completion for  │
+    │                                                      the current shell.      │
+    │ --show-completion                                    Show completion for the │
+    │                                                      current shell, to copy  │
+    │                                                      it or customize the     │
+    │                                                      installation.           │
+    │ --help                                               Show this message and   │
+    │                                                      exit.                   │
     ╰──────────────────────────────────────────────────────────────────────────────╯
 
 ## How to use

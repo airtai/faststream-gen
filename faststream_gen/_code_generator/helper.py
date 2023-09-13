@@ -384,7 +384,6 @@ class CustomAIChat:
         self.messages.append(
             {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
         )
-        print(f"****{self.model}****")
         response = openai.ChatCompletion.create(
             model=self.model,
             messages=self.messages,

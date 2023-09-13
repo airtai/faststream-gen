@@ -178,6 +178,12 @@ For each consumed message, create a new message object and increment the value o
         "-v",
         help="Enable verbose logging by setting the logger level to INFO.",
     ),
+    save_intermediate_files: bool = typer.Option(
+        False,
+        "--dev",
+        "-d",
+        help="Save the intermediate faststream-gen files within the output_path.",
+    ),
 ) -> None:
     """Effortlessly create a new FastStream project based on the app description."""
     try:
@@ -218,7 +224,7 @@ For each consumed message, create a new message object and increment the value o
             prompt_examples["skeleton_to_app_and_test"],
         )
         
-        create_project(output_path)
+        create_project(output_path, save_intermediate_files)
 
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:

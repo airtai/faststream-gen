@@ -30,7 +30,7 @@ from faststream_gen._code_generator.constants import (
 logger = get_logger(__name__)
 
 # %% ../../nbs/New_Project_Generator.ipynb 5
-def create_project(output_path: str) -> None:
+def create_project(output_path: str, save_intermediate_files: bool) -> None:
      with yaspin(
         text="Creating a new FastStream project...", color="cyan", spinner="clock"
     ) as sp:
@@ -39,16 +39,18 @@ def create_project(output_path: str) -> None:
             with TemporaryDirectory() as tmp_dir:
                 app_path = f"{tmp_dir}/app/application.py"
                 test_path = f"{tmp_dir}/tests/test_application.py"
+                intermediate_dir_path = f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}"
                 shutil.copytree(str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX), tmp_dir, dirs_exist_ok=True)
-                shutil.copy(f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}/{APPLICATION_FILE_NAME}", app_path)
-                shutil.copy(f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}/{INTEGRATION_TEST_FILE_NAME}", test_path)
+                shutil.copy(f"{intermediate_dir_path}/{APPLICATION_FILE_NAME}", app_path)
+                shutil.copy(f"{intermediate_dir_path}/{INTEGRATION_TEST_FILE_NAME}", test_path)
 
                 test_file_contents = read_file_contents(test_path)
                 test_file_contents = test_file_contents.replace("from application import", "from app.application import")
                 write_file_contents(test_path, test_file_contents)
 
-                # todo: remove intermediate files based on condition
                 shutil.copytree(tmp_dir, output_path, dirs_exist_ok=True)
+                if not save_intermediate_files:
+                    shutil.rmtree(intermediate_dir_path)
                 
         sp.text = ""
         sp.ok(f" ✔ New FastStream project created.")

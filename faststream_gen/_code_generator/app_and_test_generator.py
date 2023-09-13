@@ -86,7 +86,7 @@ def generate_app_and_test(
         The generated integration test code for the application
     """
     with yaspin(
-        text="Generating application and tests...", color="cyan", spinner="clock"
+        text="Generating application and tests (usually takes around 30 to 40 seconds)...", color="cyan", spinner="clock"
     ) as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
         app_skeleton = read_file_contents(app_file_name)
