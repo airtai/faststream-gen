@@ -21,6 +21,8 @@ from ._code_generator.helper import set_logger_level, add_tokens_usage, write_fi
 from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
                                                     GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_SKELETON, INTERMEDIATE_RESULTS_DIR_NAME
 
+from ._components.new_project_generator import create_project
+
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
 
@@ -170,7 +172,7 @@ For each consumed message, create a new message object and increment the value o
             cleaned_description, tokens_list
         )
         intermediate_results_path = pathlib.Path(output_path) / INTERMEDIATE_RESULTS_DIR_NAME
-        intermediate_results_path.mkdir(exist_ok=True)
+        intermediate_results_path.mkdir(parents=True, exist_ok=True)
         write_file_contents(
             f"{intermediate_results_path}/{DESCRIPTION_FILE_NAME}",
             validated_description,
@@ -181,17 +183,19 @@ For each consumed message, create a new message object and increment the value o
 
         prompt_examples = get_relevant_prompt_examples(validated_description)
         tokens_list = generate_app_skeleton(
-            intermediate_results_path,
+            str(intermediate_results_path),
             tokens_list,
             prompt_examples["description_to_skeleton"],
         )
 
         tokens_list = generate_app_and_test(
             validated_description,
-            intermediate_results_path,
+            str(intermediate_results_path),
             tokens_list,
             prompt_examples["skeleton_to_app_and_test"],
         )
+        
+        create_project(output_path)
 
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:

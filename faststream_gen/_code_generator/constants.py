@@ -7,7 +7,7 @@ __all__ = ['DESCRIPTION_FILE_NAME', 'APPLICATION_SKELETON_FILE_NAME', 'ASYNC_API
            'MAX_ASYNC_SPEC_RETRIES', 'TOKEN_TYPES', 'MODEL_PRICING', 'INCOMPLETE_DESCRIPTION', 'DESCRIPTION_EXAMPLE',
            'MAX_NUM_FIXES_MSG', 'FASTSTREAM_REPO_ZIP_URL', 'FASTSTREAM_DOCS_DIR_SUFFIX',
            'FASTSTREAM_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_EXAMPLE_FILES', 'FASTSTREAM_TMP_DIR_PREFIX',
-           'FASTSTREAM_DIR_TO_EXCLUDE']
+           'FASTSTREAM_DIR_TO_EXCLUDE', 'FASTSTREAM_TEMPLATE_ZIP_URL', 'FASTSTREAM_TEMPLATE_DIR_SUFFIX']
 
 # %% ../../nbs/Constants.ipynb 2
 DESCRIPTION_FILE_NAME = "app_description.txt"
@@ -15,7 +15,7 @@ APPLICATION_SKELETON_FILE_NAME = "application_skeleton.py"
 ASYNC_API_SPEC_FILE_NAME = "asyncapi.yml"
 APPLICATION_FILE_NAME = "application.py"
 INTEGRATION_TEST_FILE_NAME = "test.py"
-INTERMEDIATE_RESULTS_DIR_NAME = "intermediate_results"
+INTERMEDIATE_RESULTS_DIR_NAME = "_faststream_gen_tmp"
 
 GENERATE_APP_FROM_ASYNCAPI = "generate_app_from_asyncapi"
 GENERATE_APP_FROM_SKELETON = "generate_app_from_skeleton"
@@ -65,3 +65,7 @@ FASTSTREAM_EXAMPLES_DIR_SUFFIX = "fastkafka-FastStream/faststream_gen_examples"
 FASTSTREAM_EXAMPLE_FILES = ['description.txt', 'app_skeleton.py', 'app.py', 'test_app.py']
 FASTSTREAM_TMP_DIR_PREFIX = "appended_examples"
 FASTSTREAM_DIR_TO_EXCLUDE = "api"
+
+# %% ../../nbs/Constants.ipynb 12
+FASTSTREAM_TEMPLATE_ZIP_URL = "http://github.com/airtai/faststream-gen-template/archive/main.zip"
+FASTSTREAM_TEMPLATE_DIR_SUFFIX = "faststream-gen-template-main"
