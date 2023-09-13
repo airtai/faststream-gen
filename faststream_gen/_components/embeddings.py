@@ -101,7 +101,7 @@ def _save_embeddings_db(doc_chunks: List[Document], db_path: Path) -> None:
         doc_chunks: A list of documents where each document represents a chunk.
         db_path: Path to save the FAISS db.
     """
-    db = FAISS.from_documents(doc_chunks, OpenAIEmbeddings()) # type: ignore
+    db = FAISS.from_documents(doc_chunks, OpenAIEmbeddings())
     db.save_local(str(db_path))
 
 # %% ../../nbs/Embeddings_CLI.ipynb 9
