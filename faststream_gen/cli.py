@@ -19,7 +19,7 @@ from ._code_generator.app_skeleton_generator import generate_app_skeleton
 from ._code_generator.app_and_test_generator import generate_app_and_test
 from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents, get_relevant_prompt_examples
 from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
-                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_SKELETON
+                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_SKELETON, INTERMEDIATE_RESULTS_DIR_NAME
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -45,10 +45,10 @@ def _ensure_openai_api_key_set() -> None:
 
 # %% ../nbs/CLI.ipynb 10
 app = typer.Typer(
-    short_help="Commands for accelerating FastStream app creation using advanced AI technology",
-     help="""Commands for accelerating FastStream app creation using advanced AI technology.
+    short_help="Commands for accelerating FastStream project creation using advanced AI technology",
+     help="""Commands for accelerating FastStream project creation using advanced AI technology.
 
-These commands use a combination of OpenAI's gpt-3.5-turbo and gpt-3.5-turbo-16k models to generate FastStream code. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+These commands use OpenAI's gpt-3.5-turbo-16k models to generate FastStream project. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
 
 Once you have the key, please set it in the OPENAI_API_KEY environment variable before executing the code generation commands.
 
@@ -113,13 +113,13 @@ def _get_description(input_path: str) -> str:
 # %% ../nbs/CLI.ipynb 18
 @app.command(
     "generate",
-    help="Effortlessly generate FastStream application code and integration tests from the app description.",
+    help="Effortlessly create a new FastStream project based on the app description.",
 )
 @set_logger_level
 def generate_fastkafka_app(
     description: Optional[str] = typer.Argument(
         None,
-        help="""Summarize your FastStream app in a few sentences!
+        help="""Summarize your FastStream application in a few sentences!
 
 
 \nInclude details about messages, topics, servers, and a brief overview of the intended business logic.
@@ -144,10 +144,10 @@ For each consumed message, create a new message object and increment the value o
         """,
     ),
     output_path: str = typer.Option(
-        "./faststream-gen",
+        ".",
         "--output_path",
         "-o",
-        help="The path to the output directory where the generated files will be saved. This path should be relative to the current working directory.",
+        help="The path to the output directory where the generated project files will be saved. This path should be relative to the current working directory.",
     ),
     verbose: bool = typer.Option(
         False,
@@ -156,7 +156,7 @@ For each consumed message, create a new message object and increment the value o
         help="Enable verbose logging by setting the logger level to INFO.",
     ),
 ) -> None:
-    """Effortlessly generate an AsyncAPI specification, FastStream application code, and integration tests from the app description."""
+    """Effortlessly create a new FastStream project based on the app description."""
     try:
         tokens_list: List[Dict[str, int]] = []
         _ensure_openai_api_key_set()
@@ -169,8 +169,11 @@ For each consumed message, create a new message object and increment the value o
         validated_description, tokens_list = validate_app_description(
             cleaned_description, tokens_list
         )
+        intermediate_results_path = pathlib.Path(output_path) / INTERMEDIATE_RESULTS_DIR_NAME
+        intermediate_results_path.mkdir(exist_ok=True)
         write_file_contents(
-            f"{output_path}/{DESCRIPTION_FILE_NAME}", validated_description
+            f"{intermediate_results_path}/{DESCRIPTION_FILE_NAME}",
+            validated_description,
         )
 
         #         tokens_list = generate_asyncapi_spec(validated_description, output_path, tokens_list)
@@ -178,16 +181,16 @@ For each consumed message, create a new message object and increment the value o
 
         prompt_examples = get_relevant_prompt_examples(validated_description)
         tokens_list = generate_app_skeleton(
-            output_path,
+            intermediate_results_path,
             tokens_list,
             prompt_examples["description_to_skeleton"],
         )
 
         tokens_list = generate_app_and_test(
             validated_description,
-            output_path,
+            intermediate_results_path,
             tokens_list,
-             prompt_examples["skeleton_to_app_and_test"],
+            prompt_examples["skeleton_to_app_and_test"],
         )
 
         fg = typer.colors.CYAN

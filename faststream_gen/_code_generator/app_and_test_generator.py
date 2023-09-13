@@ -119,5 +119,5 @@ def generate_app_and_test(
         write_file_contents(test_output_file, test_code)
 
         sp.text = ""
-        sp.ok(f" ✔ The app and the tests are generated and saved at: {app_output_file} and {test_output_file}")
+        sp.ok(f" ✔ The app and the tests are generated.")
         return total_usage

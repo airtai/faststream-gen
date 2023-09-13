@@ -65,5 +65,5 @@ def generate_app_skeleton(
         write_file_contents(output_file, validated_app)
 
         sp.text = ""
-        sp.ok(f" ✔ FastStream app skeleton code generated and saved at: {output_file}")
+        sp.ok(f" ✔ FastStream app skeleton code generated.")
         return total_usage
