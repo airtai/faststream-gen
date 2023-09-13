@@ -67,9 +67,10 @@ def _validate_response(response: str) -> List[str]:
 
         return []
 
-# %% ../../nbs/App_And_Test_Generator.ipynb 10
+# %% ../../nbs/App_And_Test_Generator.ipynb 9
 def generate_app_and_test(
     description: str,
+    model: str,
     code_gen_directory: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
@@ -101,6 +102,7 @@ def generate_app_and_test(
             params={
                 "temperature": 0.5,
             },
+            model=model,
             user_prompt=prompt,
             semantic_search_query="How to test FastStream applications? Explain in detail.",  # todo: experiment without this query
         )

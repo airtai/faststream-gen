@@ -22,7 +22,7 @@ ERROR_RESPONSE = "I apologize, but I can only respond to queries related to Fast
 GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastStream! Unfortunately, I can only generate FastStream code and offer assistance in that area. For general information about FastStream, please visit https://fastkafka.airt.ai/"
 
 # %% ../../nbs/App_Description_Validator.ipynb 6
-def validate_app_description(description: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
+def validate_app_description(description: str, model: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
     """Validate the user's application description
 
     If the description is unrelated to FastStream or contains insensitive/inappropriate language, show an error
@@ -40,7 +40,7 @@ def validate_app_description(description: str, total_usage: List[Dict[str, int]]
         text="Validating the application description...", color="cyan", spinner="clock"
     ) as sp:
         
-        ai = CustomAIChat(user_prompt=APP_VALIDATION_PROMPT, semantic_search_query="What is FastStream?")
+        ai = CustomAIChat(user_prompt=APP_VALIDATION_PROMPT, model=model, semantic_search_query="What is FastStream?")
         response, usage = ai(description)
         total_usage.append(usage)
         

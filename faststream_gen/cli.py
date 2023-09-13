@@ -13,13 +13,28 @@ import typer
 import pathlib
 
 from ._components.logger import get_logger
-from ._code_generator.app_description_validator import validate_app_description
+from faststream_gen._code_generator.app_description_validator import (
+    validate_app_description,
+)
+
 # from faststream_gen._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_skeleton_generator import generate_app_skeleton
 from ._code_generator.app_and_test_generator import generate_app_and_test
-from ._code_generator.helper import set_logger_level, add_tokens_usage, write_file_contents, get_relevant_prompt_examples
-from ._code_generator.constants import DEFAULT_MODEL, MODEL_PRICING, TOKEN_TYPES, DESCRIPTION_FILE_NAME, \
-                                                    GENERATE_APP_FROM_ASYNCAPI, GENERATE_APP_SKELETON, INTERMEDIATE_RESULTS_DIR_NAME
+from faststream_gen._code_generator.helper import (
+    set_logger_level,
+    add_tokens_usage,
+    write_file_contents,
+    get_relevant_prompt_examples,
+)
+from faststream_gen._code_generator.constants import (
+    MODEL_PRICING,
+    TOKEN_TYPES,
+    DESCRIPTION_FILE_NAME,
+    GENERATE_APP_FROM_ASYNCAPI,
+    GENERATE_APP_SKELETON,
+    INTERMEDIATE_RESULTS_DIR_NAME,
+    OpenAIModel
+)
 
 from ._components.new_project_generator import create_project
 
@@ -50,11 +65,11 @@ app = typer.Typer(
     short_help="Commands for accelerating FastStream project creation using advanced AI technology",
      help="""Commands for accelerating FastStream project creation using advanced AI technology.
 
-These commands use OpenAI's gpt-3.5-turbo-16k models to generate FastStream project. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+These commands use OpenAI's model to generate FastStream project. To access this feature, kindly sign up if you haven't already and create an API key with OpenAI. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
 
 Once you have the key, please set it in the OPENAI_API_KEY environment variable before executing the code generation commands.
 
-Note: Accessing OpenAI API incurs charges. However, when you sign up for the first time, you usually get free credits that are more than enough to generate multiple FastStream apps. For further information on pricing and free credicts, check this link: https://openai.com/pricing
+Note: Accessing OpenAI API incurs charges. For further information on pricing and free credicts, check this link: https://openai.com/pricing
     """,
 )
 
@@ -72,7 +87,7 @@ def _strip_white_spaces(description: str) -> str:
     return pattern.sub(" ", description).strip()
 
 # %% ../nbs/CLI.ipynb 13
-def _calculate_price(total_tokens_usage: Dict[str, int], model: str = DEFAULT_MODEL) -> float:
+def _calculate_price(total_tokens_usage: Dict[str, int], model: str) -> float:
     """Calculates the total price based on the number of promt & completion tokens and the models price for input and output tokens (per 1k tokens).
 
     Args:
@@ -151,6 +166,12 @@ For each consumed message, create a new message object and increment the value o
         "-o",
         help="The path to the output directory where the generated project files will be saved. This path should be relative to the current working directory.",
     ),
+    model: OpenAIModel = typer.Option(
+        OpenAIModel.gpt4.value,
+        "--model",
+        "-m",
+        help=f"The OpenAI model that will be used to create the FastStream project. For better results, we recommend using '{OpenAIModel.gpt4.value}'.",
+    ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
@@ -169,7 +190,7 @@ For each consumed message, create a new message object and increment the value o
 
         cleaned_description = _strip_white_spaces(description)
         validated_description, tokens_list = validate_app_description(
-            cleaned_description, tokens_list
+            cleaned_description, model.value, tokens_list
         )
         intermediate_results_path = pathlib.Path(output_path) / INTERMEDIATE_RESULTS_DIR_NAME
         intermediate_results_path.mkdir(parents=True, exist_ok=True)
@@ -184,12 +205,14 @@ For each consumed message, create a new message object and increment the value o
         prompt_examples = get_relevant_prompt_examples(validated_description)
         tokens_list = generate_app_skeleton(
             str(intermediate_results_path),
+            model.value,
             tokens_list,
             prompt_examples["description_to_skeleton"],
         )
 
         tokens_list = generate_app_and_test(
             validated_description,
+            model.value,
             str(intermediate_results_path),
             tokens_list,
             prompt_examples["skeleton_to_app_and_test"],
@@ -208,7 +231,7 @@ For each consumed message, create a new message object and increment the value o
         raise typer.Exit(code=1)
     finally:
         total_tokens_usage = add_tokens_usage(tokens_list)
-        price = _calculate_price(total_tokens_usage)
+        price = _calculate_price(total_tokens_usage, model.value)
 
         typer.secho(f" Tokens used: {total_tokens_usage['total_tokens']}", fg=fg)
         logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")

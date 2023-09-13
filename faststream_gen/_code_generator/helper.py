@@ -32,7 +32,6 @@ from .._components.logger import get_logger, set_level
 from .prompts import SYSTEM_PROMPT
 from faststream_gen._code_generator.constants import (
     DEFAULT_PARAMS,
-    DEFAULT_MODEL,
     MAX_RETRIES,
     ASYNC_API_SPEC_FILE_NAME,
     APPLICATION_FILE_NAME,
@@ -341,7 +340,7 @@ class CustomAIChat:
 
     def __init__(
         self,
-        model: Optional[str] = DEFAULT_MODEL,
+        model: str,
         user_prompt: Optional[str] = None,
         params: Dict[str, float] = DEFAULT_PARAMS,
         semantic_search_query: Optional[str] = None,
@@ -385,7 +384,7 @@ class CustomAIChat:
         self.messages.append(
             {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
         )
-
+        print(f"****{self.model}****")
         response = openai.ChatCompletion.create(
             model=self.model,
             messages=self.messages,

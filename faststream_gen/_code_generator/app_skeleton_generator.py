@@ -24,6 +24,7 @@ logger = get_logger(__name__)
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
 def generate_app_skeleton(
     code_gen_directory: str,
+    model: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
 ) -> List[Dict[str, int]]:
@@ -53,6 +54,7 @@ def generate_app_skeleton(
             params={
                 "temperature": 0.5,
             },
+            model=model,
             user_prompt=prompt,
             semantic_search_query=app_description_content,
         )
