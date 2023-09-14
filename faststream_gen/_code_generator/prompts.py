@@ -478,6 +478,8 @@ Instructions you must follow while generating the files:
 
     - You need to generate a single txt file containing both the contents of ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== with proper delimiters
     
+    - You should only update the faststream package, if the  ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== contains any other requirements, you should retain it as it is.
+    
     - you should always respond with the below example format and do not add additional text to it.
     
     - Do not add unnecessary new lines in your response. Do not add additional new line at the end of your response.
@@ -510,14 +512,20 @@ async def on_input_data(msg: DataBasic, logger: Logger) -> DataBasic:
 
 ==== REQUIREMENT ====
 faststream[docs]==0.0.1.dev20230912
+pandas===0.0.1
+PyYAML==6.0.1
 
 ==== DEV REQUIREMENT ====
+pytest=0.1.0
 faststream[testing]==0.0.1.dev20230912
 
 ==== YOUR RESPONSE ====
 ### requirements.txt ###
 faststream[kafka, docs]==0.0.1.dev20230912
+pandas===0.0.1
+PyYAML==6.0.1
 ### dev_requirements.txt ###
+pytest=0.1.0
 faststream[kafka, testing]==0.0.1.dev20230912
 
 ==== EXAMPLE APP CODE ====
@@ -536,16 +544,24 @@ async def pub():
 asyncio.run(pub())
 
 ==== REQUIREMENT ====
+numpy==0.1.1
+fastapi==0.10.1
+langchain=0.254.0
 faststream[docs]==0.0.2
 
 ==== DEV REQUIREMENT ====
 faststream[testing]==0.0.2
+mkdocs-material>=9.0.0
 
 ==== YOUR RESPONSE ====
 ### requirements.txt ###
+numpy==0.1.1
+fastapi==0.10.1
+langchain=0.254.0
 faststream[rabbit, docs]==0.0.2
 ### dev_requirements.txt ###
 faststream[rabbit, testing]==0.0.2
+mkdocs-material>=9.0.0
 
 
 ==== APP CODE ====
