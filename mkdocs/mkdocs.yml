@@ -73,24 +73,21 @@ theme:
   - search.share
   palette:
   - scheme: slate
-    primary: black
-    accent: yellow
+    primary: custom
+    accent: light blue
     toggle:
       icon: material/toggle-switch
       name: Switch to light mode
   - scheme: default
-    primary: black   # deep orange
-    accent: red
+    primary: custom
+    accent: light blue
     toggle:
       icon: material/toggle-switch-off-outline
       name: Switch to dark mode
   icon:
     repo: fontawesome/brands/github
-#     repo: fontawesome/brands/gitlab
-    logo: material/compass-outline
-#     admonition:
-#         <type>: <icon> 
-  favicon: overrides/images/compass-outline.png
+  logo: overrides/images/airt_icon_blue.svg
+  favicon: overrides/images/airt_icon_blue.svg
 
 extra_css:
 - overrides/css/extra.css
