@@ -66,9 +66,9 @@ For each consumed message, create a new message object and increment the value o
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
 
 # %% ../../nbs/Constants.ipynb 12
-FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/fastkafka/archive/FastStream.zip"
-FASTSTREAM_DOCS_DIR_SUFFIX = "fastkafka-FastStream/.faststream_gen"
-FASTSTREAM_EXAMPLES_DIR_SUFFIX = "fastkafka-FastStream/faststream_gen_examples"
+FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/faststream/archive/main.zip"
+FASTSTREAM_DOCS_DIR_SUFFIX = "faststream-main/.faststream_gen"
+FASTSTREAM_EXAMPLES_DIR_SUFFIX = "faststream-main/faststream_gen_examples"
 FASTSTREAM_EXAMPLE_FILES = ['description.txt', 'app_skeleton.py', 'app.py', 'test_app.py']
 FASTSTREAM_TMP_DIR_PREFIX = "appended_examples"
 FASTSTREAM_DIR_TO_EXCLUDE = "api"
