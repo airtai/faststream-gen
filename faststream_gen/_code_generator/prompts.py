@@ -344,7 +344,7 @@ APP_SKELETON_GENERATION_PROMPT = """
 
 Generate skeleton code for FastStream applications based on provided app descriptions in the "==== USER APP DESCRIPTION ====" section, adhering to these guidelines:
 
-    - For methods decorated with @broker.subscriber and @broker.publisher, avoid implementing business logic. Instead, write "raise NotImplementedError()" and create Google-style docstrings to describe their intended functionality when handling received or produced messages. In each docstring, include a clear instruction to "log the consumed message using logger.info" for subscriber functions.
+    - Avoid implementing business logic of ANY function. Instead, write "raise NotImplementedError()" and create Google-style docstrings to describe their intended functionality when handling received or produced messages. In each docstring, include a clear instruction to "log the consumed message using logger.info" for subscriber functions.
 
     - Ensure the generated code aligns with the specific app description requirements.
 
@@ -400,6 +400,8 @@ While generating the application and the test code for FastStream application ba
     - Output only a valid executable python code. No other extra text should be included in your response.
     - DO NOT enclose the response within back-ticks. Meaning NEVER ADD ```python to your response.
     - Never try to explain and reason your answers. Only return a valid python code.
+    - Your response should be divided into two section, ### application.py ### which contains the application code and ### test.py ### which contains the test code.
+    - Remember, your response must have only two seperators ### application.py ### and ### test.py ###. DO NOT add any other separators (e.g. ### main.py ###).
     - NEVER initialize publisher variable inside functions. You can use broker.publish function only in the test functions. In ALL OTHER functions, use publisher!
     - ALWAYS initialize publisher variable (If you need to publish message) after defining app variable:
 
@@ -502,6 +504,7 @@ from pydantic import BaseModel, Field, NonNegativeFloat
 
 from faststream import FastStream, Logger
 from faststream.kafka import KafkaBroker
+import pandas
 
 
 class DataBasic(BaseModel):
@@ -523,19 +526,15 @@ async def on_input_data(msg: DataBasic, logger: Logger) -> DataBasic:
 ==== REQUIREMENT ====
 faststream[docs]==0.0.1.dev20230912
 pandas===0.0.1
-PyYAML==6.0.1
 
 ==== DEV REQUIREMENT ====
-pytest=0.1.0
 faststream[testing]==0.0.1.dev20230912
 
 ==== YOUR RESPONSE ====
 ### requirements.txt ###
 faststream[kafka, docs]==0.0.1.dev20230912
 pandas===0.0.1
-PyYAML==6.0.1
 ### dev_requirements.txt ###
-pytest=0.1.0
 faststream[kafka, testing]==0.0.1.dev20230912
 
 ==== EXAMPLE APP CODE ====
@@ -554,24 +553,16 @@ async def pub():
 asyncio.run(pub())
 
 ==== REQUIREMENT ====
-numpy==0.1.1
-fastapi==0.10.1
-langchain=0.254.0
 faststream[docs]==0.0.2
 
 ==== DEV REQUIREMENT ====
 faststream[testing]==0.0.2
-mkdocs-material>=9.0.0
 
 ==== YOUR RESPONSE ====
 ### requirements.txt ###
-numpy==0.1.1
-fastapi==0.10.1
-langchain=0.254.0
 faststream[rabbit, docs]==0.0.2
 ### dev_requirements.txt ###
 faststream[rabbit, testing]==0.0.2
-mkdocs-material>=9.0.0
 
 
 ==== APP CODE ====
