@@ -2,6 +2,17 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091401
+
+### New Features
+
+- Generate requirements.txt dynamically for each app ([#98](https://github.com/airtai/faststream-gen/pull/98)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+- Support for generating a new FastStream project ([#94](https://github.com/airtai/faststream-gen/pull/94)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+- Unify docs look ([#99](https://github.com/airtai/faststream-gen/pull/99)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091201
 
 ### Bugs Squashed
