@@ -2,6 +2,14 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091402
+
+### New Features
+
+- Implemented a retry and restart mechanism in the fix function ([#105](https://github.com/airtai/faststream-gen/pull/105)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+- Run integration test after creating a new project ([#103](https://github.com/airtai/faststream-gen/pull/103)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
 ## 0.0.1.dev2023091401
 
 ### New Features
