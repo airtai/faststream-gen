@@ -20,6 +20,7 @@ from faststream_gen._code_generator.app_description_validator import (
 # from faststream_gen._code_generator.asyncapi_spec_generator import generate_asyncapi_spec
 from ._code_generator.app_skeleton_generator import generate_app_skeleton
 from ._code_generator.app_and_test_generator import generate_app_and_test
+from ._components.integration_test_generator import run_integration_test
 from faststream_gen._code_generator.helper import (
     set_logger_level,
     add_tokens_usage,
@@ -167,7 +168,7 @@ For each consumed message, create a new message object and increment the value o
         help="The path to the output directory where the generated project files will be saved. This path should be relative to the current working directory.",
     ),
     model: OpenAIModel = typer.Option(
-        OpenAIModel.gpt4.value,
+        OpenAIModel.gpt3.value,
         "--model",
         "-m",
         help=f"The OpenAI model that will be used to create the FastStream project. For better results, we recommend using '{OpenAIModel.gpt4.value}'.",
@@ -225,6 +226,8 @@ For each consumed message, create a new message object and increment the value o
         )
         
         tokens_list = create_project(output_path, save_intermediate_files, model.value, tokens_list)
+        
+        run_integration_test(output_path)
 
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
