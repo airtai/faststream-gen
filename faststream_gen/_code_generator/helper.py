@@ -33,6 +33,7 @@ from .prompts import SYSTEM_PROMPT
 from faststream_gen._code_generator.constants import (
     DEFAULT_PARAMS,
     MAX_RETRIES,
+    MAX_RESTARTS,
     ASYNC_API_SPEC_FILE_NAME,
     APPLICATION_FILE_NAME,
     TOKEN_TYPES,
@@ -402,18 +403,21 @@ class ValidateAndFixResponse:
     Attributes:
         generate: A callable object for generating responses.
         validate: A callable object for validating responses.
-        max_attempts: An optional integer specifying the maximum number of attempts to generate and validate a response.
+        max_retries: An optional integer specifying the maximum number of attempts to generate and validate a response.
+        max_restarts: An optional integer specifying the maximum number of restart attempts to generate and validate a response.
     """
 
     def __init__(
         self,
         generate: Callable[..., Any],
         validate: Callable[..., Any],
-        max_attempts: Optional[int] = MAX_RETRIES,
+        max_retries: Optional[int] = MAX_RETRIES,
+        max_restarts: Optional[int] = MAX_RESTARTS,
     ):
         self.generate = generate
         self.validate = validate
-        self.max_attempts = max_attempts
+        self.max_retries = max_retries
+        self.max_restarts = max_restarts
 
     def construct_prompt_with_error_msg(
         self,
@@ -464,7 +468,10 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
 # %% ../../nbs/Helper.ipynb 39
 @patch  # type: ignore
 def fix(
-    self: ValidateAndFixResponse, prompt: str, total_usage: List[Dict[str, int]], **kwargs: str
+    self: ValidateAndFixResponse,
+    prompt: str,
+    total_usage: List[Dict[str, int]],
+    **kwargs: str,
 ) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
@@ -472,18 +479,17 @@ def fix(
         prompt: The initial prompt string.
         kwargs: Additional keyword arguments to be passed to the validation function.
 
-
     Returns:
         str: The generated response that has passed the validation.
 
     Raises:
         ValueError: If the maximum number of attempts is exceeded and the response has not successfully passed the validation.
     """
-    iterations = 0
-    initial_prompt = prompt
     total_tokens_usage: Dict[str, int] = defaultdict(int)
-    try:
-        while True:
+    initial_prompt = prompt
+    for i in range(self.max_restarts): # type: ignore
+        logger.info(f"Attempt: {i+1}")    
+        for _ in range(self.max_retries): # type: ignore
             response, usage = self.generate(prompt)
             total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
             errors = self.validate(response, **kwargs)
@@ -497,11 +503,7 @@ def fix(
             logger.info(
                 f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the prompt we are sending on this retry:\n{prompt}"
             )
-            iterations += 1
-            if self.max_attempts is not None and iterations >= self.max_attempts:
-                raise ValueError(
-                    f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_attempts}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
-                )
-    except:
-        total_usage.append(total_tokens_usage)
-        raise
+    total_usage.append(total_tokens_usage)
+    raise ValueError(
+        f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
+    )

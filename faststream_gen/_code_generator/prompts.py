@@ -402,10 +402,20 @@ While generating the application and the test code for FastStream application ba
     - Never try to explain and reason your answers. Only return a valid python code.
     - Your response should be divided into two section, ### application.py ### which contains the application code and ### test.py ### which contains the test code.
     - Remember, your response must have only two seperators ### application.py ### and ### test.py ###. DO NOT add any other separators (e.g. ### main.py ###).
+    - NEVER initialize publisher variable inside functions. You can use broker.publish function only in the test functions. In ALL OTHER functions, use publisher!
+    - ALWAYS initialize publisher variable (If you need to publish message) after defining app variable:
 
-Guidelines for writing tests: - When a function is decorated @broker.publisher in the application code, remember that this function will always publish the message irrespective of the conditions mentioned in the "==== APP SKELETON ====" section. In such cases, never use mock.assert_not_called() while testing the function. For example:
+        Example 1:
+        app = FastStream(broker)
+        publisher = broker.publisher("new_data")
 
-    When you test a function in the application which is decorated with @broker.publisher("output_data"), you should never use on_output_data.mock.assert_not_called() in your tests. Never ever break this rule. Because the decorator @broker.publisher will always publish the message irrespective of the conditions mentioned in the decorated function.
+        Example 2:
+        app = FastStream(broker)
+        new_data_publisher = broker.publisher("new_data")
+
+Guidelines for writing tests: 
+    - When a function is decorated @broker.publisher in the application code, remember that this function will always publish the message irrespective of the conditions mentioned in the "==== APP SKELETON ====" section. In such cases, never use mock.assert_not_called() while testing the function. For example:
+    - When you test a function in the application which is decorated with @broker.publisher("output_data"), you should never use on_output_data.mock.assert_not_called() in your tests. Never ever break this rule. Because the decorator @broker.publisher will always publish the message irrespective of the conditions mentioned in the decorated function.
 
 Below are few examples for your understanding:
 
