@@ -42,7 +42,7 @@ def set_cwd(cwd_path: Union[Path, str]) -> Generator:
     finally:
         os.chdir(original_cwd)
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 5
+# %% ../../nbs/Integration_Test_Generator.ipynb 4
 def _setup_venv_and_run_tests(
     env_name: str = "venv", file_to_test: Optional[str] = None
 ) -> bool:
@@ -72,7 +72,7 @@ def _setup_venv_and_run_tests(
     except Exception as e:
         return False
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 8
+# %% ../../nbs/Integration_Test_Generator.ipynb 7
 def run_integration_test(src_dir: str) -> None:
     with yaspin(
         text="Running integration tests...", color="cyan", spinner="clock"
