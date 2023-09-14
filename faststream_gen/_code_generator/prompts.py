@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['SYSTEM_PROMPT', 'APP_VALIDATION_PROMPT', 'ASYNCAPI_SPEC_GENERATION_PROMPT', 'APP_SKELETON_GENERATION_PROMPT',
-           'APP_AND_TEST_GENERATION_PROMPT']
+           'APP_AND_TEST_GENERATION_PROMPT', 'REQUIREMENTS_GENERATION_PROMPT']
 
 # %% ../../nbs/Prompts.ipynb 1
 SYSTEM_PROMPT = """
@@ -452,5 +452,118 @@ pass
 
 
 ==== APP SKELETON ====
+
+"""
+
+# %% ../../nbs/Prompts.ipynb 6
+REQUIREMENTS_GENERATION_PROMPT = """
+You will be provided with an application code in ==== APP CODE ====, ==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section. Your goal is to update both the r==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section based on the provided ==== APP CODE ====.
+
+Input:
+
+You will be given application code a FastStream application in ==== APP CODE ==== section and requirements in ==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section.
+
+Output:
+
+You need to understand the ==== APP CODE ==== and update the following:
+
+    - The ==== REQUIREMENT ==== section based on the application code
+    - The ==== DEV REQUIREMENT ==== section based on the application code
+
+Instructions you must follow while generating the files:
+
+    - You need to understand the ==== APP CODE ====, if it contains kafka related code, e.g: import statement like "from faststream.kafka import KafkaBroker", then the application is related to kafka, then your ==== REQUIREMENT ==== contents should be faststream[kafka, docs], and ==== DEV REQUIREMENT ==== contents should be faststream[kafka, testing]
+
+    - You need to understand the ==== APP CODE ====, if it contains RabbitMQ related code, e.g: import statement like "from faststream.rabbit import RabbitBroker", then the application is related to RabbitMQ, then your ==== REQUIREMENT ==== contents should be faststream[rabbit, docs], and ==== DEV REQUIREMENT ==== contents should be faststream[rabbit, testing]
+
+    - You need to generate a single txt file containing both the contents of ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== with proper delimiters
+    
+    - You should only update the faststream package, if the  ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== contains any other requirements, you should retain it as it is.
+    
+    - you should always respond with the below example format and do not add additional text to it.
+    
+    - Do not add unnecessary new lines in your response. Do not add additional new line at the end of your response.
+
+Below are few examples for your understanding:
+
+==== EXAMPLE APP CODE ====
+
+from pydantic import BaseModel, Field, NonNegativeFloat
+
+from faststream import FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+
+class DataBasic(BaseModel):
+    data: NonNegativeFloat = Field(
+        ..., examples=[0.5], description="Float data example"
+    )
+
+
+broker = KafkaBroker("localhost:9092")
+app = FastStream(broker)
+
+
+@broker.publisher("output_data")
+@broker.subscriber("input_data")
+async def on_input_data(msg: DataBasic, logger: Logger) -> DataBasic:
+    logger.info(msg)
+    return DataBasic(data=msg.data + 1.0)
+
+==== REQUIREMENT ====
+faststream[docs]==0.0.1.dev20230912
+pandas===0.0.1
+PyYAML==6.0.1
+
+==== DEV REQUIREMENT ====
+pytest=0.1.0
+faststream[testing]==0.0.1.dev20230912
+
+==== YOUR RESPONSE ====
+### requirements.txt ###
+faststream[kafka, docs]==0.0.1.dev20230912
+pandas===0.0.1
+PyYAML==6.0.1
+### dev_requirements.txt ###
+pytest=0.1.0
+faststream[kafka, testing]==0.0.1.dev20230912
+
+==== EXAMPLE APP CODE ====
+
+import asyncio
+from faststream.rabbit import RabbitBroker
+
+async def pub():
+    async with RabbitBroker() as broker:
+        await broker.publish(
+            "Hi!",
+            queue="test",
+            exchange="test"
+        )
+
+asyncio.run(pub())
+
+==== REQUIREMENT ====
+numpy==0.1.1
+fastapi==0.10.1
+langchain=0.254.0
+faststream[docs]==0.0.2
+
+==== DEV REQUIREMENT ====
+faststream[testing]==0.0.2
+mkdocs-material>=9.0.0
+
+==== YOUR RESPONSE ====
+### requirements.txt ###
+numpy==0.1.1
+fastapi==0.10.1
+langchain=0.254.0
+faststream[rabbit, docs]==0.0.2
+### dev_requirements.txt ###
+faststream[rabbit, testing]==0.0.2
+mkdocs-material>=9.0.0
+
+
+==== APP CODE ====
 
 """

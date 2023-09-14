@@ -224,7 +224,7 @@ For each consumed message, create a new message object and increment the value o
             prompt_examples["skeleton_to_app_and_test"],
         )
         
-        create_project(output_path, save_intermediate_files)
+        tokens_list = create_project(output_path, save_intermediate_files, model.value, tokens_list)
 
         fg = typer.colors.CYAN
     except (ValueError, KeyError) as e:
