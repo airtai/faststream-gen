@@ -487,9 +487,9 @@ def fix(
     """
     total_tokens_usage: Dict[str, int] = defaultdict(int)
     initial_prompt = prompt
-    for i in range(self.max_restarts):
+    for i in range(self.max_restarts): # type: ignore
         logger.info(f"Attempt: {i+1}")    
-        for _ in range(self.max_retries):
+        for _ in range(self.max_retries): # type: ignore
             response, usage = self.generate(prompt)
             total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
             errors = self.validate(response, **kwargs)
