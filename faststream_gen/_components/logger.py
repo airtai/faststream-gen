@@ -103,14 +103,5 @@ def set_level(level: int) -> None:
     Args:
         level: Logger level to set
     """
-
-    # Getting all loggers that has either faststream_gen or __main__ in the name
-    loggers = [
-        logging.getLogger(name)
-        for name in logging.root.manager.loggerDict
-        if ("faststream_gen" in name) or ("__main__" in name)
-    ]
-
-    for logger in loggers:
-        logger.setLevel(level)
-
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)
