@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091501
+
+### New Features
+
+- Update semantic search database ([#111](https://github.com/airtai/faststream-gen/pull/111)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091404
 
 ### Bugs Squashed
