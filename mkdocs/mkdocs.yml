@@ -100,4 +100,7 @@ extra_javascript:
 extra:
   version:
     provider: mike
+  analytics:
+    provider: google
+    property: G-84Y5MCKH3B
   social_image: "https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen"
