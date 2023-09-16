@@ -21,6 +21,7 @@ from faststream_gen._code_generator.helper import (
     write_file_contents,
     read_file_contents,
     validate_python_code,
+    retry_on_error,
 )
 from .prompts import APP_AND_TEST_GENERATION_PROMPT
 from faststream_gen._code_generator.constants import (
@@ -68,6 +69,24 @@ def _validate_response(response: str) -> List[str]:
         return []
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 9
+@retry_on_error() # type: ignore
+def _generate(
+    model: str, prompt: str, app_skeleton: str, total_usage: List[Dict[str, int]]
+) -> Tuple[str, List[Dict[str, int]]]:
+    test_generator = CustomAIChat(
+        params={
+            "temperature": 0.2,
+        },
+        model=model,
+        user_prompt=prompt,
+    )
+    test_validator = ValidateAndFixResponse(test_generator, _validate_response)
+    return test_validator.fix(
+        app_skeleton,
+        total_usage=total_usage,
+    )
+
+
 def generate_app_and_test(
     description: str,
     model: str,
@@ -85,8 +104,11 @@ def generate_app_and_test(
     Returns:
         The generated integration test code for the application
     """
+    logger.info("==== Skeleton to App and Test Generation ====")
     with yaspin(
-        text="Generating application and tests (usually takes around 30 to 40 seconds)...", color="cyan", spinner="clock"
+        text="Generating application and tests (usually takes around 30 to 40 seconds)...",
+        color="cyan",
+        spinner="clock",
     ) as sp:
         app_file_name = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
         app_skeleton = read_file_contents(app_file_name)
@@ -98,22 +120,13 @@ def generate_app_and_test(
             .replace("==== RELEVANT EXAMPLES GOES HERE ====", relevant_prompt_examples)
             .replace("from .app import", "from application import")
         )
-        test_generator = CustomAIChat(
-            params={
-                "temperature": 0.5,
-            },
-            model=model,
-            user_prompt=prompt,
-            semantic_search_query="How to test FastStream applications? Explain in detail.",  # todo: experiment without this query
+
+        validated_app_and_test_code, total_usage = _generate(
+            model, prompt, app_skeleton, total_usage
         )
-        test_validator = ValidateAndFixResponse(test_generator, _validate_response)
-        validated_app_and_test_code, total_usage = test_validator.fix(
-            f"{app_skeleton}",
-            total_usage=total_usage,
-        )
-        
+
         app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)
-        
+
         app_output_file = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
         write_file_contents(app_output_file, app_code)
 

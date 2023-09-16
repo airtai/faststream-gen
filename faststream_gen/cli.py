@@ -187,6 +187,7 @@ For each consumed message, create a new message object and increment the value o
     ),
 ) -> None:
     """Effortlessly create a new FastStream project based on the app description."""
+    logger.info("Project generation started.")
     try:
         tokens_list: List[Dict[str, int]] = []
         _ensure_openai_api_key_set()
@@ -247,14 +248,14 @@ For each consumed message, create a new message object and increment the value o
         logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
         typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
 
-        phases = [
-            "validation",
-            "specification generation",
-            "app generation",
-            "test generation",
-        ]
-        logger.info("Number of tokens per phase:")
-        for i, token in enumerate(tokens_list):
-            logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
+#         phases = [
+#             "validation",
+#             "specification generation",
+#             "app generation",
+#             "test generation",
+#         ]
+#         logger.info("Number of tokens per phase:")
+#         for i, token in enumerate(tokens_list):
+#             logger.info(f"{phases[i]}: {token['total_tokens']} tokens")
 
     typer.secho("✨  All files were successfully generated!", fg=fg)

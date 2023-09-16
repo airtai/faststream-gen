@@ -39,6 +39,7 @@ class OpenAIModel(str, Enum):
     gpt3 = "gpt-3.5-turbo-16k"
     gpt4 = "gpt-4"
 
+
 # %% ../../nbs/Constants.ipynb 8
 TOKEN_TYPES = ["prompt_tokens", "completion_tokens", "total_tokens"]
 
