@@ -4,4 +4,4 @@ website:
       - index.ipynb
       - section: Tutorials
         contents:
-          - Tutorial/Scrape_And_Publish.ipynb
+          - Tutorial/Cryptocurrency_Tutorial.ipynb
