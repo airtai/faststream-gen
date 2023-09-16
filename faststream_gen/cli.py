@@ -187,6 +187,7 @@ For each consumed message, create a new message object and increment the value o
     ),
 ) -> None:
     """Effortlessly create a new FastStream project based on the app description."""
+    logger.info("Project generation started.")
     try:
         tokens_list: List[Dict[str, int]] = []
         _ensure_openai_api_key_set()

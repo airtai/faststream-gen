@@ -38,7 +38,7 @@ def generate_app_skeleton(
     Returns:
         The total token used to generate the FastStream code
     """
-
+    logger.info("==== Description to Skeleton Generation ====")
     with yaspin(
         text=f"Generating FastStream app skeleton code (usually takes around 15 to 30 seconds)...",
         color="cyan",

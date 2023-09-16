@@ -85,6 +85,7 @@ def generate_app_and_test(
     Returns:
         The generated integration test code for the application
     """
+    logger.info("==== Skeleton to App and Test Generation ====")
     with yaspin(
         text="Generating application and tests (usually takes around 30 to 40 seconds)...", color="cyan", spinner="clock"
     ) as sp:

@@ -262,6 +262,10 @@ def _get_relevant_document(query: str) -> str:
 
 # %% ../../nbs/Helper.ipynb 26
 examples_delimiter = {
+    "description": {
+        "start": "==== description.txt starts ====",
+        "end": "==== description.txt ends ====",
+    },
     "skeleton": {
         "start": "==== app_skeleton.py starts ====",
         "end": "==== app_skeleton.py ends ====",
@@ -292,7 +296,7 @@ def _format_examples(parent_docs_str: List[str]) -> Dict[str, str]:
     """
     ret_val = {"description_to_skeleton": "", "skeleton_to_app_and_test": ""}
     for d in parent_docs_str:
-        description = d.split("==== description.txt starts ====")[-1]
+        description = _split_text(d, examples_delimiter["description"])
         skeleton = _split_text(d, examples_delimiter["skeleton"])
         app = _split_text(d, examples_delimiter["app"])
         test_app = _split_text(d, examples_delimiter["test_app"])
@@ -318,15 +322,10 @@ def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
     """
     db_path = get_root_data_path() / "examples"
     db = FAISS.load_local(db_path, OpenAIEmbeddings()) # type: ignore
-    # Retreive relavent chuncks
     results = db.similarity_search(query, k=3, fetch_k=5)
-    # Retreive parent documents for every matched chuncks
-    parent_docs = [db.similarity_search("==== app_skeleton.py starts ====",filter=dict(source=r.metadata["source"]), k=2) for r in results]
-    parent_docs_str = ["\n\n\n".join([d.page_content for d in docs]) for docs in parent_docs]
-    prompt_examples = _format_examples(parent_docs_str)
+    results_page_content = [r.page_content for r in results]
+    prompt_examples = _format_examples(results_page_content)
     return prompt_examples
-
-    
 
 # %% ../../nbs/Helper.ipynb 30
 class CustomAIChat:
@@ -385,6 +384,11 @@ class CustomAIChat:
         self.messages.append(
             {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
         )
+        prompt_str = "\n\n".join([f"===Role:{m['role']}===\n\nMessage:\n{m['content']}" for m in self.messages])
+        logger.info("*"*120)
+        logger.info(f"\n\nPrompt to the model: \n\n{prompt_str}")
+        logger.info("*"*120)
+        
         response = openai.ChatCompletion.create(
             model=self.model,
             messages=self.messages,
@@ -500,9 +504,9 @@ def fix(
             prompt = self.construct_prompt_with_error_msg(
                 initial_prompt, response, error_str
             )
-            logger.info(
-                f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the prompt we are sending on this retry:\n{prompt}"
-            )
+#             logger.info(
+#                 f"Validation failed due to the following errors, trying again...\n{error_str}\n\nBelow is the prompt we are sending on this retry:\n{prompt}"
+#             )
     total_usage.append(total_tokens_usage)
     raise ValueError(
         f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"

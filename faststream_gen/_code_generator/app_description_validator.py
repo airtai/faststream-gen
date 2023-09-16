@@ -36,6 +36,7 @@ def validate_app_description(description: str, model: str, total_usage: List[Dic
     """
     
     print("✨  Generating a new FastStream application!")
+    logger.info("==== App description validation ====")
     with yaspin(
         text="Validating the application description...", color="cyan", spinner="clock"
     ) as sp:
