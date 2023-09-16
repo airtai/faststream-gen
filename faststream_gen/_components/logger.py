@@ -64,9 +64,15 @@ def get_default_logger_configuration(level: int = logging.INFO) -> Dict[str, Any
                 "class": "logging.StreamHandler",
                 "stream": "ext://sys.stdout",  # Default is stderr
             },
+            "file": {
+                "level": level,
+                "formatter": "standard",
+                "class": "logging.FileHandler",
+                "filename": "faststream-log.txt",  # Specify the file name and path
+            },
         },
         "loggers": {
-            "": {"handlers": ["default"], "level": level},  # root logger
+            "": {"handlers": ["default", "file"], "level": level},  # root logger
         },
     }
     return LOGGING_CONFIG
@@ -103,14 +109,5 @@ def set_level(level: int) -> None:
     Args:
         level: Logger level to set
     """
-
-    # Getting all loggers that has either faststream_gen or __main__ in the name
-    loggers = [
-        logging.getLogger(name)
-        for name in logging.root.manager.loggerDict
-        if ("faststream_gen" in name) or ("__main__" in name)
-    ]
-
-    for logger in loggers:
-        logger.setLevel(level)
-
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)

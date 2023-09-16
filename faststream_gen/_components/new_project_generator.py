@@ -52,14 +52,12 @@ def _validate_response(response: str) -> List[str]:
 def _generate_requirements(
     d: str, model: str, total_usage: List[Dict[str, int]]
 ) -> Tuple[str, str, List[Dict[str, int]]]:
-    
     app_code = read_file_contents(f"{d}/app/application.py")
     requirements = read_file_contents(f"{d}/requirements.txt")
     dev_requirements = read_file_contents(f"{d}/dev_requirements.txt")
 
     prompt = (
-        REQUIREMENTS_GENERATION_PROMPT
-        + app_code
+        app_code
         + "\n==== REQUIREMENT ====\n"
         + requirements
         + "\n==== DEV REQUIREMENT ====\n"
@@ -67,7 +65,7 @@ def _generate_requirements(
     )
     requirements_generator = CustomAIChat(
         model=model,
-        user_prompt=prompt,
+        user_prompt=REQUIREMENTS_GENERATION_PROMPT + prompt,
     )
     requirements_validator = ValidateAndFixResponse(
         requirements_generator, _validate_response
@@ -77,9 +75,7 @@ def _generate_requirements(
         total_usage=total_usage,
     )
 
-    requirements, dev_requirements = _split_requirements(
-        requirements
-    )
+    requirements, dev_requirements = _split_requirements(requirements)
 
     return requirements, dev_requirements, total_usage
 

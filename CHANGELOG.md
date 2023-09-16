@@ -2,6 +2,27 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091501
+
+### New Features
+
+- Update semantic search database ([#111](https://github.com/airtai/faststream-gen/pull/111)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
+## 0.0.1.dev2023091404
+
+### Bugs Squashed
+
+- Fix the root logger's level setting ([#107](https://github.com/airtai/faststream-gen/pull/107)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
+## 0.0.1.dev2023091403
+
+### Bugs Squashed
+
+- Update semantic search database ([#106](https://github.com/airtai/faststream-gen/pull/106)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091402
 
 ### New Features

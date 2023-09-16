@@ -12,16 +12,44 @@ from pathlib import Path
 from yaspin import yaspin
 
 from .._components.logger import get_logger
-from .helper import CustomAIChat, ValidateAndFixResponse, write_file_contents, read_file_contents, validate_python_code
+from faststream_gen._code_generator.helper import (
+    CustomAIChat,
+    ValidateAndFixResponse,
+    write_file_contents,
+    read_file_contents,
+    validate_python_code,
+    retry_on_error,
+)
 from .prompts import APP_SKELETON_GENERATION_PROMPT
-from .constants import DESCRIPTION_FILE_NAME, \
-                                                    APPLICATION_SKELETON_FILE_NAME, \
-                                                    GENERATE_APP_SKELETON
+from faststream_gen._code_generator.constants import (
+    DESCRIPTION_FILE_NAME,
+    APPLICATION_SKELETON_FILE_NAME,
+    GENERATE_APP_SKELETON,
+)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 3
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
+@retry_on_error() # type: ignore
+def _generate(
+    model: str,
+    prompt: str,
+    app_description_content: str,
+    total_usage: List[Dict[str, int]],
+) -> Tuple[str, List[Dict[str, int]]]:
+    app_generator = CustomAIChat(
+        params={
+            "temperature": 0.2,
+        },
+        model=model,
+        user_prompt=prompt,
+        #             semantic_search_query=app_description_content,
+    )
+    app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
+    return app_validator.fix(app_description_content, total_usage)
+
+
 def generate_app_skeleton(
     code_gen_directory: str,
     model: str,
@@ -38,7 +66,7 @@ def generate_app_skeleton(
     Returns:
         The total token used to generate the FastStream code
     """
-
+    logger.info("==== Description to Skeleton Generation ====")
     with yaspin(
         text=f"Generating FastStream app skeleton code (usually takes around 15 to 30 seconds)...",
         color="cyan",
@@ -50,17 +78,9 @@ def generate_app_skeleton(
         prompt = APP_SKELETON_GENERATION_PROMPT.replace(
             "==== RELEVANT EXAMPLES GOES HERE ====", f"\n{relevant_prompt_examples}"
         )
-        app_generator = CustomAIChat(
-            params={
-                "temperature": 0.5,
-            },
-            model=model,
-            user_prompt=prompt,
-            semantic_search_query=app_description_content,
-        )
-        app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-        validated_app, total_usage = app_validator.fix(
-            app_description_content, total_usage
+
+        validated_app, total_usage = _generate(
+            model, prompt, app_description_content, total_usage
         )
 
         output_file = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"

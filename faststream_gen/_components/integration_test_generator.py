@@ -52,8 +52,9 @@ def _setup_venv_and_run_tests(
 
         # Install requirements and run pytest
         commands = [
-            f"venv/bin/pip install -q -r dev_requirements.txt",
-            f"venv/bin/python -m pytest"
+            "venv/bin/pip install --upgrade pip",
+            "venv/bin/pip install -q -r dev_requirements.txt",
+            "venv/bin/python -m pytest"
             if not file_to_test
             else f"venv/bin/python -m pytest {file_to_test}",
         ]

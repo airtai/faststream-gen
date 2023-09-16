@@ -36,6 +36,7 @@ def validate_app_description(description: str, model: str, total_usage: List[Dic
     """
     
     print("✨  Generating a new FastStream application!")
+    logger.info("==== App description validation ====")
     with yaspin(
         text="Validating the application description...", color="cyan", spinner="clock"
     ) as sp:
@@ -52,5 +53,5 @@ def validate_app_description(description: str, model: str, total_usage: List[Dic
         elif response == "2":
             raise ValueError(f"✘ Error: Application description is incomplete.\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n")
         else:
-            sp.ok(" ✔ Application description validated")
+            sp.ok(" ✔ Application description validated.")
             return description, total_usage
