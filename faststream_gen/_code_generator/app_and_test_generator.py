@@ -69,7 +69,7 @@ def _validate_response(response: str) -> List[str]:
         return []
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 9
-@retry_on_error()
+@retry_on_error() # type: ignore
 def _generate(
     model: str, prompt: str, app_skeleton: str, total_usage: List[Dict[str, int]]
 ) -> Tuple[str, List[Dict[str, int]]]:

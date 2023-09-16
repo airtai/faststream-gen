@@ -47,16 +47,16 @@ from .._components.package_data import get_root_data_path
 logger = get_logger(__name__, level=logging.WARNING)
 
 # %% ../../nbs/Helper.ipynb 5
-def retry_on_error(max_retries: int = MAX_RESTARTS, delay=1):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
+def retry_on_error(max_retries: int = MAX_RESTARTS, delay=1): # type: ignore
+    def decorator(func): # type: ignore
+        def wrapper(*args, **kwargs): # type: ignore
             for i in range(max_retries):
-                error = ""
+                error = "" 
                 try:
                     return func(*args, **kwargs)
                 except ValueError as e:
                     # Log the error here
-                    error = e
+                    error = e # type: ignore
                     logger.info(f"Attempt {i} failed. Restarting step.")
                     time.sleep(delay)
             raise ValueError(error)

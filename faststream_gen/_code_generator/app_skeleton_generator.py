@@ -31,7 +31,7 @@ from faststream_gen._code_generator.constants import (
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
-@retry_on_error()
+@retry_on_error() # type: ignore
 def _generate(
     model: str,
     prompt: str,
