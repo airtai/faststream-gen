@@ -2,6 +2,15 @@
 
 <!-- do not remove -->
 
+## 0.0.1.dev2023091601
+
+### Bugs Squashed
+
+- Prompt optimization ([#119](https://github.com/airtai/faststream-gen/pull/119)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+- Prompt examples fixes ([#117](https://github.com/airtai/faststream-gen/pull/117)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091501
 
 ### New Features
