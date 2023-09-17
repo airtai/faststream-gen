@@ -106,7 +106,7 @@ def generate_app_and_test(
     """
     logger.info("==== Skeleton to App and Test Generation ====")
     with yaspin(
-        text="Generating application and tests (usually takes around 30 to 40 seconds)...",
+        text="Generating application and tests (usually takes around 30 to 90 seconds)...",
         color="cyan",
         spinner="clock",
     ) as sp:
