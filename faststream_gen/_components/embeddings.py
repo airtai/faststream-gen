@@ -229,10 +229,10 @@ def _generate_examples_db(
         docs = _create_documents(
             input_path / FASTSTREAM_TMP_DIR_PREFIX, extension="*.txt"
         )
-        doc_chunks = _split_document_into_chunks(
-            docs, separator="==== description.txt ends ===="
-        )
-        _save_embeddings_db(doc_chunks, output_path)
+#         doc_chunks = _split_document_into_chunks(
+#             docs, separator="==== description.txt ends ===="
+#         )
+        _save_embeddings_db(docs, output_path)
 
         sp.text = ""
         sp.ok(f" ✔ Examples embeddings created and saved to: {output_path}")
