@@ -68,7 +68,7 @@ def generate_app_skeleton(
     """
     logger.info("==== Description to Skeleton Generation ====")
     with yaspin(
-        text=f"Generating FastStream app skeleton code (usually takes around 15 to 30 seconds)...",
+        text=f"Generating FastStream app skeleton code (usually takes around 15 to 45 seconds)...",
         color="cyan",
         spinner="clock",
     ) as sp:
