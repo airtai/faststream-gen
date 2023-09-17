@@ -2,6 +2,17 @@
 
 <!-- do not remove -->
 
+## 0.1.0rc0
+
+### New Features
+
+- Add tutorial page in docs ([#114](https://github.com/airtai/faststream-gen/pull/114)), thanks to [@harishmohanraj](https://github.com/rjambrecic)
+
+### Bugs Squashed
+
+- Update README.md ([#120](https://github.com/airtai/faststream-gen/pull/120)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
 ## 0.0.1.dev2023091601
 
 ### Bugs Squashed
