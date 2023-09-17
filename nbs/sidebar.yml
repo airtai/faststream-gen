@@ -2,3 +2,6 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - section: Tutorials
+        contents:
+          - Tutorial/Cryptocurrency_Tutorial.ipynb
