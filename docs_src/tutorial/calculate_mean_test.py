@@ -1,23 +1,46 @@
 import pytest
-import numpy as np
-from faststream import Context
+
+from faststream import Context, TestApp
 from faststream.kafka import TestKafkaBroker
 
-from app.application import PriceData, broker, on_new_data, prices
+from app.application import CryptoPrice, app, broker
+
 
 @broker.subscriber("price_mean")
-async def on_price_mean(msg: float, key: bytes = Context("message.raw_message.key")):
+async def on_price_mean(
+    msg: float, key: bytes = Context("message.raw_message.key")
+):
     pass
+
 
 @pytest.mark.asyncio
 async def test_price_mean_calculation():
     async with TestKafkaBroker(broker):
-        for i in range(1, 12):
-            await broker.publish(PriceData(price=i, currency="USD"), "new_data", key=b"BTC")
+        async with TestApp(app):
+            await broker.publish(
+                CryptoPrice(price=100, crypto_currency="BTC"),
+                "new_data",
+                key=b"partition_key",
+            )
+            await broker.publish(
+                CryptoPrice(price=200, crypto_currency="BTC"),
+                "new_data",
+                key=b"partition_key",
+            )
+            await broker.publish(
+                CryptoPrice(price=300, crypto_currency="BTC"),
+                "new_data",
+                key=b"partition_key",
+            )
+            await broker.publish(
+                CryptoPrice(price=400, crypto_currency="BTC"),
+                "new_data",
+                key=b"partition_key",
+            )
+            await broker.publish(
+                CryptoPrice(price=500, crypto_currency="BTC"),
+                "new_data",
+                key=b"partition_key",
+            )
 
-        on_new_data.mock.assert_called_with(dict(PriceData(price=11, currency="USD")))
-        on_price_mean.mock.assert_called_with(6.5)
-        assert len(prices) == 11
-        assert prices[-1] == 11
-        assert prices[0] == 1
-        assert pytest.approx(np.mean(prices[-10:]), 0.001) == 6.5
+            on_price_mean.mock.assert_called_with(400.0)
