@@ -14,10 +14,10 @@ publisher = broker.publisher("new_data")
 
 class CryptoPrice(BaseModel):
     price: NonNegativeFloat = Field(
-        ..., examples=[50000.0], description="Current price of cryptocurrency in USD"
+        ..., examples=[50000.0], description="Current price of the cryptocurrency in USD"
     )
     crypto_currency: str = Field(
-        ..., examples=["BTC"], description="Cryptocurrency symbol e.g BTC, ETH..."
+        ..., examples=["BTC"], description="The cryptocurrency symbol"
     )
 
 
@@ -27,10 +27,10 @@ async def app_setup(context: ContextRepo):
 
 
 @app.on_shutdown
-async def app_shutdown(context: ContextRepo):
+async def shutdown(context: ContextRepo):
     context.set_global("app_is_running", False)
 
-    # Get the running task and await for it to finish
+    # Get all the running tasks and wait for them to finish
     publish_tasks = context.get("publish_tasks")
     await asyncio.wait(publish_tasks)
 
@@ -43,14 +43,7 @@ async def fetch_and_publish_crypto_price(
 ) -> None:
     # Always use context: ContextRepo for storing app_is_running variable
     while context.get("app_is_running"):
-        if crypto_currency == "BTC":
-            url = "https://api.coinbase.com/v2/prices/BTC-USD/spot"
-        elif crypto_currency == "ETH":
-            url = "https://api.coinbase.com/v2/prices/ETH-USD/spot"
-        else:
-            logger.warning(f"Invalid crypto currency: {crypto_currency}")
-            continue
-
+        url = f"https://api.coinbase.com/v2/prices/{crypto_currency}-USD/spot"
         response = requests.get(url)
 
         if response.status_code == 200:
@@ -71,13 +64,13 @@ async def fetch_and_publish_crypto_price(
 async def publish_crypto_price(logger: Logger, context: ContextRepo):
     logger.info("Starting publishing:")
 
-    crypto_currencies = ["BTC", "ETH"]
-    # start fetching and publishing crypto prices
+    cryptocurrencies = ["BTC", "ETH"]
+    # start fetching and publishing for each cryptocurrency
     publish_tasks = [
         asyncio.create_task(
             fetch_and_publish_crypto_price(crypto_currency, logger, context)
         )
-        for crypto_currency in crypto_currencies
+        for crypto_currency in cryptocurrencies
     ]
     # you need to save asyncio tasks so you can wait for them to finish at app shutdown (the function with @app.on_shutdown function)
     context.set_global("publish_tasks", publish_tasks)

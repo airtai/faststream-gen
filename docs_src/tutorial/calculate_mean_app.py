@@ -14,7 +14,7 @@ class CryptoPrice(BaseModel):
         ..., examples=[50000], description="Current price of the cryptocurrency"
     )
     crypto_currency: str = Field(
-        ..., examples=["BTC"], description="Cryptocurrency symbol (e.g. BTC, ETH)"
+        ..., examples=["BTC"], description="Cryptocurrency symbol"
     )
 
 
