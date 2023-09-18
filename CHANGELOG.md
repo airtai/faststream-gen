@@ -2,11 +2,12 @@
 
 <!-- do not remove -->
 
-## 0.1.0rc1
+## 0.1.0
 
 ### New Features
 
-- Update semantic search database ([#121](https://github.com/airtai/faststream-gen/pull/121)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+- Initial release ([#121](https://github.com/airtai/faststream-gen/pull/121)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
 
 ## 0.1.0rc0
 
