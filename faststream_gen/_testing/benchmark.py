@@ -98,8 +98,10 @@ def benchmark(
                             f" ✘ Error: App generated failed for: {app_description.name}"
                         )
                     finally:
+                        log_file_dir = fixtures_path_obj / "log-files"
+                        log_file_dir.mkdir(parents=True, exist_ok=True)
                         shutil.copy(
                             Path(d) / "faststream-log.txt",
-                            fixtures_path_obj / f"{Path(app_description).stem}-log.txt",
+                            log_file_dir / f"{Path(app_description).stem}-log.txt",
                         )
     typer.secho(f"Success rate: {(success_cnt/no_of_description_files) * 100} %", fg=typer.colors.CYAN)
