@@ -39,7 +39,7 @@ def _split_app_and_test_code(response: str) -> Tuple[str, str]:
     return app_code, test_code
 
 
-def _validate_response(response: str) -> List[str]:
+def _validate_response(response: str, **kwargs) -> List[str]:
     try:
         app_code, test_code = _split_app_and_test_code(response)
     except (IndexError, ValueError) as e:
@@ -69,9 +69,14 @@ def _validate_response(response: str) -> List[str]:
         return []
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 9
-@retry_on_error() # type: ignore
+@retry_on_error()  # type: ignore
 def _generate(
-    model: str, prompt: str, app_skeleton: str, total_usage: List[Dict[str, int]]
+    model: str,
+    prompt: str,
+    app_skeleton: str,
+    total_usage: List[Dict[str, int]],
+    code_gen_directory: str,
+    **kwargs,
 ) -> Tuple[str, List[Dict[str, int]]]:
     test_generator = CustomAIChat(
         params={
@@ -84,6 +89,8 @@ def _generate(
     return test_validator.fix(
         app_skeleton,
         total_usage=total_usage,
+        intermediate_results_path=code_gen_directory,
+        **kwargs
     )
 
 
@@ -122,7 +129,7 @@ def generate_app_and_test(
         )
 
         validated_app_and_test_code, total_usage = _generate(
-            model, prompt, app_skeleton, total_usage
+            model, prompt, app_skeleton, total_usage, code_gen_directory
         )
 
         app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)

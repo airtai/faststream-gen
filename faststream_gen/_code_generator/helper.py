@@ -53,6 +53,7 @@ def retry_on_error(max_retries: int = MAX_RESTARTS, delay=1): # type: ignore
             for i in range(max_retries):
                 error = "" 
                 try:
+                    kwargs["attempt"] = i
                     return func(*args, **kwargs)
                 except ValueError as e:
                     # Log the error here
@@ -163,7 +164,7 @@ def read_file_contents(output_file: str) -> str:
         )
 
 # %% ../../nbs/Helper.ipynb 17
-def validate_python_code(code: str) -> List[str]:
+def validate_python_code(code: str, **kwargs) -> List[str]:
     """Validate and report errors in the provided Python code.
 
     Args:
@@ -489,6 +490,7 @@ def fix(
     self: ValidateAndFixResponse,
     prompt: str,
     total_usage: List[Dict[str, int]],
+    intermediate_results_path: Optional[str] = None,
     **kwargs: str,
 ) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
@@ -505,7 +507,7 @@ def fix(
     """
     total_tokens_usage: Dict[str, int] = defaultdict(int)
     initial_prompt = prompt
-    for _ in range(self.max_retries): # type: ignore
+    for i in range(self.max_retries):  # type: ignore
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
         errors = self.validate(response, **kwargs)
@@ -516,9 +518,29 @@ def fix(
         prompt = self.construct_prompt_with_error_msg(
             initial_prompt, response, error_str
         )
-        logger.info(
-                f"Validation failed, trying again...Errors:\n{error_str}"
-            )
+        logger.info(f"Validation failed, trying again...Errors:\n{error_str}")
+        
+        if intermediate_results_path is not None:
+            if "attempt" in kwargs:
+                attempt_dir = Path(intermediate_results_path) / f'attempt_{kwargs["attempt"]}'
+                attempt_dir.mkdir(parents=True, exist_ok=True)
+
+                try_dir = attempt_dir / f"try_{i+1}"
+                try_dir.mkdir(parents=True, exist_ok=True)
+
+                with open((try_dir / "input.txt"), "w", encoding="utf-8") as f:
+                    f.write(initial_prompt)
+                
+                with open((try_dir / "output.txt"), "w", encoding="utf-8") as f:
+                    f.write(response)
+                    
+                with open((try_dir / "errors.txt"), "w", encoding="utf-8") as f:
+                    f.write(error_str)
+
+                formatted_msg = "/n".join([f"===={m[0]}====\n\n{m[1]}" for m in self.generate.messages])
+                with open((try_dir / "prompt.txt"), "w", encoding="utf-8") as f:
+                    f.write(formatted_msg + "\n" + prompt)
+
     total_usage.append(total_tokens_usage)
     raise ValueError(
         f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"

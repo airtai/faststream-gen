@@ -37,6 +37,8 @@ def _generate(
     prompt: str,
     app_description_content: str,
     total_usage: List[Dict[str, int]],
+    code_gen_directory: str,
+    **kwargs
 ) -> Tuple[str, List[Dict[str, int]]]:
     app_generator = CustomAIChat(
         params={
@@ -47,7 +49,7 @@ def _generate(
         #             semantic_search_query=app_description_content,
     )
     app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-    return app_validator.fix(app_description_content, total_usage)
+    return app_validator.fix(app_description_content, total_usage, code_gen_directory, **kwargs)
 
 
 def generate_app_skeleton(
@@ -80,7 +82,7 @@ def generate_app_skeleton(
         )
 
         validated_app, total_usage = _generate(
-            model, prompt, app_description_content, total_usage
+            model, prompt, app_description_content, total_usage, code_gen_directory
         )
 
         output_file = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
