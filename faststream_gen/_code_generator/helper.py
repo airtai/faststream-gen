@@ -495,29 +495,28 @@ def _save_results(
     retry_cnt: int,
     **kwargs: Dict[str, int],
 ) -> None:
-    if intermediate_results_path is not None:
-        if "attempt" in kwargs:
-            step_dir = Path(intermediate_results_path) / step_name # type: ignore
-            step_dir.mkdir(parents=True, exist_ok=True)
+    if intermediate_results_path is not None and "attempt" in kwargs:
+        step_dir = Path(intermediate_results_path) / step_name  # type: ignore
+        step_dir.mkdir(parents=True, exist_ok=True)
 
-            attempt_dir = step_dir / f'attempt_{kwargs["attempt"] + 1}' # type: ignore
-            attempt_dir.mkdir(parents=True, exist_ok=True)
+        attempt_dir = step_dir / f'attempt_{kwargs["attempt"] + 1}'  # type: ignore
+        attempt_dir.mkdir(parents=True, exist_ok=True)
 
-            try_dir = attempt_dir / f"try_{retry_cnt+1}"
-            try_dir.mkdir(parents=True, exist_ok=True)
+        try_dir = attempt_dir / f"try_{retry_cnt+1}"
+        try_dir.mkdir(parents=True, exist_ok=True)
 
-            formatted_msg = "\n".join(
-                [f"===={m['role']}====\n\n{m['content']}\n\n" for m in messages]
-            )
+        formatted_msg = "\n".join(
+            [f"===={m['role']}====\n\n{m['content']}\n\n" for m in messages]
+        )
 
-            with open((try_dir / "input.txt"), "w", encoding="utf-8") as f:
-                f.write(formatted_msg)
-
-            with open((try_dir / "output.txt"), "w", encoding="utf-8") as f:
-                f.write(response)
-
-            with open((try_dir / "errors.txt"), "w", encoding="utf-8") as f:
-                f.write(error_str)
+        with open((try_dir / "input.txt"), "w", encoding="utf-8") as f_input, open(
+            (try_dir / "output.txt"), "w", encoding="utf-8"
+        ) as f_output, open(
+            (try_dir / "errors.txt"), "w", encoding="utf-8"
+        ) as f_errors:
+            f_input.write(formatted_msg)
+            f_output.write(response)
+            f_errors.write(error_str)
 
 # %% ../../nbs/Helper.ipynb 46
 @patch  # type: ignore
