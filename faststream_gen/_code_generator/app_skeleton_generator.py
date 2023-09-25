@@ -25,20 +25,22 @@ from faststream_gen._code_generator.constants import (
     DESCRIPTION_FILE_NAME,
     APPLICATION_SKELETON_FILE_NAME,
     GENERATE_APP_SKELETON,
+    RESULTS_DIR_NAMES,
+    INTERMEDIATE_OUTPUT_DIR_NAME,
 )
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 3
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
-@retry_on_error() # type: ignore
+@retry_on_error()  # type: ignore
 def _generate(
     model: str,
     prompt: str,
     app_description_content: str,
     total_usage: List[Dict[str, int]],
     code_gen_directory: str,
-    **kwargs
+    **kwargs,
 ) -> Tuple[str, List[Dict[str, int]]]:
     app_generator = CustomAIChat(
         params={
@@ -49,7 +51,13 @@ def _generate(
         #             semantic_search_query=app_description_content,
     )
     app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-    return app_validator.fix(app_description_content, total_usage, code_gen_directory, **kwargs)
+    return app_validator.fix(
+        app_description_content,
+        total_usage,
+        RESULTS_DIR_NAMES["skeleton"],
+        code_gen_directory,
+        **kwargs,
+    )
 
 
 def generate_app_skeleton(
@@ -74,7 +82,7 @@ def generate_app_skeleton(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_description_file_name = f"{code_gen_directory}/{DESCRIPTION_FILE_NAME}"
+        app_description_file_name = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{DESCRIPTION_FILE_NAME}"
         app_description_content = read_file_contents(app_description_file_name)
 
         prompt = APP_SKELETON_GENERATION_PROMPT.replace(
@@ -85,7 +93,7 @@ def generate_app_skeleton(
             model, prompt, app_description_content, total_usage, code_gen_directory
         )
 
-        output_file = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
+        output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
         write_file_contents(output_file, validated_app)
 
         sp.text = ""

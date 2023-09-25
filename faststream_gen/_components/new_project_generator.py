@@ -26,7 +26,8 @@ from faststream_gen._code_generator.constants import (
     FASTSTREAM_TEMPLATE_DIR_SUFFIX,
     INTERMEDIATE_RESULTS_DIR_NAME,
     APPLICATION_FILE_NAME,
-    INTEGRATION_TEST_FILE_NAME
+    INTEGRATION_TEST_FILE_NAME,
+    INTERMEDIATE_OUTPUT_DIR_NAME
 )
 
 from .._code_generator.prompts import REQUIREMENTS_GENERATION_PROMPT
@@ -97,16 +98,17 @@ def create_project(
                 test_path = f"{tmp_dir}/tests/test_application.py"
 
                 intermediate_dir_path = f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}"
+                intermediate_output_dir_path = f"{intermediate_dir_path}/{INTERMEDIATE_OUTPUT_DIR_NAME}"
                 shutil.copytree(
                     str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
                     tmp_dir,
                     dirs_exist_ok=True,
                 )
                 shutil.copy(
-                    f"{intermediate_dir_path}/{APPLICATION_FILE_NAME}", app_path
+                    f"{intermediate_output_dir_path}/{APPLICATION_FILE_NAME}", app_path
                 )
                 shutil.copy(
-                    f"{intermediate_dir_path}/{INTEGRATION_TEST_FILE_NAME}", test_path
+                    f"{intermediate_output_dir_path}/{INTEGRATION_TEST_FILE_NAME}", test_path
                 )
 
                 test_file_contents = read_file_contents(test_path)

@@ -34,7 +34,8 @@ from faststream_gen._code_generator.constants import (
     GENERATE_APP_FROM_ASYNCAPI,
     GENERATE_APP_SKELETON,
     INTERMEDIATE_RESULTS_DIR_NAME,
-    OpenAIModel
+    OpenAIModel,
+    INTERMEDIATE_OUTPUT_DIR_NAME,
 )
 
 from ._components.new_project_generator import create_project
@@ -201,9 +202,11 @@ For each consumed message, create a new message object and increment the value o
             cleaned_description, model.value, tokens_list
         )
         intermediate_results_path = pathlib.Path(output_path) / INTERMEDIATE_RESULTS_DIR_NAME
-        intermediate_results_path.mkdir(parents=True, exist_ok=True)
+        intermediate_output_path = intermediate_results_path / INTERMEDIATE_OUTPUT_DIR_NAME
+        intermediate_output_path.mkdir(parents=True, exist_ok=True)
+        
         write_file_contents(
-            f"{intermediate_results_path}/{DESCRIPTION_FILE_NAME}",
+            f"{intermediate_output_path}/{DESCRIPTION_FILE_NAME}",
             validated_description,
         )
 
