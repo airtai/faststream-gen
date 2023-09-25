@@ -403,9 +403,7 @@ class CustomAIChat:
             {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
         )
         prompt_str = "\n\n".join([f"===Role:{m['role']}===\n\nMessage:\n{m['content']}" for m in self.messages])
-        logger.info("*"*120)
         logger.info(f"\n\nPrompt to the model: \n\n{prompt_str}")
-        logger.info("*"*120)
         
         response = openai.ChatCompletion.create(
             model=self.model,
@@ -420,7 +418,6 @@ class CustomAIChat:
 
 # %% ../../nbs/Helper.ipynb 37
 def _construct_prompt_with_error_msg(
-    prompt: str,
     response: str,
     errors: str,
 ) -> str:
@@ -435,8 +432,7 @@ def _construct_prompt_with_error_msg(
         A string combining the original prompt, invalid response, and the error message.
     """
     prompt_with_errors = (
-        prompt
-        + f"\n\n==== YOUR RESPONSE (WITH ISSUES) ====\n\n{response}"
+        f"\n\n==== YOUR RESPONSE (WITH ISSUES) ====\n\n{response}"
         + f"\n\nRead the contents of ==== YOUR RESPONSE (WITH ISSUES) ==== section and fix the below mentioned issues:\n\n{errors}"
     )
     return prompt_with_errors
@@ -546,7 +542,6 @@ def fix(
         ValueError: If the maximum number of attempts is exceeded and the response has not successfully passed the validation.
     """
     total_tokens_usage: Dict[str, int] = defaultdict(int)
-    initial_prompt = prompt
     for i in range(self.max_retries):  # type: ignore
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
@@ -565,9 +560,10 @@ def fix(
             total_usage.append(total_tokens_usage)
             return response, total_usage
 
-        prompt = _construct_prompt_with_error_msg(
-            initial_prompt, response, error_str
-        )
+        self.generate.messages[-1]["content"] = self.generate.messages[-1][
+            "content"
+        ].rsplit("==== YOUR RESPONSE ====", 1)[0]
+        prompt = _construct_prompt_with_error_msg(response, error_str)
         logger.info(f"Validation failed, trying again...Errors:\n{error_str}")
 
     total_usage.append(total_tokens_usage)
