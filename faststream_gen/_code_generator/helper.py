@@ -40,6 +40,7 @@ from faststream_gen._code_generator.constants import (
     MAX_NUM_FIXES_MSG,
     INCOMPLETE_DESCRIPTION,
     DESCRIPTION_EXAMPLE,
+    RESULTS_DIR_NAMES,
 )
 from .._components.package_data import get_root_data_path
 
@@ -47,23 +48,29 @@ from .._components.package_data import get_root_data_path
 logger = get_logger(__name__, level=logging.WARNING)
 
 # %% ../../nbs/Helper.ipynb 5
-def retry_on_error(max_retries: int = MAX_RESTARTS, delay=1): # type: ignore
-    def decorator(func): # type: ignore
-        def wrapper(*args, **kwargs): # type: ignore
+def retry_on_error(max_retries: int = MAX_RESTARTS, delay: int = 1, step_name: str = RESULTS_DIR_NAMES["app"]):  # type: ignore
+    def decorator(func):  # type: ignore
+        def wrapper(*args, **kwargs):  # type: ignore
             for i in range(max_retries):
-                error = "" 
                 try:
+                    kwargs["attempt"] = i
                     return func(*args, **kwargs)
                 except ValueError as e:
                     # Log the error here
-                    error = e # type: ignore
                     logger.info(f"Attempt {i} failed. Restarting step.")
                     time.sleep(delay)
-            raise ValueError(error)
+                    # Capture exception details here
+                    last_exception = e
+            if step_name == RESULTS_DIR_NAMES["app"]:
+                return last_exception.args[0], last_exception.args[1], True
+            else:
+                raise ValueError(last_exception)
+
         return wrapper
+
     return decorator
 
-# %% ../../nbs/Helper.ipynb 8
+# %% ../../nbs/Helper.ipynb 10
 def _fetch_content(url: str) -> requests.models.Response: # type: ignore
     """Fetch content from a URL using an HTTP GET request.
 
@@ -93,7 +100,7 @@ def _fetch_content(url: str) -> requests.models.Response: # type: ignore
         except requests.exceptions.RequestException as e:
             raise requests.exceptions.RequestException(f"An error occurred: {e}")
 
-# %% ../../nbs/Helper.ipynb 10
+# %% ../../nbs/Helper.ipynb 12
 @contextmanager
 def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
@@ -118,7 +125,7 @@ def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, N
             typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
             raise typer.Exit(code=1)
 
-# %% ../../nbs/Helper.ipynb 12
+# %% ../../nbs/Helper.ipynb 14
 def write_file_contents(output_file: str, contents: str) -> None:
     """Write the given contents to the specified output file.
 
@@ -140,7 +147,7 @@ def write_file_contents(output_file: str, contents: str) -> None:
             f"Error: Failed to save file at '{output_file}' due to: '{e}'. Please ensure that the specified 'output_path' is valid and that you have the necessary permissions to write files to it."
         )
 
-# %% ../../nbs/Helper.ipynb 14
+# %% ../../nbs/Helper.ipynb 16
 def read_file_contents(output_file: str) -> str:
     """Read and return the contents from the specified file.
 
@@ -162,8 +169,8 @@ def read_file_contents(output_file: str) -> str:
             f"Error: The file '{output_file}' does not exist. Please ensure that the specified 'output_path' is valid and that you have the necessary permissions to access it."
         )
 
-# %% ../../nbs/Helper.ipynb 17
-def validate_python_code(code: str) -> List[str]:
+# %% ../../nbs/Helper.ipynb 19
+def validate_python_code(code: str, **kwargs: Dict[str, Any]) -> List[str]:
     """Validate and report errors in the provided Python code.
 
     Args:
@@ -179,15 +186,15 @@ def validate_python_code(code: str) -> List[str]:
 
             # Import the module using importlib
             spec = importlib.util.spec_from_file_location("tmp_module", temp_file)
-            module = importlib.util.module_from_spec(spec) # type: ignore
-            spec.loader.exec_module(module) # type: ignore
+            module = importlib.util.module_from_spec(spec)  # type: ignore
+            spec.loader.exec_module(module)  # type: ignore
 
         except Exception as e:
-            return [ f"{type(e).__name__}: {e}"]
+            return [f"{type(e).__name__}: {e}"]
 
         return []
 
-# %% ../../nbs/Helper.ipynb 21
+# %% ../../nbs/Helper.ipynb 23
 def set_logger_level(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to set the logger level based on verbosity.
 
@@ -208,7 +215,7 @@ def set_logger_level(func: Callable[..., Any]) -> Callable[..., Any]:
 
     return wrapper_decorator
 
-# %% ../../nbs/Helper.ipynb 24
+# %% ../../nbs/Helper.ipynb 26
 # Reference: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 
 
@@ -261,7 +268,7 @@ def _retry_with_exponential_backoff(
 
     return decorator
 
-# %% ../../nbs/Helper.ipynb 27
+# %% ../../nbs/Helper.ipynb 29
 def _get_relevant_document(query: str) -> str:
     """Load the vector database and retrieve the most relevant document based on the given query.
 
@@ -277,7 +284,7 @@ def _get_relevant_document(query: str) -> str:
     results_str = "\n".join([result.page_content for result in results])
     return results_str
 
-# %% ../../nbs/Helper.ipynb 29
+# %% ../../nbs/Helper.ipynb 31
 examples_delimiter = {
     "description": {
         "start": "==== description.txt starts ====",
@@ -327,7 +334,7 @@ def _format_examples(parent_docs_str: List[str]) -> Dict[str, str]:
 
     return ret_val
 
-# %% ../../nbs/Helper.ipynb 31
+# %% ../../nbs/Helper.ipynb 33
 def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
     """Load the vector database and retrieve the most relevant examples based on the given query for each step.
 
@@ -344,7 +351,7 @@ def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
     prompt_examples = _format_examples(results_page_content)
     return prompt_examples
 
-# %% ../../nbs/Helper.ipynb 33
+# %% ../../nbs/Helper.ipynb 35
 class CustomAIChat:
     """Custom class for interacting with OpenAI
 
@@ -402,9 +409,7 @@ class CustomAIChat:
             {"role": "user", "content": f"{user_prompt}\n==== YOUR RESPONSE ====\n"}
         )
         prompt_str = "\n\n".join([f"===Role:{m['role']}===\n\nMessage:\n{m['content']}" for m in self.messages])
-        logger.info("*"*120)
         logger.info(f"\n\nPrompt to the model: \n\n{prompt_str}")
-        logger.info("*"*120)
         
         response = openai.ChatCompletion.create(
             model=self.model,
@@ -417,7 +422,28 @@ class CustomAIChat:
             response["usage"],
         )
 
-# %% ../../nbs/Helper.ipynb 37
+# %% ../../nbs/Helper.ipynb 39
+def _construct_prompt_with_error_msg(
+    response: str,
+    errors: str,
+) -> str:
+    """Construct prompt message along with the error message.
+
+    Args:
+        prompt: The original prompt string.
+        response: The invalid response string from OpenAI.
+        errors: The errors which needs to be fixed in the invalid response.
+
+    Returns:
+        A string combining the original prompt, invalid response, and the error message.
+    """
+    prompt_with_errors = (
+        f"\n\n==== YOUR RESPONSE (WITH ISSUES) ====\n\n{response}"
+        + f"\n\nRead the contents of ==== YOUR RESPONSE (WITH ISSUES) ==== section and fix the below mentioned issues:\n\n{errors}"
+    )
+    return prompt_with_errors
+
+# %% ../../nbs/Helper.ipynb 41
 class ValidateAndFixResponse:
     """Generates and validates response from OpenAI
 
@@ -437,35 +463,17 @@ class ValidateAndFixResponse:
         self.validate = validate
         self.max_retries = max_retries
 
-    def construct_prompt_with_error_msg(
+    def fix(
         self,
         prompt: str,
-        response: str,
-        errors: str,
-    ) -> str:
-        """Construct prompt message along with the error message.
-
-        Args:
-            prompt: The original prompt string.
-            response: The invalid response string from OpenAI.
-            errors: The errors which needs to be fixed in the invalid response.
-
-        Returns:
-            A string combining the original prompt, invalid response, and the error message.
-        """
-        prompt_with_errors = (
-            prompt
-            + f"\n\n==== YOUR RESPONSE (WITH ISSUES) ====\n\n{response}"
-            + f"\n\nRead the contents of ==== YOUR RESPONSE (WITH ISSUES) ==== section and fix the below mentioned issues:\n\n{errors}"
-        )
-        return prompt_with_errors
-
-    def fix(
-        self, prompt: str, total_usage: List[Dict[str, int]], **kwargs: str
+        total_usage: List[Dict[str, int]],
+        step_name: Optional[str] = None,
+        intermediate_results_path: Optional[str] = None,
+        **kwargs: Dict[str, Any],
     ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
-# %% ../../nbs/Helper.ipynb 39
+# %% ../../nbs/Helper.ipynb 42
 def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
     """Add list of OpenAI "usage" dictionaries by categories defined in TOKEN_TYPES (prompt_tokens, completion_tokens and total_tokens).
 
@@ -483,13 +491,48 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
             
     return added_tokens
 
-# %% ../../nbs/Helper.ipynb 42
+# %% ../../nbs/Helper.ipynb 45
+def _save_results(
+    step_name: Optional[str],
+    intermediate_results_path: Optional[str],
+    messages: List[Dict[str, str]],
+    response: str,
+    error_str: str,
+    retry_cnt: int,
+    **kwargs: Dict[str, int],
+) -> None:
+    if intermediate_results_path is not None and "attempt" in kwargs:
+        step_dir = Path(intermediate_results_path) / step_name  # type: ignore
+        step_dir.mkdir(parents=True, exist_ok=True)
+
+        attempt_dir = step_dir / f'attempt_{kwargs["attempt"] + 1}'  # type: ignore
+        attempt_dir.mkdir(parents=True, exist_ok=True)
+
+        try_dir = attempt_dir / f"try_{retry_cnt+1}"
+        try_dir.mkdir(parents=True, exist_ok=True)
+
+        formatted_msg = "\n".join(
+            [f"===={m['role']}====\n\n{m['content']}\n\n" for m in messages]
+        )
+
+        with open((try_dir / "input.txt"), "w", encoding="utf-8") as f_input, open(
+            (try_dir / "output.txt"), "w", encoding="utf-8"
+        ) as f_output, open(
+            (try_dir / "errors.txt"), "w", encoding="utf-8"
+        ) as f_errors:
+            f_input.write(formatted_msg)
+            f_output.write(response)
+            f_errors.write(error_str)
+
+# %% ../../nbs/Helper.ipynb 48
 @patch  # type: ignore
 def fix(
     self: ValidateAndFixResponse,
     prompt: str,
     total_usage: List[Dict[str, int]],
-    **kwargs: str,
+    step_name: Optional[str] = None,
+    intermediate_results_path: Optional[str] = None,
+    **kwargs: Dict[str, Any],
 ) -> Tuple[str, List[Dict[str, int]]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
@@ -504,22 +547,34 @@ def fix(
         ValueError: If the maximum number of attempts is exceeded and the response has not successfully passed the validation.
     """
     total_tokens_usage: Dict[str, int] = defaultdict(int)
-    initial_prompt = prompt
-    for _ in range(self.max_retries): # type: ignore
+    for i in range(self.max_retries):  # type: ignore
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
         errors = self.validate(response, **kwargs)
+        error_str = "\n".join(errors)
+        _save_results(
+            step_name,
+            intermediate_results_path,
+            self.generate.messages,  # type: ignore
+            response,
+            error_str,
+            i,
+            **kwargs,
+        )
         if len(errors) == 0:
             total_usage.append(total_tokens_usage)
             return response, total_usage
-        error_str = "\n".join(errors)
-        prompt = self.construct_prompt_with_error_msg(
-            initial_prompt, response, error_str
-        )
-        logger.info(
-                f"Validation failed, trying again...Errors:\n{error_str}"
-            )
+
+        self.generate.messages[-1]["content"] = self.generate.messages[-1][ # type: ignore
+            "content"
+        ].rsplit("==== YOUR RESPONSE ====", 1)[0]
+        prompt = _construct_prompt_with_error_msg(response, error_str)
+        logger.info(f"Validation failed, trying again...Errors:\n{error_str}")
+
     total_usage.append(total_tokens_usage)
-    raise ValueError(
-        f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
-    )
+    if step_name == RESULTS_DIR_NAMES["app"]:
+        raise ValueError(response, total_usage)
+    else:
+        raise ValueError(
+            f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
+        )
