@@ -56,9 +56,9 @@ The key features are:
   testing, and deployment, ensuring that your FastStream application
   remains in top shape throughout its development lifecycle.
 
-
-https://github.com/airtai/faststream-gen/assets/32619626/e567b745-2829-464e-8101-b45da6027bb5
-
+<video src="https://github.com/airtai/faststream-gen/assets/32619626/e567b745-2829-464e-8101-b45da6027bb5" controls  >
+      Your browser does not support the <code>video</code> element.
+    </video>
 
 ### Quick start
 
