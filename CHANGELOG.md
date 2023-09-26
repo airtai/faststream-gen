@@ -2,6 +2,19 @@
 
 <!-- do not remove -->
 
+
+## 0.1.4
+
+### New Features
+
+- Create a benchmark for measuring success rate of code generation ([#135](https://github.com/airtai/faststream-gen/pull/135)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+  - Closes #88
+
+- Save generated files on exceptions during code generation ([#132](https://github.com/airtai/faststream-gen/pull/132)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+  - Closes #131
+
+
+
 ## 0.1.3
 
 ### New Features
