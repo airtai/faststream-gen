@@ -29,7 +29,7 @@ from faststream_gen._code_generator.constants import (
     APPLICATION_FILE_NAME,
     INTEGRATION_TEST_FILE_NAME,
     RESULTS_DIR_NAMES,
-    INTERMEDIATE_OUTPUT_DIR_NAME,
+    LOG_OUTPUT_DIR_NAME,
 )
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 3
@@ -127,7 +127,7 @@ def generate_app_and_test(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_file_name = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
+        app_file_name = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
         app_skeleton = read_file_contents(app_file_name)
 
         prompt = (
@@ -144,10 +144,10 @@ def generate_app_and_test(
 
         app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)
 
-        app_output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_FILE_NAME}"
+        app_output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_FILE_NAME}"
         write_file_contents(app_output_file, app_code)
 
-        test_output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{INTEGRATION_TEST_FILE_NAME}"
+        test_output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_output_file, test_code)
         
         sp.text = ""

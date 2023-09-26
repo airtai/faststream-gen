@@ -33,9 +33,9 @@ from faststream_gen._code_generator.constants import (
     DESCRIPTION_FILE_NAME,
     GENERATE_APP_FROM_ASYNCAPI,
     GENERATE_APP_SKELETON,
-    INTERMEDIATE_RESULTS_DIR_NAME,
+    LOGS_DIR_NAME,
     OpenAIModel,
-    INTERMEDIATE_OUTPUT_DIR_NAME,
+    LOG_OUTPUT_DIR_NAME,
 )
 
 from ._components.new_project_generator import create_project
@@ -202,10 +202,10 @@ For each consumed message, create a new message object and increment the value o
             cleaned_description, model.value, tokens_list
         )
         intermediate_results_path = (
-            pathlib.Path(output_path) / INTERMEDIATE_RESULTS_DIR_NAME
+            pathlib.Path(output_path) / LOGS_DIR_NAME
         )
         intermediate_output_path = (
-            intermediate_results_path / INTERMEDIATE_OUTPUT_DIR_NAME
+            intermediate_results_path / LOG_OUTPUT_DIR_NAME
         )
         intermediate_output_path.mkdir(parents=True, exist_ok=True)
 
@@ -274,10 +274,10 @@ For each consumed message, create a new message object and increment the value o
     if is_app_and_test_code_broken:
         if output_path == ".":
             test_cmd = "python -m pytest"
-            logs_dir = INTERMEDIATE_RESULTS_DIR_NAME
+            logs_dir = LOGS_DIR_NAME
         else:
             test_cmd = f"cd {output_path} && python -m pytest"
-            logs_dir = f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}"
+            logs_dir = f"{output_path}/{LOGS_DIR_NAME}"
         typer.secho(
             f"""\n\nApologies, we couldn't generate a working application and test code from your application description.
 

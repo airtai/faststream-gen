@@ -26,7 +26,7 @@ from faststream_gen._code_generator.constants import (
     APPLICATION_SKELETON_FILE_NAME,
     GENERATE_APP_SKELETON,
     RESULTS_DIR_NAMES,
-    INTERMEDIATE_OUTPUT_DIR_NAME,
+    LOG_OUTPUT_DIR_NAME,
 )
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 3
@@ -82,7 +82,7 @@ def generate_app_skeleton(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_description_file_name = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{DESCRIPTION_FILE_NAME}"
+        app_description_file_name = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{DESCRIPTION_FILE_NAME}"
         app_description_content = read_file_contents(app_description_file_name)
 
         prompt = APP_SKELETON_GENERATION_PROMPT.replace(
@@ -93,7 +93,7 @@ def generate_app_skeleton(
             model, prompt, app_description_content, total_usage, code_gen_directory
         )
 
-        output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
+        output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
         write_file_contents(output_file, validated_app)
 
         sp.text = ""

@@ -24,10 +24,10 @@ from faststream_gen._code_generator.helper import (
 from faststream_gen._code_generator.constants import (
     FASTSTREAM_TEMPLATE_ZIP_URL,
     FASTSTREAM_TEMPLATE_DIR_SUFFIX,
-    INTERMEDIATE_RESULTS_DIR_NAME,
+    LOGS_DIR_NAME,
     APPLICATION_FILE_NAME,
     INTEGRATION_TEST_FILE_NAME,
-    INTERMEDIATE_OUTPUT_DIR_NAME
+    LOG_OUTPUT_DIR_NAME
 )
 
 from .._code_generator.prompts import REQUIREMENTS_GENERATION_PROMPT
@@ -98,8 +98,8 @@ def create_project(
                 app_path = f"{tmp_dir}/app/application.py"
                 test_path = f"{tmp_dir}/tests/test_application.py"
 
-                intermediate_dir_path = f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}"
-                intermediate_output_dir_path = f"{intermediate_dir_path}/{INTERMEDIATE_OUTPUT_DIR_NAME}"
+                intermediate_dir_path = f"{output_path}/{LOGS_DIR_NAME}"
+                intermediate_output_dir_path = f"{intermediate_dir_path}/{LOG_OUTPUT_DIR_NAME}"
                 shutil.copytree(
                     str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
                     tmp_dir,
