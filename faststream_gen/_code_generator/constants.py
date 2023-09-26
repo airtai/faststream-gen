@@ -5,9 +5,10 @@ __all__ = ['DESCRIPTION_FILE_NAME', 'APPLICATION_SKELETON_FILE_NAME', 'ASYNC_API
            'INTEGRATION_TEST_FILE_NAME', 'LOGS_DIR_NAME', 'LOG_OUTPUT_DIR_NAME', 'GENERATE_APP_FROM_ASYNCAPI',
            'GENERATE_APP_FROM_SKELETON', 'GENERATE_APP_SKELETON', 'RESULTS_DIR_NAMES', 'DEFAULT_PARAMS', 'MAX_RETRIES',
            'MAX_RESTARTS', 'MAX_ASYNC_SPEC_RETRIES', 'TOKEN_TYPES', 'MODEL_PRICING', 'INCOMPLETE_DESCRIPTION',
-           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'FASTSTREAM_REPO_ZIP_URL', 'FASTSTREAM_DOCS_DIR_SUFFIX',
-           'FASTSTREAM_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_EXAMPLE_FILES', 'FASTSTREAM_TMP_DIR_PREFIX',
-           'FASTSTREAM_DIR_TO_EXCLUDE', 'FASTSTREAM_TEMPLATE_ZIP_URL', 'FASTSTREAM_TEMPLATE_DIR_SUFFIX', 'OpenAIModel']
+           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'INCOMPLETE_APP_ERROR_MSG', 'FASTSTREAM_REPO_ZIP_URL',
+           'FASTSTREAM_DOCS_DIR_SUFFIX', 'FASTSTREAM_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_EXAMPLE_FILES',
+           'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE', 'FASTSTREAM_TEMPLATE_ZIP_URL',
+           'FASTSTREAM_TEMPLATE_DIR_SUFFIX', 'OpenAIModel']
 
 # %% ../../nbs/Constants.ipynb 2
 from enum import Enum
@@ -76,6 +77,11 @@ For each consumed message, create a new message object and increment the value o
 """
 
 MAX_NUM_FIXES_MSG = "Maximum number of retries"
+
+INCOMPLETE_APP_ERROR_MSG = """Apologies, we couldn't generate a working application and test code from your application description.
+
+Please run the following command to start manual debugging:
+"""
 
 # %% ../../nbs/Constants.ipynb 12
 FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/faststream/archive/main.zip"

@@ -1,0 +1,23 @@
+Develop a Faststream application that fetches user information from the "https://randomuser.me/api/" endpoint at regular intervals of 5 seconds. The API response is in JSON format and contains various fields. Extract the following information from the response:
+
+1. User's first name: Extract from results[0]["name"]["first"] and store it in the user_name variable.
+2. User's nationality: Extract from results[0]["location"]["country"] and store it in the actual_user_nationality variable.
+3. User's gender: Extract from results[0]["gender"] and store it in the actual_user_gender variable.
+
+
+Next, perform the following predictions:
+
+1. Make a GET request to "https://api.genderize.io/?name={user_name}". The response will be in JSON format. Extract the gender from response["gender"] and store it in the predicted_user_gender variable.
+
+2. Make a GET request to "https://api.nationalize.io/?name={user_name}". The response will be in JSON format. Extract the nationality from response["country"][0]["country_id"] and store it in the predicted_user_nationality variable.
+Once you have collected these details, construct a new message with the following fields:
+
+    - user_name
+    - actual_user_nationality
+    - actual_user_gender
+    - predicted_user_gender
+    - predicted_user_nationality
+
+Publish this message to the "prediction_results" Kafka topic for further analysis and processing.
+
+The Faststream application should efficiently handle API requests, data extraction, and message publishing, ensuring real-time processing of user information and predictions.

@@ -178,4 +178,4 @@ mkdocs/site/
 faststream-gen/
 faststream-log.txt
 nbs/my-awesome-project/
-
+fixtures/benchmark-results/

@@ -1,0 +1,9 @@
+Develop a Faststream application that consumes messages from the "new_data" Kafka topic. The messages in the "new_data" topic are structured as JSON and contain a single attribute:
+
+- word: string
+
+Upon receiving a message in the "new_data" topic, extract the word from the message. If the word contains spaces, replace the spaces with "+" and make a GET request to "https://api.datamuse.com/words?ml={word}".
+
+The response from this API is a JSON-encoded string that represents a list of dictionaries. Calculate the length of this response. If the length is greater than 3, publish the top 3 matches to the "top_word_matches" Kafka topic and the rest to the "other_word_matches" Kafka topic. If the length is 3 or less, publish the entire list to the "top_word_matches" Kafka topic.
+
+The Faststream application should efficiently handle message consumption, API requests, and message publishing, ensuring that it categorizes and publishes the word matches appropriately to the "top_word_matches" and "other_word_matches" topics for downstream consumers to analyze and process.

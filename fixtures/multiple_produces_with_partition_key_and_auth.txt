@@ -1,0 +1,16 @@
+Develop a FastStream application that interfaces with a locally hosted Kafka broker. The application's primary task is to consume messages from the "currency" Kafka topic. It's important to note that the "currency" topic should consistently employ a specific partition key.
+
+Messages within the "currency" topic are structured as JSON-encoded objects, featuring two key attributes:
+
+x: a floating-point value
+y: another floating-point value
+
+The application should maintain a memory buffer to retain the most recent 10 incoming messages.
+
+During message consumption, the application calculates two sums: the sum of all x elements, referred to as x_sum, and the sum of all y elements, referred to as y_sum, based on the contents of the memory buffer. Subsequently, it computes x_sum - y_sum. If the resulting value is less than 0, the application publishes a message to the "negative_sum" Kafka topic, accompanied by x_sum and y_sum. Conversely, if the result is greater than 0, the application publishes a message to the "positive_sum" Kafka topic, along with x_sum and y_sum. Additionally, a message containing x_sum and y_sum is sent to the "sum" topic, irrespective of the aforementioned conditions.
+
+It's crucial to ensure that the same partition key is consistently applied to the following Kafka topics: "input_data," "sum," "positive_sum," and "negative_sum" to maintain data consistency.
+
+Furthermore, secure communication with the Kafka broker is essential. This entails employing SSL encryption and SASL Scram512 for authorization. The necessary username and password for authorization should be sourced from environment variables.
+
+The FastStream application must be architected for efficient message consumption, calculation, and message publishing, all while prioritizing secure communication and proper authorization with the Kafka broker.
