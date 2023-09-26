@@ -28,6 +28,8 @@ from faststream_gen._code_generator.constants import (
     APPLICATION_SKELETON_FILE_NAME,
     APPLICATION_FILE_NAME,
     INTEGRATION_TEST_FILE_NAME,
+    RESULTS_DIR_NAMES,
+    INTERMEDIATE_OUTPUT_DIR_NAME,
 )
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 3
@@ -39,7 +41,7 @@ def _split_app_and_test_code(response: str) -> Tuple[str, str]:
     return app_code, test_code
 
 
-def _validate_response(response: str) -> List[str]:
+def _validate_response(response: str, **kwargs: Dict[str, Any]) -> List[str]:
     try:
         app_code, test_code = _split_app_and_test_code(response)
     except (IndexError, ValueError) as e:
@@ -68,11 +70,16 @@ def _validate_response(response: str) -> List[str]:
 
         return []
 
-# %% ../../nbs/App_And_Test_Generator.ipynb 9
-@retry_on_error() # type: ignore
+# %% ../../nbs/App_And_Test_Generator.ipynb 11
+@retry_on_error()  # type: ignore
 def _generate(
-    model: str, prompt: str, app_skeleton: str, total_usage: List[Dict[str, int]]
-) -> Tuple[str, List[Dict[str, int]]]:
+    model: str,
+    prompt: str,
+    app_skeleton: str,
+    total_usage: List[Dict[str, int]],
+    code_gen_directory: str,
+    **kwargs,
+) -> Tuple[str, List[Dict[str, int]], bool]:
     test_generator = CustomAIChat(
         params={
             "temperature": 0.2,
@@ -81,19 +88,29 @@ def _generate(
         user_prompt=prompt,
     )
     test_validator = ValidateAndFixResponse(test_generator, _validate_response)
-    return test_validator.fix(
+    validator_result = test_validator.fix(
         app_skeleton,
         total_usage=total_usage,
+        step_name=RESULTS_DIR_NAMES["app"],
+        intermediate_results_path=code_gen_directory,
+        **kwargs,
     )
+    try:
+        app_and_test_code, total_usage = validator_result
+        is_app_and_test_code_broken = False
+        return app_and_test_code, total_usage, is_app_and_test_code_broken
+    except ValueError as e:
+        app_and_test_code, total_usage, is_app_and_test_code_broken = validator_result # type: ignore
+        return app_and_test_code, total_usage, is_app_and_test_code_broken
 
-
+# %% ../../nbs/App_And_Test_Generator.ipynb 14
 def generate_app_and_test(
     description: str,
     model: str,
     code_gen_directory: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
-) -> List[Dict[str, int]]:
+) -> Tuple[List[Dict[str, int]], bool]:
     """Generate integration test for the FastStream app
 
     Args:
@@ -110,7 +127,7 @@ def generate_app_and_test(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_file_name = f"{code_gen_directory}/{APPLICATION_SKELETON_FILE_NAME}"
+        app_file_name = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
         app_skeleton = read_file_contents(app_file_name)
 
         prompt = (
@@ -121,18 +138,25 @@ def generate_app_and_test(
             .replace("from .app import", "from application import")
         )
 
-        validated_app_and_test_code, total_usage = _generate(
-            model, prompt, app_skeleton, total_usage
+        validated_app_and_test_code, total_usage, is_app_and_test_code_broken = _generate(
+            model, prompt, app_skeleton, total_usage, code_gen_directory
         )
 
         app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)
 
-        app_output_file = f"{code_gen_directory}/{APPLICATION_FILE_NAME}"
+        app_output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{APPLICATION_FILE_NAME}"
         write_file_contents(app_output_file, app_code)
 
-        test_output_file = f"{code_gen_directory}/{INTEGRATION_TEST_FILE_NAME}"
+        test_output_file = f"{code_gen_directory}/{INTERMEDIATE_OUTPUT_DIR_NAME}/{INTEGRATION_TEST_FILE_NAME}"
         write_file_contents(test_output_file, test_code)
-
+        
         sp.text = ""
-        sp.ok(f" ✔ The app and the tests are generated.")
-        return total_usage
+        if not is_app_and_test_code_broken:
+            message = " ✔ The app and the tests are generated."
+        else:
+            message = " ✘ Error: Failed to generate a valid application and test code."
+            sp.color = "red"
+
+        sp.ok(message)
+
+        return total_usage, is_app_and_test_code_broken

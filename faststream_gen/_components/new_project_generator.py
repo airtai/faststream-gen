@@ -26,7 +26,8 @@ from faststream_gen._code_generator.constants import (
     FASTSTREAM_TEMPLATE_DIR_SUFFIX,
     INTERMEDIATE_RESULTS_DIR_NAME,
     APPLICATION_FILE_NAME,
-    INTEGRATION_TEST_FILE_NAME
+    INTEGRATION_TEST_FILE_NAME,
+    INTERMEDIATE_OUTPUT_DIR_NAME
 )
 
 from .._code_generator.prompts import REQUIREMENTS_GENERATION_PROMPT
@@ -82,9 +83,10 @@ def _generate_requirements(
 # %% ../../nbs/New_Project_Generator.ipynb 10
 def create_project(
     output_path: str,
-    save_intermediate_files: bool,
+    save_log_files: bool,
     model: str,
     total_usage: List[Dict[str, int]],
+    is_app_and_test_code_broken: bool,
 ) -> List[Dict[str, int]]:
     with yaspin(
         text="Creating a new FastStream project...", color="cyan", spinner="clock"
@@ -97,16 +99,17 @@ def create_project(
                 test_path = f"{tmp_dir}/tests/test_application.py"
 
                 intermediate_dir_path = f"{output_path}/{INTERMEDIATE_RESULTS_DIR_NAME}"
+                intermediate_output_dir_path = f"{intermediate_dir_path}/{INTERMEDIATE_OUTPUT_DIR_NAME}"
                 shutil.copytree(
                     str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
                     tmp_dir,
                     dirs_exist_ok=True,
                 )
                 shutil.copy(
-                    f"{intermediate_dir_path}/{APPLICATION_FILE_NAME}", app_path
+                    f"{intermediate_output_dir_path}/{APPLICATION_FILE_NAME}", app_path
                 )
                 shutil.copy(
-                    f"{intermediate_dir_path}/{INTEGRATION_TEST_FILE_NAME}", test_path
+                    f"{intermediate_output_dir_path}/{INTEGRATION_TEST_FILE_NAME}", test_path
                 )
 
                 test_file_contents = read_file_contents(test_path)
@@ -124,7 +127,7 @@ def create_project(
                 write_file_contents(dev_requirements_file, dev_requirements)
 
                 shutil.copytree(tmp_dir, output_path, dirs_exist_ok=True)
-                if not save_intermediate_files:
+                if (not save_log_files) and (not is_app_and_test_code_broken):
                     shutil.rmtree(intermediate_dir_path)
 
         sp.text = ""

@@ -64,15 +64,16 @@ def get_default_logger_configuration(level: int = logging.INFO) -> Dict[str, Any
                 "class": "logging.StreamHandler",
                 "stream": "ext://sys.stdout",  # Default is stderr
             },
-            "file": {
-                "level": level,
-                "formatter": "standard",
-                "class": "logging.FileHandler",
-                "filename": "faststream-log.txt",  # Specify the file name and path
-            },
+#             "file": {
+#                 "level": level,
+#                 "formatter": "standard",
+#                 "class": "logging.FileHandler",
+#                 "filename": "faststream-log.txt",  # Specify the file name and path
+#             },
         },
         "loggers": {
-            "": {"handlers": ["default", "file"], "level": level},  # root logger
+#             "": {"handlers": ["default", "file"], "level": level},  # root logger
+            "": {"handlers": ["default"], "level": level},  # root logger
         },
     }
     return LOGGING_CONFIG
