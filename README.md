@@ -195,6 +195,11 @@ faststream_gen "Create a FastStream application using localhost broker for testi
 Here’s a look at the directory hierarchy:
 
     my-awesome-project
+    ├── .github
+    │   └── workflows
+    │       ├── deploy_docs.yml
+    │       └── test.yml
+    ├── .gitignore
     ├── LICENSE
     ├── README.md
     ├── app
@@ -210,7 +215,7 @@ Here’s a look at the directory hierarchy:
     └── tests
         └── test_application.py
 
-    3 directories, 11 files
+    5 directories, 14 files
 
 Let’s take a quick look at the generated application and test code.
 
