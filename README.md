@@ -56,10 +56,9 @@ The key features are:
   testing, and deployment, ensuring that your FastStream application
   remains in top shape throughout its development lifecycle.
 
-
-
-https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4
-
+<video src="https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4" controls  >
+      Your browser does not support the <code>video</code> element.
+    </video>
 
 ### Quick start
 
@@ -189,36 +188,13 @@ faststream_gen "Create a FastStream application using localhost broker for testi
      ✔ The app and the tests are generated.  around 30 to 90 seconds)...
      ✔ New FastStream project created. 
      ✔ Integration tests were successfully completed. 
-     Tokens used: 10768
-     Total Cost (USD): $0.03284
+     Tokens used: 9564
+     Total Cost (USD): $0.02921
     ✨  All files were successfully generated!
 
 Here’s a look at the directory hierarchy:
 
-    my-awesome-project
-    ├── .github
-    │   └── workflows
-    │       ├── deploy_docs.yml
-    │       └── test.yml
-    ├── .gitignore
-    ├── LICENSE
-    ├── README.md
-    ├── app
-    │   ├── __init__.py
-    │   ├── __pycache__
-    │   │   └── application.cpython-311.pyc
-    │   └── application.py
-    ├── dev_requirements.txt
-    ├── requirements.txt
-    ├── scripts
-    │   ├── services.yml
-    │   ├── start_kafka_broker_locally.sh
-    │   ├── stop_kafka_broker_locally.sh
-    │   └── subscribe_to_kafka_broker_locally.sh
-    └── tests
-        └── test_application.py
-
-    6 directories, 15 files
+    /bin/bash: line 1: tree: command not found
 
 Let’s take a quick look at the generated application and test code.
 
@@ -232,9 +208,9 @@ Let’s take a quick look at the generated application and test code.
     from faststream.kafka import KafkaBroker
 
 
-    class InputData(BaseModel):
+    class Data(BaseModel):
         data: int = Field(
-            ..., examples=[5], description="The data value to be incremented"
+            ..., examples=[1], description="The data attribute to be incremented"
         )
 
 
@@ -246,9 +222,9 @@ Let’s take a quick look at the generated application and test code.
 
 
     @broker.subscriber("input_data")
-    async def on_input_data(msg: InputData, logger: Logger) -> None:
+    async def on_input_data(msg: Data, logger: Logger) -> None:
         logger.info(f"{msg=}")
-        incremented_data = InputData(data=msg.data + 1)
+        incremented_data = Data(data=msg.data + 1)
         await to_output_data.publish(incremented_data)
 
 `test_application.py`:
@@ -260,20 +236,20 @@ Let’s take a quick look at the generated application and test code.
     from faststream import Context
     from faststream.kafka import TestKafkaBroker
 
-    from app.application import InputData, broker, on_input_data
+    from app.application import Data, broker, on_input_data
 
 
     @broker.subscriber("output_data")
-    async def on_output_data(msg: InputData):
+    async def on_output_data(msg: Data):
         pass
 
 
     @pytest.mark.asyncio
     async def test_data_was_incremented():
         async with TestKafkaBroker(broker):
-            await broker.publish(InputData(data=5), "input_data")
-            on_input_data.mock.assert_called_with(dict(InputData(data=5)))
-            on_output_data.mock.assert_called_with(dict(InputData(data=6)))
+            await broker.publish(Data(data=1), "input_data")
+            on_input_data.mock.assert_called_with(dict(Data(data=1)))
+            on_output_data.mock.assert_called_with(dict(Data(data=2)))
 
 #### Start localhost Kafka broker
 
