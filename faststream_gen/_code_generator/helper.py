@@ -40,6 +40,7 @@ from faststream_gen._code_generator.constants import (
     MAX_NUM_FIXES_MSG,
     INCOMPLETE_DESCRIPTION,
     DESCRIPTION_EXAMPLE,
+    RESULTS_DIR_NAMES,
 )
 from .._components.package_data import get_root_data_path
 
@@ -47,24 +48,29 @@ from .._components.package_data import get_root_data_path
 logger = get_logger(__name__, level=logging.WARNING)
 
 # %% ../../nbs/Helper.ipynb 5
-def retry_on_error(max_retries: int = MAX_RESTARTS, delay=1): # type: ignore
-    def decorator(func): # type: ignore
-        def wrapper(*args, **kwargs): # type: ignore
+def retry_on_error(max_retries: int = MAX_RESTARTS, delay: int = 1, step_name: str = RESULTS_DIR_NAMES["app"]):  # type: ignore
+    def decorator(func):  # type: ignore
+        def wrapper(*args, **kwargs):  # type: ignore
             for i in range(max_retries):
-                error = "" 
                 try:
                     kwargs["attempt"] = i
                     return func(*args, **kwargs)
                 except ValueError as e:
                     # Log the error here
-                    error = e # type: ignore
                     logger.info(f"Attempt {i} failed. Restarting step.")
                     time.sleep(delay)
-            raise ValueError(error)
+                    # Capture exception details here
+                    last_exception = e
+            if step_name == RESULTS_DIR_NAMES["app"]:
+                return last_exception.args[0], last_exception.args[1], True
+            else:
+                raise ValueError(last_exception)
+
         return wrapper
+
     return decorator
 
-# %% ../../nbs/Helper.ipynb 8
+# %% ../../nbs/Helper.ipynb 10
 def _fetch_content(url: str) -> requests.models.Response: # type: ignore
     """Fetch content from a URL using an HTTP GET request.
 
@@ -94,7 +100,7 @@ def _fetch_content(url: str) -> requests.models.Response: # type: ignore
         except requests.exceptions.RequestException as e:
             raise requests.exceptions.RequestException(f"An error occurred: {e}")
 
-# %% ../../nbs/Helper.ipynb 10
+# %% ../../nbs/Helper.ipynb 12
 @contextmanager
 def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
@@ -119,7 +125,7 @@ def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, N
             typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
             raise typer.Exit(code=1)
 
-# %% ../../nbs/Helper.ipynb 12
+# %% ../../nbs/Helper.ipynb 14
 def write_file_contents(output_file: str, contents: str) -> None:
     """Write the given contents to the specified output file.
 
@@ -141,7 +147,7 @@ def write_file_contents(output_file: str, contents: str) -> None:
             f"Error: Failed to save file at '{output_file}' due to: '{e}'. Please ensure that the specified 'output_path' is valid and that you have the necessary permissions to write files to it."
         )
 
-# %% ../../nbs/Helper.ipynb 14
+# %% ../../nbs/Helper.ipynb 16
 def read_file_contents(output_file: str) -> str:
     """Read and return the contents from the specified file.
 
@@ -163,7 +169,7 @@ def read_file_contents(output_file: str) -> str:
             f"Error: The file '{output_file}' does not exist. Please ensure that the specified 'output_path' is valid and that you have the necessary permissions to access it."
         )
 
-# %% ../../nbs/Helper.ipynb 17
+# %% ../../nbs/Helper.ipynb 19
 def validate_python_code(code: str, **kwargs: Dict[str, Any]) -> List[str]:
     """Validate and report errors in the provided Python code.
 
@@ -188,7 +194,7 @@ def validate_python_code(code: str, **kwargs: Dict[str, Any]) -> List[str]:
 
         return []
 
-# %% ../../nbs/Helper.ipynb 21
+# %% ../../nbs/Helper.ipynb 23
 def set_logger_level(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to set the logger level based on verbosity.
 
@@ -209,7 +215,7 @@ def set_logger_level(func: Callable[..., Any]) -> Callable[..., Any]:
 
     return wrapper_decorator
 
-# %% ../../nbs/Helper.ipynb 24
+# %% ../../nbs/Helper.ipynb 26
 # Reference: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 
 
@@ -262,7 +268,7 @@ def _retry_with_exponential_backoff(
 
     return decorator
 
-# %% ../../nbs/Helper.ipynb 27
+# %% ../../nbs/Helper.ipynb 29
 def _get_relevant_document(query: str) -> str:
     """Load the vector database and retrieve the most relevant document based on the given query.
 
@@ -278,7 +284,7 @@ def _get_relevant_document(query: str) -> str:
     results_str = "\n".join([result.page_content for result in results])
     return results_str
 
-# %% ../../nbs/Helper.ipynb 29
+# %% ../../nbs/Helper.ipynb 31
 examples_delimiter = {
     "description": {
         "start": "==== description.txt starts ====",
@@ -328,7 +334,7 @@ def _format_examples(parent_docs_str: List[str]) -> Dict[str, str]:
 
     return ret_val
 
-# %% ../../nbs/Helper.ipynb 31
+# %% ../../nbs/Helper.ipynb 33
 def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
     """Load the vector database and retrieve the most relevant examples based on the given query for each step.
 
@@ -345,7 +351,7 @@ def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
     prompt_examples = _format_examples(results_page_content)
     return prompt_examples
 
-# %% ../../nbs/Helper.ipynb 33
+# %% ../../nbs/Helper.ipynb 35
 class CustomAIChat:
     """Custom class for interacting with OpenAI
 
@@ -416,7 +422,7 @@ class CustomAIChat:
             response["usage"],
         )
 
-# %% ../../nbs/Helper.ipynb 37
+# %% ../../nbs/Helper.ipynb 39
 def _construct_prompt_with_error_msg(
     response: str,
     errors: str,
@@ -437,7 +443,7 @@ def _construct_prompt_with_error_msg(
     )
     return prompt_with_errors
 
-# %% ../../nbs/Helper.ipynb 39
+# %% ../../nbs/Helper.ipynb 41
 class ValidateAndFixResponse:
     """Generates and validates response from OpenAI
 
@@ -467,7 +473,7 @@ class ValidateAndFixResponse:
     ) -> Tuple[str, List[Dict[str, int]]]:
         raise NotImplementedError()
 
-# %% ../../nbs/Helper.ipynb 40
+# %% ../../nbs/Helper.ipynb 42
 def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
     """Add list of OpenAI "usage" dictionaries by categories defined in TOKEN_TYPES (prompt_tokens, completion_tokens and total_tokens).
 
@@ -485,7 +491,7 @@ def add_tokens_usage(usage_list: List[Dict[str, int]]) -> Dict[str, int]:
             
     return added_tokens
 
-# %% ../../nbs/Helper.ipynb 43
+# %% ../../nbs/Helper.ipynb 45
 def _save_results(
     step_name: Optional[str],
     intermediate_results_path: Optional[str],
@@ -518,7 +524,7 @@ def _save_results(
             f_output.write(response)
             f_errors.write(error_str)
 
-# %% ../../nbs/Helper.ipynb 46
+# %% ../../nbs/Helper.ipynb 48
 @patch  # type: ignore
 def fix(
     self: ValidateAndFixResponse,
@@ -559,13 +565,16 @@ def fix(
             total_usage.append(total_tokens_usage)
             return response, total_usage
 
-        self.generate.messages[-1]["content"] = self.generate.messages[-1][
+        self.generate.messages[-1]["content"] = self.generate.messages[-1][ # type: ignore
             "content"
         ].rsplit("==== YOUR RESPONSE ====", 1)[0]
         prompt = _construct_prompt_with_error_msg(response, error_str)
         logger.info(f"Validation failed, trying again...Errors:\n{error_str}")
 
     total_usage.append(total_tokens_usage)
-    raise ValueError(
-        f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
-    )
+    if step_name == RESULTS_DIR_NAMES["app"]:
+        raise ValueError(response, total_usage)
+    else:
+        raise ValueError(
+            f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
+        )

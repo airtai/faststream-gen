@@ -19,7 +19,7 @@ APPLICATION_SKELETON_FILE_NAME = "application_skeleton.py"
 ASYNC_API_SPEC_FILE_NAME = "asyncapi.yml"
 APPLICATION_FILE_NAME = "application.py"
 INTEGRATION_TEST_FILE_NAME = "test.py"
-INTERMEDIATE_RESULTS_DIR_NAME = "_faststream_gen_tmp"
+INTERMEDIATE_RESULTS_DIR_NAME = "_faststream_gen_logs"
 INTERMEDIATE_OUTPUT_DIR_NAME = "output"
 
 GENERATE_APP_FROM_ASYNCAPI = "generate_app_from_asyncapi"

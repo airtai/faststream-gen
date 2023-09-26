@@ -83,9 +83,10 @@ def _generate_requirements(
 # %% ../../nbs/New_Project_Generator.ipynb 10
 def create_project(
     output_path: str,
-    save_intermediate_files: bool,
+    save_log_files: bool,
     model: str,
     total_usage: List[Dict[str, int]],
+    is_app_and_test_code_broken: bool,
 ) -> List[Dict[str, int]]:
     with yaspin(
         text="Creating a new FastStream project...", color="cyan", spinner="clock"
@@ -126,7 +127,7 @@ def create_project(
                 write_file_contents(dev_requirements_file, dev_requirements)
 
                 shutil.copytree(tmp_dir, output_path, dirs_exist_ok=True)
-                if not save_intermediate_files:
+                if (not save_log_files) and (not is_app_and_test_code_broken):
                     shutil.rmtree(intermediate_dir_path)
 
         sp.text = ""
