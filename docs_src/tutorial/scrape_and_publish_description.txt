@@ -1,14 +1,24 @@
-Create faststream application which will retrieve cryptocurrency current price and publish it to new_data topic. 
+Create faststream application which will retrieve current cryptocurrency price
+and publish it to new_data topic. 
+
 Application should retrieve the data every 2 seconds.
 
 Message which will be produced is JSON with the two attributes:
-    - price: non negative float (it represents current pice of cryptocurrency in USD)
-    - crypto_currency: string (it represents the cryptocurrency e.g BTC, ETH...)
+- price: non negative float (current price of cryptocurrency in USD)
+- crypto_currency: string (the cryptocurrency e.g BTC, ETH...)
 
-Curent price of Bitcoin can be retrieveed by simple GET request to 'https://api.coinbase.com/v2/prices/BTC-USD/spot'
-Curent price of Ethereum can be retrieveed by simple GET request to 'https://api.coinbase.com/v2/prices/ETH-USD/spot'
+Curent price of Bitcoin can be retrieveed by simple GET request to:
+    - https://api.coinbase.com/v2/prices/BTC-USD/spot
+    
+Curent price of Ethereum can be retrieveed by simple GET request to:
+    - https://api.coinbase.com/v2/prices/ETH-USD/spot
 
-The response of this GET request is a JSON and you can get information about the crypto_currency in response['data']['base']
-and the information about the price in response['data']['amount']
+The response of this GET request is a JSON and you can get
+information about the crypto_currency in:
+    response['data']['base']
+    
+and the information about the price in:
+    response['data']['amount']
 
-Use utf-8 encoded crypto_currency attribute as a partition key when publishing the message to new_data topic..
+Use utf-8 encoded crypto_currency attribute as a partition key when publishing
+the message to new_data topic.
