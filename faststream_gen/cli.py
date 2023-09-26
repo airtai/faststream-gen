@@ -36,6 +36,7 @@ from faststream_gen._code_generator.constants import (
     LOGS_DIR_NAME,
     OpenAIModel,
     LOG_OUTPUT_DIR_NAME,
+    INCOMPLETE_APP_ERROR_MSG,
 )
 
 from ._components.new_project_generator import create_project
@@ -279,9 +280,7 @@ For each consumed message, create a new message object and increment the value o
             test_cmd = f"cd {output_path} && python -m pytest"
             logs_dir = f"{output_path}/{LOGS_DIR_NAME}"
         typer.secho(
-            f"""\n\nApologies, we couldn't generate a working application and test code from your application description.
-
-Please run the following command to start manual debugging:
+            f"""\n\n{INCOMPLETE_APP_ERROR_MSG}
 
 {test_cmd}
 
