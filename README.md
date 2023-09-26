@@ -188,13 +188,29 @@ faststream_gen "Create a FastStream application using localhost broker for testi
      ✔ The app and the tests are generated.  around 30 to 90 seconds)...
      ✔ New FastStream project created. 
      ✔ Integration tests were successfully completed. 
-     Tokens used: 9564
-     Total Cost (USD): $0.02921
+     Tokens used: 9400
+     Total Cost (USD): $0.02866
     ✨  All files were successfully generated!
 
 Here’s a look at the directory hierarchy:
 
-    /bin/bash: line 1: tree: command not found
+    my-awesome-project
+    ├── LICENSE
+    ├── README.md
+    ├── app
+    │   ├── __init__.py
+    │   └── application.py
+    ├── dev_requirements.txt
+    ├── requirements.txt
+    ├── scripts
+    │   ├── services.yml
+    │   ├── start_kafka_broker_locally.sh
+    │   ├── stop_kafka_broker_locally.sh
+    │   └── subscribe_to_kafka_broker_locally.sh
+    └── tests
+        └── test_application.py
+
+    3 directories, 11 files
 
 Let’s take a quick look at the generated application and test code.
 
@@ -202,30 +218,20 @@ Let’s take a quick look at the generated application and test code.
 
 
 
-    from pydantic import BaseModel, Field
-
     from faststream import FastStream, Logger
     from faststream.kafka import KafkaBroker
 
-
-    class Data(BaseModel):
-        data: int = Field(
-            ..., examples=[1], description="The data attribute to be incremented"
-        )
-
-
     broker = KafkaBroker("localhost:9092")
     app = FastStream(broker)
-
 
     to_output_data = broker.publisher("output_data")
 
 
     @broker.subscriber("input_data")
-    async def on_input_data(msg: Data, logger: Logger) -> None:
+    async def on_input_data(msg: dict, logger: Logger) -> None:
         logger.info(f"{msg=}")
-        incremented_data = Data(data=msg.data + 1)
-        await to_output_data.publish(incremented_data)
+        incremented_data = msg["data"] + 1
+        await to_output_data.publish({"data": incremented_data})
 
 `test_application.py`:
 
@@ -236,20 +242,20 @@ Let’s take a quick look at the generated application and test code.
     from faststream import Context
     from faststream.kafka import TestKafkaBroker
 
-    from app.application import Data, broker, on_input_data
+    from app.application import app, broker, on_input_data
 
 
     @broker.subscriber("output_data")
-    async def on_output_data(msg: Data):
+    async def on_output_data(msg: dict, key: bytes = Context("message.raw_message.key")):
         pass
 
 
     @pytest.mark.asyncio
     async def test_data_was_incremented():
         async with TestKafkaBroker(broker):
-            await broker.publish(Data(data=1), "input_data")
-            on_input_data.mock.assert_called_with(dict(Data(data=1)))
-            on_output_data.mock.assert_called_with(dict(Data(data=2)))
+            await broker.publish({"data": 1}, "input_data")
+            on_input_data.mock.assert_called_with({"data": 1})
+            on_output_data.mock.assert_called_with({"data": 2})
 
 #### Start localhost Kafka broker
 
