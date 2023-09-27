@@ -2,8 +2,8 @@
 
 # %% auto 0
 __all__ = ['logger', 'examples_delimiter', 'set_logger_level', 'retry_on_error', 'ensure_openai_api_key_set', 'add_tokens_usage',
-           'get_relevant_prompt_examples', 'strip_white_spaces', 'write_file_contents', 'mock_openai_create',
-           'download_and_extract_faststream_archive', 'validate_python_code']
+           'get_relevant_prompt_examples', 'strip_white_spaces', 'write_file_contents', 'read_file_contents',
+           'mock_openai_create', 'download_and_extract_faststream_archive', 'validate_python_code']
 
 # %% ../../nbs/Helper.ipynb 1
 from typing import *
@@ -76,7 +76,7 @@ def retry_on_error(max_retries: int = MAX_RESTARTS, delay: int = 1):  # type: ig
                     time.sleep(delay)
                     # Capture exception details here
                     last_exception = e
-            return last_exception.args[0], last_exception.args[1], False
+            return last_exception.args[0], last_exception.args[1]
         return wrapper
 
     return decorator
@@ -217,6 +217,28 @@ def write_file_contents(output_file: str, contents: str) -> None:
         )
 
 # %% ../../nbs/Helper.ipynb 26
+def read_file_contents(output_file: str) -> str:
+    """Read and return the contents from the specified file.
+
+    Args:
+        output_file: The path to the file to be read.
+
+    Returns:
+        The contents of the file as string.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+    """
+    try:
+        with open(output_file, "r", encoding="utf-8") as f:
+            contents = f.read()
+        return contents
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Error: The file '{output_file}' does not exist. Please ensure that the specified 'output_path' is valid and that you have the necessary permissions to access it."
+        )
+
+# %% ../../nbs/Helper.ipynb 29
 @contextmanager
 def mock_openai_create(test_response):
     mock_choices = {
@@ -232,7 +254,7 @@ def mock_openai_create(test_response):
         mock.create.return_value = mock_choices
         yield
 
-# %% ../../nbs/Helper.ipynb 28
+# %% ../../nbs/Helper.ipynb 31
 def _fetch_content(url: str) -> requests.models.Response: # type: ignore
     """Fetch content from a URL using an HTTP GET request.
 
@@ -262,7 +284,7 @@ def _fetch_content(url: str) -> requests.models.Response: # type: ignore
         except requests.exceptions.RequestException as e:
             raise requests.exceptions.RequestException(f"An error occurred: {e}")
 
-# %% ../../nbs/Helper.ipynb 30
+# %% ../../nbs/Helper.ipynb 33
 @contextmanager
 def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
@@ -287,27 +309,23 @@ def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, N
             typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
             raise typer.Exit(code=1)
 
-# %% ../../nbs/Helper.ipynb 32
-def validate_python_code(code: str, **kwargs: Dict[str, Any]) -> List[str]:
+# %% ../../nbs/Helper.ipynb 35
+def validate_python_code(file_name: str, **kwargs: Dict[str, Any]) -> List[str]:
     """Validate and report errors in the provided Python code.
 
     Args:
-        code: The Python code as a string.
+        file_name: Python file to validate
 
     Returns:
         A list of error messages encountered during validation. If no errors occur, an empty list is returned.
     """
-    with TemporaryDirectory() as d:
-        try:
-            temp_file = Path(d) / "application.py"
-            write_file_contents(str(temp_file), code)
+    try:
+        # Import the module using importlib
+        spec = importlib.util.spec_from_file_location("tmp_module", file_name)
+        module = importlib.util.module_from_spec(spec)  # type: ignore
+        spec.loader.exec_module(module)  # type: ignore
 
-            # Import the module using importlib
-            spec = importlib.util.spec_from_file_location("tmp_module", temp_file)
-            module = importlib.util.module_from_spec(spec)  # type: ignore
-            spec.loader.exec_module(module)  # type: ignore
+    except Exception as e:
+        return [f"{type(e).__name__}: {e}"]
 
-        except Exception as e:
-            return [f"{type(e).__name__}: {e}"]
-
-        return []
+    return []

@@ -8,6 +8,7 @@ from typing import *
 import time
 import json
 from pathlib import Path
+from collections import defaultdict
 
 from yaspin import yaspin
 
@@ -29,6 +30,16 @@ from faststream_gen._code_generator.constants import (
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
+def _validate_response(
+    response: str, output_directory: str, **kwargs: Dict[str, Any]
+) -> List[str]:
+    target_file_name = Path(output_directory) / APPLICATION_FILE_PATH
+    write_file_contents(str(target_file_name), response)
+    ret_val = validate_python_code(str(target_file_name))
+
+    return ret_val
+
+# %% ../../nbs/App_Skeleton_Generator.ipynb 8
 @retry_on_error()  # type: ignore
 def _generate(
     model: str,
@@ -46,23 +57,22 @@ def _generate(
         user_prompt=prompt,
         #         semantic_search_query=app_description_content,
     )
-    app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-    log_dir_path = Path(output_directory) / LOGS_DIR_NAME
+    app_validator = ValidateAndFixResponse(app_generator, _validate_response)
     validator_result = app_validator.fix(
         app_description_content,
         total_usage,
         STEP_LOG_DIR_NAMES["skeleton"],
-        str(log_dir_path),
+        str(output_directory),
         **kwargs,
     )
 
-    try:
-        validated_app_skeleton, total_usage = validator_result
-        return validated_app_skeleton, total_usage, True
-    except ValueError as e:
-        return validator_result
+    return (
+        (validator_result, True)
+        if isinstance(validator_result[-1], defaultdict)
+        else validator_result
+    )
 
-# %% ../../nbs/App_Skeleton_Generator.ipynb 8
+# %% ../../nbs/App_Skeleton_Generator.ipynb 11
 def generate_app_skeleton(
     validated_description: str,
     output_directory: str,
@@ -90,14 +100,9 @@ def generate_app_skeleton(
             "==== RELEVANT EXAMPLES GOES HERE ====", f"\n{relevant_prompt_examples}"
         )
 
-        validated_app_skeleton, total_usage, is_valid_skeleton_code = _generate(
+        total_usage, is_valid_skeleton_code = _generate(
             model, prompt, validated_description, total_usage, output_directory
         )
-
-        output_file = Path(output_directory) / APPLICATION_FILE_PATH
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-        write_file_contents(str(output_file), validated_app_skeleton)
-
         sp.text = ""
         if is_valid_skeleton_code:
             message = f" ✔ FastStream app skeleton code generated."

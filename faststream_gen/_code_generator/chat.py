@@ -24,6 +24,7 @@ from faststream_gen._code_generator.constants import (
     MAX_NUM_FIXES_MSG,
     INCOMPLETE_DESCRIPTION,
     DESCRIPTION_EXAMPLE,
+    LOGS_DIR_NAME,
 )
 from .._components.logger import get_logger, set_level
 from .prompts import SYSTEM_PROMPT
@@ -263,10 +264,10 @@ def fix(
     self: ValidateAndFixResponse,
     prompt: str,
     total_usage: List[Dict[str, int]],
-    step_name: Optional[str] = None,
-    log_dir_path: Optional[str] = None,
+    step_name: str = None,
+    output_directory: str = None,
     **kwargs: Dict[str, Any],
-) -> Tuple[str, List[Dict[str, int]]]:
+) -> List[Dict[str, int]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
 
     Args:
@@ -280,10 +281,12 @@ def fix(
         ValueError: If the maximum number of attempts is exceeded and the response has not successfully passed the validation.
     """
     total_tokens_usage: Dict[str, int] = defaultdict(int)
+    log_dir_path = Path(output_directory) / LOGS_DIR_NAME
     for i in range(self.max_retries):  # type: ignore
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
-        errors = self.validate(response, **kwargs)
+        
+        errors = self.validate(response, output_directory, **kwargs)
         error_str = "\n".join(errors)
         _save_log_results(
             step_name,
@@ -296,7 +299,7 @@ def fix(
         )
         if len(errors) == 0:
             total_usage.append(total_tokens_usage)
-            return response, total_usage
+            return total_usage
 
         self.generate.messages[-1]["content"] = self.generate.messages[-1][ # type: ignore
             "content"
@@ -305,9 +308,6 @@ def fix(
         logger.info(f"Validation failed, trying again...Errors:\n{error_str}")
 
     total_usage.append(total_tokens_usage)
-#     if step_name == STEP_LOG_DIR_NAMES["app"]:
-    raise ValueError(response, total_usage)
-#     else:
-#         raise ValueError(
-#             f"✘ Error: {MAX_NUM_FIXES_MSG} ({self.max_retries}) exceeded. Unable to fix the following issues. Please try again...\n{error_str}\n\n{INCOMPLETE_DESCRIPTION}\n{DESCRIPTION_EXAMPLE}\n\n"
-#         )
+    
+    # we send False to notify the generated code contains bugs
+    raise ValueError(total_usage, False)
