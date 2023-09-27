@@ -10,16 +10,16 @@ import time
 from yaspin import yaspin
 
 from .._components.logger import get_logger
-from .helper import CustomAIChat
+from .chat import CustomAIChat
 from .prompts import APP_VALIDATION_PROMPT
-from .constants import INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE
+from .constants import INCOMPLETE_DESCRIPTION, DESCRIPTION_EXAMPLE, OpenAIModel
 
 # %% ../../nbs/App_Description_Validator.ipynb 3
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Description_Validator.ipynb 5
 ERROR_RESPONSE = "I apologize, but I can only respond to queries related to FastStream code generation. Feel free to ask me about using FastStream, and I'll do my best to help you with that!"
-GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastStream! Unfortunately, I can only generate FastStream code and offer assistance in that area. For general information about FastStream, please visit https://fastkafka.airt.ai/"
+GENERAL_FASTKAFKA_RESPONSE = "Great to see your interest in FastStream! Unfortunately, I can only generate FastStream code and offer assistance in that area. For general information about FastStream, please visit https://faststream.airt.ai/"
 
 # %% ../../nbs/App_Description_Validator.ipynb 6
 def validate_app_description(description: str, model: str, total_usage: List[Dict[str, int]]) -> Tuple[str, List[Dict[str, int]]]:
