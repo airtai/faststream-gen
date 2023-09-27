@@ -58,6 +58,9 @@ The key features are:
 
 ![HTML-page](https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4?raw=true.png)
 
+https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4
+
+
 ### Quick start
 
 The following quick start guide will walk you through installing and
