@@ -57,7 +57,7 @@ The key features are:
   remains in top shape throughout its development lifecycle.
 
 
-[![faststream-gen example](https://github.com/davorrunje/faststream-gen/blob/main/mkdocs/docs_overrides/images/tutorial-video.png?raw=true)](https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4 "faststream-gen")
+[![faststream-gen example](https://github.com/airtai/faststream-gen/blob/main/mkdocs/docs_overrides/images/tutorial-video.png?raw=true)](https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4 "faststream-gen")
 
 ### Quick start
 
