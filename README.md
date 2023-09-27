@@ -57,7 +57,7 @@ The key features are:
   remains in top shape throughout its development lifecycle.
 
 
-[![IMAGE faststream-gen](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4 "faststream-gen")
+[![faststream-gen example](https://github.com/airtai/faststream/blob/main/docs/docs/assets/img/AsyncAPI-basic-html-short.png?raw=true)](https://github.com/airtai/faststream-gen/assets/32619626/2731caa1-1108-4f4e-8507-9bf1168419e4 "faststream-gen")
 
 ### Quick start
 
