@@ -12,34 +12,30 @@ from pathlib import Path
 from yaspin import yaspin
 
 from .._components.logger import get_logger
+from .chat import CustomAIChat, ValidateAndFixResponse
 from faststream_gen._code_generator.helper import (
-    CustomAIChat,
-    ValidateAndFixResponse,
     write_file_contents,
-    read_file_contents,
     validate_python_code,
     retry_on_error,
 )
 from .prompts import APP_SKELETON_GENERATION_PROMPT
 from faststream_gen._code_generator.constants import (
-    DESCRIPTION_FILE_NAME,
-    APPLICATION_SKELETON_FILE_NAME,
-    GENERATE_APP_SKELETON,
-    RESULTS_DIR_NAMES,
-    LOG_OUTPUT_DIR_NAME,
+    STEP_LOG_DIR_NAMES,
+    APPLICATION_FILE_PATH,
+    LOGS_DIR_NAME
 )
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 3
 logger = get_logger(__name__)
 
 # %% ../../nbs/App_Skeleton_Generator.ipynb 5
-@retry_on_error(step_name=RESULTS_DIR_NAMES["skeleton"])  # type: ignore
+@retry_on_error()  # type: ignore
 def _generate(
     model: str,
     prompt: str,
     app_description_content: str,
     total_usage: List[Dict[str, int]],
-    code_gen_directory: str,
+    output_directory: str,
     **kwargs,
 ) -> Tuple[str, List[Dict[str, int]]]:
     app_generator = CustomAIChat(
@@ -48,20 +44,28 @@ def _generate(
         },
         model=model,
         user_prompt=prompt,
-        #             semantic_search_query=app_description_content,
+        #         semantic_search_query=app_description_content,
     )
     app_validator = ValidateAndFixResponse(app_generator, validate_python_code)
-    return app_validator.fix(
+    log_dir_path = Path(output_directory) / LOGS_DIR_NAME
+    validator_result = app_validator.fix(
         app_description_content,
         total_usage,
-        RESULTS_DIR_NAMES["skeleton"],
-        code_gen_directory,
+        STEP_LOG_DIR_NAMES["skeleton"],
+        str(log_dir_path),
         **kwargs,
     )
 
+    try:
+        validated_app_skeleton, total_usage = validator_result
+        return validated_app_skeleton, total_usage, True
+    except ValueError as e:
+        return validator_result
 
+# %% ../../nbs/App_Skeleton_Generator.ipynb 8
 def generate_app_skeleton(
-    code_gen_directory: str,
+    validated_description: str,
+    output_directory: str,
     model: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
@@ -82,20 +86,24 @@ def generate_app_skeleton(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_description_file_name = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{DESCRIPTION_FILE_NAME}"
-        app_description_content = read_file_contents(app_description_file_name)
-
         prompt = APP_SKELETON_GENERATION_PROMPT.replace(
             "==== RELEVANT EXAMPLES GOES HERE ====", f"\n{relevant_prompt_examples}"
         )
 
-        validated_app, total_usage = _generate(
-            model, prompt, app_description_content, total_usage, code_gen_directory
+        validated_app_skeleton, total_usage, is_valid_skeleton_code = _generate(
+            model, prompt, validated_description, total_usage, output_directory
         )
 
-        output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
-        write_file_contents(output_file, validated_app)
+        output_file = Path(output_directory) / APPLICATION_FILE_PATH
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        write_file_contents(str(output_file), validated_app_skeleton)
 
         sp.text = ""
-        sp.ok(f" ✔ FastStream app skeleton code generated.")
-        return total_usage
+        if is_valid_skeleton_code:
+            message = f" ✔ FastStream app skeleton code generated."
+        else:
+            message = " ✘ Error: Failed to generate a valid application skeleton code."
+            sp.color = "red"
+
+        sp.ok(message)
+        return total_usage, is_valid_skeleton_code

@@ -23,6 +23,8 @@ from faststream_gen._code_generator.helper import (
 )
 from ._code_generator.constants import MODEL_PRICING, EMPTY_DESCRIPTION_ERROR, OpenAIModel
 from ._components.new_project_generator import create_project
+from ._code_generator.app_skeleton_generator import generate_app_skeleton
+from ._code_generator.app_and_test_generator import generate_app_and_test
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -156,15 +158,36 @@ For each consumed message, create a new message object and increment the value o
     try:
         tokens_list: List[Dict[str, int]] = []
         ensure_openai_api_key_set()
-        
+
         # Step 1: Validate description
-        validated_description, tokens_list = _validate_app_description(description, input_path, model, tokens_list)
-        
+        validated_description, tokens_list = _validate_app_description(
+            description, input_path, model, tokens_list
+        )
+
         # Step 2: Project creation
         create_project(output_path)
-        
-        print("Project Created")
-        
+
+        # Step 3: Get relevant application examples
+        prompt_examples = get_relevant_prompt_examples(validated_description)
+
+        # Step 4: Generate application skeleton
+        tokens_list, is_valid_skeleton_code = generate_app_skeleton(
+            validated_description,
+            output_path,
+            model.value,
+            tokens_list,
+            prompt_examples["description_to_skeleton"],
+        )
+
+        if is_valid_skeleton_code:
+            tokens_list, is_valid_app_code = generate_app_and_test(
+                validated_description,
+                model.value,
+                output_path,
+                tokens_list,
+                prompt_examples["skeleton_to_app_and_test"],
+            )
+
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED
         typer.secho(e, err=True, fg=fg)
