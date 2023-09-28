@@ -24,7 +24,8 @@ from faststream_gen._code_generator.helper import (
 from ._code_generator.constants import MODEL_PRICING, EMPTY_DESCRIPTION_ERROR, OpenAIModel
 from ._components.new_project_generator import create_project
 from ._code_generator.app_skeleton_generator import generate_app_skeleton
-# from faststream_gen._code_generator.app_and_test_generator import generate_app_and_test
+from ._code_generator.app_and_test_generator import generate_app_and_test
+from ._components.integration_test_generator import run_integration_test
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -178,14 +179,16 @@ For each consumed message, create a new message object and increment the value o
             tokens_list,
             prompt_examples["description_to_skeleton"],
         )
-#         if is_valid_skeleton_code:
-#             tokens_list, is_valid_app_code = generate_app_and_test(
-#                 validated_description,
-#                 model.value,
-#                 output_path,
-#                 tokens_list,
-#                 prompt_examples["skeleton_to_app_and_test"],
-#             )
+        if is_valid_skeleton_code:
+            tokens_list, is_valid_app_code = generate_app_and_test(
+                validated_description,
+                model.value,
+                output_path,
+                tokens_list,
+                prompt_examples["skeleton_to_app_and_test"],
+            )
+            if is_valid_app_code:
+                run_integration_test(output_path)
 
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED

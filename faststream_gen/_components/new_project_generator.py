@@ -10,8 +10,17 @@ from yaspin import yaspin
 import shutil
 
 
-from .._code_generator.helper import download_and_extract_faststream_archive
-from .._code_generator.constants import FASTSTREAM_TEMPLATE_ZIP_URL, FASTSTREAM_TEMPLATE_DIR_SUFFIX
+from faststream_gen._code_generator.helper import (
+    download_and_extract_faststream_archive,
+)
+from faststream_gen._code_generator.constants import (
+    FASTSTREAM_TEMPLATE_ZIP_URL,
+    FASTSTREAM_TEMPLATE_DIR_SUFFIX,
+    APPLICATION_FILE_PATH,
+    TEST_FILE_PATH,
+)
+
+from .._code_generator.helper import write_file_contents
 
 # %% ../../nbs/New_Project_Generator.ipynb 3
 def create_project(
@@ -23,6 +32,12 @@ def create_project(
         with download_and_extract_faststream_archive(
             FASTSTREAM_TEMPLATE_ZIP_URL
         ) as extracted_path:
+            
+            app_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / APPLICATION_FILE_PATH)
+            write_file_contents(app_file, "")
+            test_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / TEST_FILE_PATH)
+            write_file_contents(test_file, "")
+            
             shutil.copytree(
                     str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
                     output_path,
