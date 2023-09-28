@@ -15,7 +15,7 @@ repos:
   rev: '1.7.5'
   hooks:
   - id: bandit
-    args: ["-r", "fastkafka_gen"]
+    args: ["-r", "faststream_gen"]
 
 - repo: https://github.com/returntocorp/semgrep
   rev: "v1.14.0"

@@ -10,26 +10,26 @@ import importlib.util
 from tempfile import TemporaryDirectory
 from pathlib import Path
 import platform
+from collections import defaultdict
 import subprocess  # nosec: B404: Consider possible security implications associated with the subprocess module.
 
 from yaspin import yaspin
 
 from .._components.logger import get_logger
+from .chat import CustomAIChat, ValidateAndFixResponse
 from faststream_gen._code_generator.helper import (
-    CustomAIChat,
-    ValidateAndFixResponse,
     write_file_contents,
     read_file_contents,
     validate_python_code,
     retry_on_error,
+    set_cwd
 )
 from .prompts import APP_AND_TEST_GENERATION_PROMPT
 from faststream_gen._code_generator.constants import (
-    APPLICATION_SKELETON_FILE_NAME,
-    APPLICATION_FILE_NAME,
-    INTEGRATION_TEST_FILE_NAME,
-    RESULTS_DIR_NAMES,
-    LOG_OUTPUT_DIR_NAME,
+    APPLICATION_FILE_PATH,
+    TEST_FILE_PATH,
+    STEP_LOG_DIR_NAMES,
+    LOGS_DIR_NAME,
 )
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 3
@@ -37,27 +37,33 @@ logger = get_logger(__name__)
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 5
 def _split_app_and_test_code(response: str) -> Tuple[str, str]:
-    app_code, test_code = response.split("### application.py ###")[1].split("### test.py ###")
+    app_code, test_code = response.split("### application.py ###")[1].split(
+        "### test.py ###"
+    )
     return app_code, test_code
 
 
-def _validate_response(response: str, **kwargs: Dict[str, Any]) -> List[str]:
+def _validate_response(
+    response: str, output_directory: str, **kwargs: Dict[str, Any]
+) -> List[str]:
     try:
         app_code, test_code = _split_app_and_test_code(response)
     except (IndexError, ValueError) as e:
         return [
             "Please add ### application.py ### and ### test.py ### in your response"
         ]
-    with TemporaryDirectory() as d:
-        write_file_contents(
-            f"{d}/{APPLICATION_FILE_NAME}",
-            app_code.replace("### application.py ###", ""),
-        )
 
-        test_file = f"{d}/{INTEGRATION_TEST_FILE_NAME}"
-        write_file_contents(test_file, test_code)
+    app_file_name = Path(output_directory) / APPLICATION_FILE_PATH
+    test_file_name = Path(output_directory) / TEST_FILE_PATH
 
-        cmd = ["pytest", test_file, "--tb=short"]
+    write_file_contents(
+        str(app_file_name),
+        app_code.replace("### application.py ###", "").strip(),
+    )
+    write_file_contents(str(test_file_name), test_code.strip())
+
+    with set_cwd(output_directory):
+        cmd = ["pytest", "--tb=short"]
         # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         p = subprocess.run(  # nosec: B602, B603 subprocess call - check for execution of untrusted input.
             cmd,
@@ -65,19 +71,19 @@ def _validate_response(response: str, **kwargs: Dict[str, Any]) -> List[str]:
             stdout=subprocess.PIPE,
             shell=True if platform.system() == "Windows" else False,
         )
-        if p.returncode != 0:
-            return [str(p.stdout.decode("utf-8"))]
+    if p.returncode != 0:
+        return [str(p.stdout.decode("utf-8"))]
 
-        return []
+    return []
 
-# %% ../../nbs/App_And_Test_Generator.ipynb 11
+# %% ../../nbs/App_And_Test_Generator.ipynb 9
 @retry_on_error()  # type: ignore
 def _generate(
     model: str,
     prompt: str,
     app_skeleton: str,
     total_usage: List[Dict[str, int]],
-    code_gen_directory: str,
+    output_directory: str,
     **kwargs,
 ) -> Tuple[str, List[Dict[str, int]], bool]:
     test_generator = CustomAIChat(
@@ -90,24 +96,23 @@ def _generate(
     test_validator = ValidateAndFixResponse(test_generator, _validate_response)
     validator_result = test_validator.fix(
         app_skeleton,
-        total_usage=total_usage,
-        step_name=RESULTS_DIR_NAMES["app"],
-        intermediate_results_path=code_gen_directory,
+        total_usage,
+        STEP_LOG_DIR_NAMES["app"],
+        str(output_directory),
         **kwargs,
     )
-    try:
-        app_and_test_code, total_usage = validator_result
-        is_app_and_test_code_broken = False
-        return app_and_test_code, total_usage, is_app_and_test_code_broken
-    except ValueError as e:
-        app_and_test_code, total_usage, is_app_and_test_code_broken = validator_result # type: ignore
-        return app_and_test_code, total_usage, is_app_and_test_code_broken
+    
+    return (
+        (validator_result, True) # type: ignore
+        if isinstance(validator_result[-1], defaultdict)
+        else validator_result
+    )
 
-# %% ../../nbs/App_And_Test_Generator.ipynb 14
+# %% ../../nbs/App_And_Test_Generator.ipynb 12
 def generate_app_and_test(
     description: str,
     model: str,
-    code_gen_directory: str,
+    output_directory: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
 ) -> Tuple[List[Dict[str, int]], bool]:
@@ -127,36 +132,28 @@ def generate_app_and_test(
         color="cyan",
         spinner="clock",
     ) as sp:
-        app_file_name = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_SKELETON_FILE_NAME}"
-        app_skeleton = read_file_contents(app_file_name)
+        app_skeleton_file_name = Path(output_directory) / APPLICATION_FILE_PATH
+        app_skeleton = read_file_contents(str(app_skeleton_file_name))
 
         prompt = (
             APP_AND_TEST_GENERATION_PROMPT.replace(
                 "==== REPLACE WITH APP DESCRIPTION ====", description
             )
             .replace("==== RELEVANT EXAMPLES GOES HERE ====", relevant_prompt_examples)
-            .replace("from .app import", "from application import")
+            .replace("from .app import", "from app.application import")
         )
 
-        validated_app_and_test_code, total_usage, is_app_and_test_code_broken = _generate(
-            model, prompt, app_skeleton, total_usage, code_gen_directory
+        total_usage, is_valid_app_code = _generate(
+            model, prompt, app_skeleton, total_usage, output_directory
         )
-
-        app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)
-
-        app_output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{APPLICATION_FILE_NAME}"
-        write_file_contents(app_output_file, app_code)
-
-        test_output_file = f"{code_gen_directory}/{LOG_OUTPUT_DIR_NAME}/{INTEGRATION_TEST_FILE_NAME}"
-        write_file_contents(test_output_file, test_code)
         
         sp.text = ""
-        if not is_app_and_test_code_broken:
-            message = " ✔ The app and the tests are generated."
+        if is_valid_app_code:
+            message = " ✔ The application and the test files are generated."
         else:
             message = " ✘ Error: Failed to generate a valid application and test code."
             sp.color = "red"
 
         sp.ok(message)
 
-        return total_usage, is_app_and_test_code_broken
+        return total_usage, is_valid_app_code
