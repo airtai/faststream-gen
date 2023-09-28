@@ -77,8 +77,7 @@ MAX_NUM_FIXES_MSG = "Maximum number of retries"
 
 INCOMPLETE_APP_ERROR_MSG = """Apologies, we couldn't generate a working application and test code from your application description.
 
-Please run the following command to start manual debugging:
-"""
+Please run the following command to start manual debugging:"""
 
 # %% ../../nbs/Constants.ipynb 11
 FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/faststream/archive/main.zip"
