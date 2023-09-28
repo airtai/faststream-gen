@@ -286,7 +286,10 @@ def fix(
         response, usage = self.generate(prompt)
         total_tokens_usage = add_tokens_usage([total_tokens_usage, usage])
         
-        errors = self.validate(response, output_directory, **kwargs)
+        if step_name == STEP_LOG_DIR_NAMES["app"]:
+            errors, response = self.validate(response, output_directory, **kwargs)
+        else:
+            errors = self.validate(response, output_directory, **kwargs)
         error_str = "\n".join(errors)
         _save_log_results(
             step_name,
