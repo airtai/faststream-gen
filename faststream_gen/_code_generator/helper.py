@@ -262,7 +262,7 @@ def read_file_contents(output_file: str) -> str:
 
 # %% ../../nbs/Helper.ipynb 31
 @contextmanager
-def mock_openai_create(test_response):
+def mock_openai_create(test_response: str) -> Generator[None, None, None]:
     mock_choices = {
         "choices": [{"message": {"content": test_response}}],
         "usage": { 

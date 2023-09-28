@@ -42,12 +42,12 @@ def _set_cwd(cwd_path: Union[Path, str]) -> Generator:
     finally:
         os.chdir(original_cwd)
 
-# %% ../../nbs/Benchmark_CLI.ipynb 6
+# %% ../../nbs/Benchmark_CLI.ipynb 5
 app = typer.Typer(
     short_help="Run benchmark against pre-defined example app descriptions",
 )
 
-# %% ../../nbs/Benchmark_CLI.ipynb 7
+# %% ../../nbs/Benchmark_CLI.ipynb 6
 @app.command(
     "run_benchmark",
     help="Run benchmark against pre-defined example app descriptions",
@@ -120,6 +120,6 @@ def benchmark(
     )
     if int(success_rate) != 1:
         typer.secho(
-            f"\nTo debug, go to {str(fixtures_path_obj / BENCHMARK_RESULTS_DIR)}, select one of the failed app description directories, and run 'python -m pytest'.",
+            f"\nTo debug, go to {str(fixtures_path_obj / BENCHMARK_RESULTS_DIR)}, select one of the failed app description directories, and run 'pytest'.",
             fg=typer.colors.RED,
         )

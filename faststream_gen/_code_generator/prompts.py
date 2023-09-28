@@ -225,47 +225,42 @@ pass
 
 # %% ../../nbs/Prompts.ipynb 5
 REQUIREMENTS_GENERATION_PROMPT = """
-You will be provided with an application code in ==== APP CODE ====, ==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section. Your goal is to update both the r==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section based on the provided ==== APP CODE ====.
 
-Input:
+You are required to examine the Python files labeled as ==== APP CODE ==== and ==== TEST CODE ==== thoroughly. Your task is to create separate lists of external dependencies for both the ==== APP CODE ==== and ==== TEST CODE ==== sections, following the specified format:
 
-You will be given application code a FastStream application in ==== APP CODE ==== section and requirements in ==== REQUIREMENT ==== and ==== DEV REQUIREMENT ==== section.
+==== APP REQUIREMENT ====
 
-Output:
+==== TEST REQUIREMENT ====
 
-You need to understand the ==== APP CODE ==== and update the following:
+Please adhere to the following rules when compiling the lists of external dependencies:
 
-    - The ==== REQUIREMENT ==== section based on the application code
-    - The ==== DEV REQUIREMENT ==== section based on the application code
-
-Instructions you must follow while generating the files:
-
-    - You need to understand the ==== APP CODE ====, if it contains kafka related code, e.g: import statement like "from faststream.kafka import KafkaBroker", then the application is related to kafka, then your ==== REQUIREMENT ==== contents should be faststream[kafka, docs], and ==== DEV REQUIREMENT ==== contents should be faststream[kafka, testing]
-
-    - You need to understand the ==== APP CODE ====, if it contains RabbitMQ related code, e.g: import statement like "from faststream.rabbit import RabbitBroker", then the application is related to RabbitMQ, then your ==== REQUIREMENT ==== contents should be faststream[rabbit, docs], and ==== DEV REQUIREMENT ==== contents should be faststream[rabbit, testing]
-
-    - You need to generate a single txt file containing both the contents of ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== with proper delimiters
-    
-    - You should only update the faststream package, if the  ==== REQUIREMENT ==== and the ==== DEV REQUIREMENT ==== contains any other requirements, you should retain it as it is.
-    
-    - you should always respond with the below example format and do not add additional text to it.
-    
-    - Do not add unnecessary new lines in your response. Do not add additional new line at the end of your response.
+- Do not include faststream and faststream.kafka in either the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections. These are considered internal packages and should not be listed as external dependencies.
+- Ensure that you populate the ==== APP REQUIREMENT ==== section based on the dependencies found in the ==== APP CODE ==== and the ==== TEST REQUIREMENT ==== section based on the dependencies found in the ==== TEST CODE ====—do not mix them together.
+- Include only external libraries and not internal Python libraries like json, time, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
 
 Below are few examples for your understanding:
 
-==== EXAMPLE APP CODE ====
+==== EXAMPLE APP CODE ==== 
 
-from pydantic import BaseModel, Field, NonNegativeFloat
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 from faststream import FastStream, Logger
 from faststream.kafka import KafkaBroker
-import pandas
+import json
 
 
-class DataBasic(BaseModel):
-    data: NonNegativeFloat = Field(
-        ..., examples=[0.5], description="Float data example"
+class CourseUpdates(BaseModel):
+    course_name: str = Field(..., examples=["Biology"], description="Course example")
+    new_content: Optional[str] = Field(
+        default=None, examples=["New content"], description="Content example"
+    )
+    timestamp: datetime = Field(
+        ...,
+        examples=["2020-04-23 10:20:30.400000"],
+        description="The timestamp of the record",
     )
 
 
@@ -273,54 +268,229 @@ broker = KafkaBroker("localhost:9092")
 app = FastStream(broker)
 
 
-@broker.publisher("output_data")
-@broker.subscriber("input_data")
-async def on_input_data(msg: DataBasic, logger: Logger) -> DataBasic:
+@broker.publisher("notify_updates")
+@broker.subscriber("course_updates")
+async def on_course_update(msg: CourseUpdates, logger: Logger) -> CourseUpdates:
     logger.info(msg)
-    return DataBasic(data=msg.data + 1.0)
 
-==== REQUIREMENT ====
-faststream[docs]==0.0.1.dev20230912
-pandas===0.0.1
+    if msg.new_content:
+        logger.info(f"Course has new content {msg.new_content=}")
+        msg = CourseUpdates(
+            course_name=("Updated: " + msg.course_name),
+            new_content=msg.new_content,
+            timestamp=datetime.now(),
+        )
+    return msg
 
-==== DEV REQUIREMENT ====
-faststream[testing]==0.0.1.dev20230912
+
+==== EXAMPLE TEST CODE ====
+
+from datetime import datetime
+
+import pytest
+from freezegun import freeze_time
+
+from faststream._compat import model_to_jsonable
+from faststream.kafka import TestKafkaBroker
+
+from .app import CourseUpdates, broker, on_course_update
+
+
+@broker.subscriber("notify_updates")
+async def on_notify_update(msg: CourseUpdates):
+    pass
+
+
+# Feeze time so the datetime always uses the same time
+@freeze_time("2023-01-01")
+@pytest.mark.asyncio
+async def test_app_without_new_content():
+    async with TestKafkaBroker(broker):
+        timestamp = datetime.now()
+        await broker.publish(
+            CourseUpdates(course_name="Biology", timestamp=timestamp), "course_updates"
+        )
+
+        course_json = model_to_jsonable(
+            CourseUpdates(course_name="Biology", timestamp=timestamp)
+        )
+        on_course_update.mock.assert_called_with(course_json)
+        on_notify_update.mock.assert_called_with(course_json)
+
+
+# Feeze time so the datetime always uses the same time
+@freeze_time("2023-01-01")
+@pytest.mark.asyncio
+async def test_app_with_new_content():
+    async with TestKafkaBroker(broker):
+        timestamp = datetime.now()
+        await broker.publish(
+            CourseUpdates(
+                course_name="Biology",
+                new_content="We have additional classes...",
+                timestamp=timestamp,
+            ),
+            "course_updates",
+        )
+        course_json = model_to_jsonable(
+            CourseUpdates(
+                course_name="Biology",
+                new_content="We have additional classes...",
+                timestamp=timestamp,
+            )
+        )
+        on_course_update.mock.assert_called_with(course_json)
+
+        on_update_json = model_to_jsonable(
+            CourseUpdates(
+                course_name="Updated: Biology",
+                new_content="We have additional classes...",
+                timestamp=timestamp,
+            )
+        )
+        on_notify_update.mock.assert_called_with(on_update_json)
 
 ==== YOUR RESPONSE ====
-### requirements.txt ###
-faststream[kafka, docs]==0.0.1.dev20230912
-pandas===0.0.1
-### dev_requirements.txt ###
-faststream[kafka, testing]==0.0.1.dev20230912
+
+==== APP REQUIREMENT ====
+"pydantic"
+
+==== TEST REQUIREMENT ====
+"pytest, freezegun"
+
 
 ==== EXAMPLE APP CODE ====
 
 import asyncio
-from faststream.rabbit import RabbitBroker
+import json
+from datetime import datetime
 
-async def pub():
-    async with RabbitBroker() as broker:
-        await broker.publish(
-            "Hi!",
-            queue="test",
-            exchange="test"
+import requests
+from pydantic import BaseModel, Field, NonNegativeFloat
+
+from faststream import ContextRepo, FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+broker = KafkaBroker("localhost:9092")
+app = FastStream(broker)
+
+
+publisher = broker.publisher("weather")
+
+
+class Weather(BaseModel):
+    latitude: NonNegativeFloat = Field(
+        ...,
+        examples=[22.5],
+        description="Latitude measures the distance north or south of the equator.",
+    )
+    longitude: NonNegativeFloat = Field(
+        ...,
+        examples=[55],
+        description="Longitude measures distance east or west of the prime meridian.",
+    )
+    temperature: float = Field(
+        ..., examples=[20], description="Temperature in Celsius degrees"
+    )
+    windspeed: NonNegativeFloat = Field(
+        ..., examples=[20], description="Wind speed in kilometers per hour"
+    )
+    time: str = Field(
+        ..., examples=["2023-09-13T07:00"], description="The time of the day"
+    )
+
+
+@app.on_startup
+async def app_setup(context: ContextRepo):
+    context.set_global("app_is_running", True)
+
+
+@app.on_shutdown
+async def shutdown(context: ContextRepo):
+    context.set_global("app_is_running", False)
+
+    # Get all the running tasks and wait them to finish
+    publish_tasks = context.get("publish_tasks")
+    await asyncio.gather(*publish_tasks)
+
+
+async def fetch_and_publish_weather(
+    latitude: float,
+    longitude: float,
+    logger: Logger,
+    context: ContextRepo,
+    time_interval: int = 5,
+) -> None:
+    # Always use context: ContextRepo for storing app_is_running variable
+    while context.get("app_is_running"):
+        uri = f"https://api.open-meteo.com/v1/forecast?current_weather=true&latitude={latitude}&longitude={longitude}"
+        response = requests.get(uri)
+
+        if response.status_code == 200:
+            # read json response
+            raw_data = json.loads(response.content)
+            temperature = raw_data["current_weather"]["temperature"]
+            windspeed = raw_data["current_weather"]["windspeed"]
+            time = raw_data["current_weather"]["time"]
+
+            new_data = Weather(
+                latitude=latitude,
+                longitude=longitude,
+                temperature=temperature,
+                windspeed=windspeed,
+                time=time,
+            )
+            key = str(latitude) + "_" + str(longitude)
+            await publisher.publish(new_data, key=key.encode("utf-8"))
+        else:
+            logger.warning(f"Failed API request {uri} at time {datetime.now()}")
+        await asyncio.sleep(time_interval)
+
+
+@app.after_startup
+async def publish_weather(logger: Logger, context: ContextRepo):
+    logger.info("Starting publishing:")
+
+    latitudes = [13, 50, 44, 24]
+    longitudes = [17, 13, 45, 70]
+    # start scraping and producing to kafka topic
+    publish_tasks = [
+        asyncio.create_task(
+            fetch_and_publish_weather(latitude, longitude, logger, context)
         )
+        for latitude, longitude in zip(latitudes, longitudes)
+    ]
+    # you need to save asyncio tasks so you can wait them to finish at app shutdown (the function with @app.on_shutdown function)
+    context.set_global("publish_tasks", publish_tasks)
 
-asyncio.run(pub())
+==== EXAMPLE TEST CODE ====
 
-==== REQUIREMENT ====
-faststream[docs]==0.0.2
+import pytest
 
-==== DEV REQUIREMENT ====
-faststream[testing]==0.0.2
+from faststream import Context, TestApp
+from faststream.kafka import TestKafkaBroker
+
+from .app import Weather, app, broker
+
+
+@broker.subscriber("weather")
+async def on_weather(msg: Weather, key: bytes = Context("message.raw_message.key")):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_message_was_published():
+    async with TestKafkaBroker(broker):
+        async with TestApp(app):
+            await on_weather.wait_call(3)
+            on_weather.mock.assert_called()
 
 ==== YOUR RESPONSE ====
-### requirements.txt ###
-faststream[rabbit, docs]==0.0.2
-### dev_requirements.txt ###
-faststream[rabbit, testing]==0.0.2
 
+==== APP REQUIREMENT ====
+"asyncio, requests, pydantic"
 
-==== APP CODE ====
+==== TEST REQUIREMENT ====
+"pytest"
 
 """

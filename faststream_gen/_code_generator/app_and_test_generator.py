@@ -103,7 +103,7 @@ def _generate(
     )
     
     return (
-        (validator_result, True)
+        (validator_result, True) # type: ignore
         if isinstance(validator_result[-1], defaultdict)
         else validator_result
     )
@@ -133,7 +133,7 @@ def generate_app_and_test(
         spinner="clock",
     ) as sp:
         app_skeleton_file_name = Path(output_directory) / APPLICATION_FILE_PATH
-        app_skeleton = read_file_contents(app_skeleton_file_name)
+        app_skeleton = read_file_contents(str(app_skeleton_file_name))
 
         prompt = (
             APP_AND_TEST_GENERATION_PROMPT.replace(
@@ -146,18 +146,10 @@ def generate_app_and_test(
         total_usage, is_valid_app_code = _generate(
             model, prompt, app_skeleton, total_usage, output_directory
         )
-
-#         app_code, test_code = _split_app_and_test_code(validated_app_and_test_code)
-
-#         app_output_file = f"{code_gen_directory}/{LOGS_DIR_NAME}/{APPLICATION_FILE_NAME}"
-#         write_file_contents(app_output_file, app_code)
-
-#         test_output_file = f"{code_gen_directory}/{LOGS_DIR_NAME}/{INTEGRATION_TEST_FILE_PATH}"
-#         write_file_contents(test_output_file, test_code)
         
         sp.text = ""
         if is_valid_app_code:
-            message = " ✔ The app and the tests are generated."
+            message = " ✔ The application and the test files are generated."
         else:
             message = " ✘ Error: Failed to generate a valid application and test code."
             sp.color = "red"

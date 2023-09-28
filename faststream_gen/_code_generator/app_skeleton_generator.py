@@ -79,7 +79,7 @@ def generate_app_skeleton(
     model: str,
     total_usage: List[Dict[str, int]],
     relevant_prompt_examples: str,
-) -> List[Dict[str, int]]:
+) -> Tuple[List[Dict[str, int]], bool]:
     """Generate skeleton code for the new FastStream app from the application description
 
     Args:

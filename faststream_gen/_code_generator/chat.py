@@ -206,8 +206,8 @@ class ValidateAndFixResponse:
 
 # %% ../../nbs/Chat.ipynb 13
 def _save_log_results(
-    step_name: Optional[str],
-    log_dir_path: Optional[str],
+    step_name: str,
+    log_dir_path: str,
     messages: List[Dict[str, str]],
     response: str,
     error_str: str,
@@ -215,7 +215,7 @@ def _save_log_results(
     **kwargs: Dict[str, int],
 ) -> None:
     if log_dir_path is not None and "attempt" in kwargs:
-        step_dir = Path(log_dir_path) / step_name  # type: ignore
+        step_dir = Path(log_dir_path) / step_name
         step_dir.mkdir(parents=True, exist_ok=True)
 
         attempt_dir = step_dir / f'attempt_{kwargs["attempt"] + 1}'  # type: ignore
@@ -264,8 +264,8 @@ def fix(
     self: ValidateAndFixResponse,
     prompt: str,
     total_usage: List[Dict[str, int]],
-    step_name: str = None,
-    output_directory: str = None,
+    step_name: str,
+    output_directory: str,
     **kwargs: Dict[str, Any],
 ) -> List[Dict[str, int]]:
     """Fix the response from OpenAI until no errors remain or maximum number of attempts is reached.
@@ -290,7 +290,7 @@ def fix(
         error_str = "\n".join(errors)
         _save_log_results(
             step_name,
-            log_dir_path,
+            str(log_dir_path),
             self.generate.messages,  # type: ignore
             response,
             error_str,

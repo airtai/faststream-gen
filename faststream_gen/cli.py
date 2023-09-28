@@ -8,6 +8,7 @@ from typing import *
 
 import typer
 from pathlib import Path
+import shutil
 
 from ._components.logger import get_logger
 from faststream_gen._code_generator.app_description_validator import (
@@ -21,11 +22,11 @@ from faststream_gen._code_generator.helper import (
     write_file_contents,
     ensure_openai_api_key_set,
 )
-from ._code_generator.constants import MODEL_PRICING, EMPTY_DESCRIPTION_ERROR, OpenAIModel
+from ._code_generator.constants import MODEL_PRICING, EMPTY_DESCRIPTION_ERROR, OpenAIModel, LOGS_DIR_NAME, INCOMPLETE_APP_ERROR_MSG
 from ._components.new_project_generator import create_project
 from ._code_generator.app_skeleton_generator import generate_app_skeleton
 from ._code_generator.app_and_test_generator import generate_app_and_test
-from ._components.integration_test_generator import run_integration_test
+from ._components.integration_test_generator import fix_requirements_and_run_tests
 
 # %% ../nbs/CLI.ipynb 3
 logger = get_logger(__name__)
@@ -93,8 +94,9 @@ def _validate_app_description(
         if not input_path:
             raise ValueError(EMPTY_DESCRIPTION_ERROR)
         description = _get_description(input_path)
-        cleaned_description = strip_white_spaces(description)
-        return validate_app_description(cleaned_description, model.value, tokens_list)
+
+    cleaned_description = strip_white_spaces(description)
+    return validate_app_description(cleaned_description, model.value, tokens_list)
 
 # %% ../nbs/CLI.ipynb 16
 @app.command(
@@ -164,7 +166,7 @@ For each consumed message, create a new message object and increment the value o
         validated_description, tokens_list = _validate_app_description(
             description, input_path, model, tokens_list
         )
-        
+
         # Step 2: Project creation
         create_project(output_path)
 
@@ -180,6 +182,7 @@ For each consumed message, create a new message object and increment the value o
             prompt_examples["description_to_skeleton"],
         )
         if is_valid_skeleton_code:
+            # Step 5: Generate application and test code only if previous step is successful
             tokens_list, is_valid_app_code = generate_app_and_test(
                 validated_description,
                 model.value,
@@ -188,7 +191,20 @@ For each consumed message, create a new message object and increment the value o
                 prompt_examples["skeleton_to_app_and_test"],
             )
             if is_valid_app_code:
-                run_integration_test(output_path)
+                # Step 5: Generate application and test code only if previous step is successful
+                (
+                    tokens_list,
+                    is_requirements_file_valid,
+                ) = fix_requirements_and_run_tests(
+                    output_path, model.value, tokens_list
+                )
+
+        if not is_valid_skeleton_code:
+            typer.secho(" ✘ Error: Failed to generate a valid application and test code.", fg=typer.colors.RED)
+            typer.secho(" ✘ Error: Integration tests failed.", fg=typer.colors.RED)
+
+        if not is_valid_app_code:
+            typer.secho(" ✘ Error: Integration tests failed.", fg=typer.colors.RED)
 
     except (ValueError, KeyError) as e:
         fg = typer.colors.RED
@@ -207,3 +223,28 @@ For each consumed message, create a new message object and increment the value o
         logger.info(f"Prompt Tokens: {total_tokens_usage['prompt_tokens']}")
         logger.info(f"Completion Tokens: {total_tokens_usage['completion_tokens']}")
         typer.secho(f" Total Cost (USD): ${round(price, 5)}", fg=fg)
+
+    if (
+        (not is_valid_skeleton_code)
+        or (not is_valid_app_code)
+        or (not is_requirements_file_valid)
+    ):
+        if output_path == ".":
+            test_cmd = "pytest"
+            logs_dir = LOGS_DIR_NAME
+        else:
+            test_cmd = f"cd {output_path} && pytest"
+            logs_dir = f"{output_path}/{LOGS_DIR_NAME}"
+        typer.secho(
+            f"""\n\n{INCOMPLETE_APP_ERROR_MSG}
+
+{test_cmd}
+
+For in-depth debugging, check the {logs_dir} directory for complete logs, including individual step information.
+""",
+            fg=typer.colors.RED,
+        )
+    else:
+        if not save_log_files:
+            shutil.rmtree(f"{output_path}/{LOGS_DIR_NAME}")
+        typer.secho("✨  All files were successfully generated!", fg=fg)
