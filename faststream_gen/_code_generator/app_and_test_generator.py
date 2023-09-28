@@ -53,7 +53,7 @@ def _fix_generated_code(s: str) -> str:
         user_prompt=_code_fix_prompt,
     )
     response, usage = ai(s) # todo: add this usage to total usage
-    return response
+    return str(response)
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 7
 def _split_app_and_test_code(response: str) -> Tuple[str, str]:
