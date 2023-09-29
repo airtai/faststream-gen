@@ -8,6 +8,8 @@ from typing import *
 from pathlib import Path
 from yaspin import yaspin
 import shutil
+import os
+import stat
 
 
 from faststream_gen._code_generator.helper import (
@@ -23,6 +25,11 @@ from faststream_gen._code_generator.constants import (
 from .._code_generator.helper import write_file_contents
 
 # %% ../../nbs/New_Project_Generator.ipynb 3
+_STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+             | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+             | stat.S_IROTH |                stat.S_IXOTH )
+
+
 def create_project(
     output_path: str,
 ) -> None:
@@ -32,17 +39,25 @@ def create_project(
         with download_and_extract_faststream_archive(
             FASTSTREAM_TEMPLATE_ZIP_URL
         ) as extracted_path:
-            
-            app_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / APPLICATION_FILE_PATH)
+            app_file = str(
+                extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / APPLICATION_FILE_PATH
+            )
             write_file_contents(app_file, "")
-            test_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / TEST_FILE_PATH)
+            test_file = str(
+                extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / TEST_FILE_PATH
+            )
             write_file_contents(test_file, "")
-            
+
+            for p in (
+                Path(extracted_path) / FASTSTREAM_TEMPLATE_DIR_SUFFIX / "scripts"
+            ).glob("*.sh"):
+                p.chmod(_STAT_0o775)
+
             shutil.copytree(
-                    str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
-                    output_path,
-                    dirs_exist_ok=True,
-                )
+                str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
+                output_path,
+                dirs_exist_ok=True,
+            )
 
         sp.text = ""
         sp.ok(f" ✔ New FastStream project created.")
