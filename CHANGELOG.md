@@ -2,6 +2,22 @@
 
 <!-- do not remove -->
 
+## 0.1.6
+
+### Bugs Squashed
+
+- Prompt fixes and updates ([#155](https://github.com/airtai/faststream-gen/pull/155)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+
+## 0.1.5
+
+### New Features
+
+- Change the permission of the generated script files ([#151](https://github.com/airtai/faststream-gen/pull/151)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+
+### Bugs Squashed
+
+- Prompt fixes and updates ([#151](https://github.com/airtai/faststream-gen/pull/151)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
 
 ## 0.1.4
 
