@@ -8,6 +8,8 @@ from typing import *
 from pathlib import Path
 from yaspin import yaspin
 import shutil
+import os
+import stat
 
 
 from faststream_gen._code_generator.helper import (
@@ -32,17 +34,28 @@ def create_project(
         with download_and_extract_faststream_archive(
             FASTSTREAM_TEMPLATE_ZIP_URL
         ) as extracted_path:
-            
-            app_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / APPLICATION_FILE_PATH)
+            app_file = str(
+                extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / APPLICATION_FILE_PATH
+            )
             write_file_contents(app_file, "")
-            test_file = str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / TEST_FILE_PATH)
+            test_file = str(
+                extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX / TEST_FILE_PATH
+            )
             write_file_contents(test_file, "")
-            
+
+            for p in (
+                Path(extracted_path) / FASTSTREAM_TEMPLATE_DIR_SUFFIX / "scripts"
+            ).glob("*.sh"):
+                # Owner: Read, Write, Execute
+                # Group: Read, Execute
+                # Others: Read, Execute
+                p.chmod(p.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
             shutil.copytree(
-                    str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
-                    output_path,
-                    dirs_exist_ok=True,
-                )
+                str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
+                output_path,
+                dirs_exist_ok=True,
+            )
 
         sp.text = ""
         sp.ok(f" ✔ New FastStream project created.")
