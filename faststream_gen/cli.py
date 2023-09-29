@@ -200,10 +200,11 @@ For each consumed message, create a new message object and increment the value o
                 )
 
         if not is_valid_skeleton_code:
+            is_valid_app_code = False
             typer.secho(" ✘ Error: Failed to generate a valid application and test code.", fg=typer.colors.RED)
             typer.secho(" ✘ Error: Integration tests failed.", fg=typer.colors.RED)
 
-        if not is_valid_app_code:
+        elif not is_valid_app_code:
             typer.secho(" ✘ Error: Integration tests failed.", fg=typer.colors.RED)
 
     except (ValueError, KeyError) as e:
