@@ -19,6 +19,21 @@ async def app_setup(context: ContextRepo):
 
 In such cases, it is necessary to add the "import asyncio" statement at the top of the code. 
 
+3. Whenever you are creating a message class while generating Faststream skeleton and the application code, make sure the message class is a derived class of BaseModel from pydantic.
+
+        Example of a Valid message class:
+            class Pet(BaseModel):
+                pet_id: NonNegativeInt = Field(..., examples=[1], description="Int data example")
+                species: str = Field(..., examples=["dog"], description="Pet example")
+
+        Example of a invalid message class:
+            class Pet:
+                def __init__(self, pet_id: int, species: str):
+                    self.pet_id = pet_id
+                    self.species = species
+                    
+4. When generating a lists of external dependencies from both the ==== APP CODE ==== and ==== TEST CODE ==== sections, include only external libraries and not internal Python libraries like json, time, asyncio, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
+
 You will encounter sections marked as:
 
 ==== APP DESCRIPTION: ====
@@ -236,7 +251,7 @@ Please adhere to the following rules when compiling the lists of external depend
 
 - Do not include faststream and faststream.kafka in either the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections. These are considered internal packages and should not be listed as external dependencies.
 - Ensure that you populate the ==== APP REQUIREMENT ==== section based on the dependencies found in the ==== APP CODE ==== and the ==== TEST REQUIREMENT ==== section based on the dependencies found in the ==== TEST CODE ====—do not mix them together.
-- Include only external libraries and not internal Python libraries like json, time, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
+- Include only external libraries and not internal Python libraries like json, time, asyncio, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
 
 Below are few examples for your understanding:
 
@@ -244,6 +259,7 @@ Below are few examples for your understanding:
 
 from datetime import datetime
 from typing import Optional
+import asyncio
 
 from pydantic import BaseModel, Field
 
@@ -488,7 +504,7 @@ async def test_message_was_published():
 ==== YOUR RESPONSE ====
 
 ==== APP REQUIREMENT ====
-"asyncio, requests, pydantic"
+"requests, pydantic"
 
 ==== TEST REQUIREMENT ====
 "pytest"
