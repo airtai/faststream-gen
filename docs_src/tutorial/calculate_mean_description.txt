@@ -1,22 +1,22 @@
-Create faststream application for consuming messages from the new_data topic. 
-This topic needs to use partition key.
+Create a FastStream application for consuming messages from the new_data topic. 
+This topic needs to use a partition key.
 
 new_data messages use JSON with two attributes 
 (create class CryptoPrice with these attributes):
-- price: non negative float (it represents current pice of the crypto)
-- crypto_currency: string (it represents the cryptocurrency e.g BTC, ETH...)
+- price: non-negative float (it represents the current price of the crypto)
+- crypto_currency: string (it represents the cryptocurrency e.g. BTC, ETH...)
 
-Application should save each message to a dictionary (global variable) 
-- partition key should be usded as a dictionary key 
+The application should save each message to a dictionary (global variable) 
+- partition key should be used as a dictionary key 
   and value should be a List of prices.
   
-Keep only last 100 messages in the dictionary.
+Keep only the last 100 messages in the dictionary.
 
-If there is less the 3 messages for that for the given partition key,
+If there are fewer than 3 messages for a given partition key,
 do not publish any messages.
 
 Otherwise, Calculate the price mean of the last 3 messages
 for the given partition key.
 
 Publish the price mean to the price_mean topic and use 
-the same partition key which the new_data topic is using.
+the same partition key that the new_data topic is using.
