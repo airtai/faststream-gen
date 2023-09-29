@@ -39,9 +39,10 @@ logger = get_logger(__name__)
 
 # %% ../../nbs/App_And_Test_Generator.ipynb 5
 _code_fix_prompt = """
-Your task is to correct the provided code. Your response should consist solely of valid Python code. You must follow the below rules while responding:
+Fix the provided Python code following these rules:
 
-- Do not include explanations or wrap your response in ```python tags.
+- Provide only valid Python code, no explanations or code tags.
+- Do not modify the line starting with 'from app.application'; it must remain unchanged. Adherence to this rule is crucial.
 """
 
 def _fix_generated_code(s: str) -> str:

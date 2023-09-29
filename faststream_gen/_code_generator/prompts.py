@@ -228,6 +228,29 @@ pass
 async def on_output_data(msg: DataBasic): # ERROR FIXED IN THIS LINE
 pass
 
+==== Error ====
+
+ImportError: cannot import name 'on_output_data' from 'app.application'
+
+==== ERROR CODE ====
+
+from app.application import InputData, broker, on_input_data, on_output_data
+
+==== FIXED CODE ====
+
+from app.application import InputData, broker, on_input_data
+
+==== Error ====
+
+assert on_input_data.mock.assert_called_with(dict(DataMessage(data=1)))
+
+==== ERROR CODE ====
+
+assert on_input_data.mock.assert_called_with(dict(DataMessage(data=1)))
+
+==== FIXED CODE ====
+
+on_input_data.mock.assert_called_with(dict(DataMessage(data=1)))
 
 ==== APP DESCRIPTION ====
 
