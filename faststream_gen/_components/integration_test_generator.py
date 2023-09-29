@@ -112,7 +112,7 @@ def _split_app_and_test_req(response: str) -> Tuple[str, str]:
     )
     return _stript(app_req), _stript(test_req)
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 9
+# %% ../../nbs/Integration_Test_Generator.ipynb 10
 def _update_toml_file(output_dir: str, app_req: str, test_req: str) -> None:
     toml_file_path = f"{output_dir}/{TOML_FILE_NAME}"
     toml_contents = read_file_contents(toml_file_path)
@@ -120,6 +120,7 @@ def _update_toml_file(output_dir: str, app_req: str, test_req: str) -> None:
     
     app_reqs = [r.strip() for r in app_req.split(",")]
     test_reqs = [r.strip() for r in test_req.split(",")]
+    test_reqs = [r for r in test_reqs if r != "pytest"]
     
     data["project"]["dependencies"] = data["project"]["dependencies"] + app_reqs
     data["project"]["optional-dependencies"]["testing"] = data["project"]["optional-dependencies"]["testing"] + test_reqs
@@ -127,7 +128,7 @@ def _update_toml_file(output_dir: str, app_req: str, test_req: str) -> None:
     toml_string = toml.dumps(data)
     write_file_contents(toml_file_path, toml_string)
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 11
+# %% ../../nbs/Integration_Test_Generator.ipynb 12
 def _validate_response(
     response: str, output_directory: str, **kwargs: Dict[str, Any]
 ) -> List[str]:
@@ -142,7 +143,7 @@ def _validate_response(
     
     return _setup_venv_and_run_tests(output_directory)
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 15
+# %% ../../nbs/Integration_Test_Generator.ipynb 16
 @retry_on_error()  # type: ignore
 def _generate(
     model: str,
@@ -175,7 +176,7 @@ def _generate(
         else validator_result
     )
 
-# %% ../../nbs/Integration_Test_Generator.ipynb 18
+# %% ../../nbs/Integration_Test_Generator.ipynb 19
 def fix_requirements_and_run_tests(
     output_directory: str,
     model: str,

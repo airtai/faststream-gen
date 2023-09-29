@@ -78,7 +78,7 @@ def _validate_response(
     test_code = test_code.strip()
 
     fixed_app_code = _fix_generated_code(app_code)
-    fixed_test_code = test_code.replace("from application import ", "from app.application import ") #_fix_generated_code(test_code)
+    fixed_test_code = _fix_generated_code(test_code).replace("from application import ", "from app.application import ")
 
     app_file_name = Path(output_directory) / APPLICATION_FILE_PATH
     test_file_name = Path(output_directory) / TEST_FILE_PATH

@@ -32,7 +32,7 @@ In such cases, it is necessary to add the "import asyncio" statement at the top 
                     self.pet_id = pet_id
                     self.species = species
                     
-4. When generating a lists of external dependencies from both the ==== APP CODE ==== and ==== TEST CODE ==== sections, include only external libraries and not internal Python libraries like json, time, asyncio, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
+4. When generating a lists of external dependencies from both the ==== APP CODE ==== and ==== TEST CODE ==== sections, include only external libraries and not internal Python libraries like json, time, asyncio, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections. Additionally do not include pytest in the ==== TEST REQUIREMENT ====
 
 You will encounter sections marked as:
 
@@ -252,6 +252,7 @@ Please adhere to the following rules when compiling the lists of external depend
 - Do not include faststream and faststream.kafka in either the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections. These are considered internal packages and should not be listed as external dependencies.
 - Ensure that you populate the ==== APP REQUIREMENT ==== section based on the dependencies found in the ==== APP CODE ==== and the ==== TEST REQUIREMENT ==== section based on the dependencies found in the ==== TEST CODE ====—do not mix them together.
 - Include only external libraries and not internal Python libraries like json, time, asyncio, etc., in the ==== APP REQUIREMENT ==== or ==== TEST REQUIREMENT ==== sections.
+- Additionally do not include pytest in the ==== TEST REQUIREMENT ====
 
 Below are few examples for your understanding:
 
@@ -372,7 +373,7 @@ async def test_app_with_new_content():
 "pydantic"
 
 ==== TEST REQUIREMENT ====
-"pytest, freezegun"
+"freezegun"
 
 
 ==== EXAMPLE APP CODE ====
@@ -507,6 +508,6 @@ async def test_message_was_published():
 "requests, pydantic"
 
 ==== TEST REQUIREMENT ====
-"pytest"
+
 
 """
