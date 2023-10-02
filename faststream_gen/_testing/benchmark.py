@@ -15,6 +15,8 @@ import subprocess # nosec: B404: Consider possible security implications associa
 import typer
 from yaspin import yaspin
 
+import numpy as np
+
 from .._code_generator.constants import INCOMPLETE_APP_ERROR_MSG
 
 
@@ -56,7 +58,13 @@ def benchmark(
     fixtures_path: str = typer.Argument(
         ...,
         help="The path to the pre-defined example app descriptions",
-    )
+    ),
+    no_repeat: int = typer.Option(
+        1,
+        "--repeat",
+        "-r",
+        help="Number of generation repetitions per app description",
+    ),
 ) -> None:
     fixtures_path_obj = Path(fixtures_path).resolve()
 
@@ -65,6 +73,10 @@ def benchmark(
         for filename in fixtures_path_obj.glob("*.txt")
         if "-log" not in filename.stem
     ]
+    
+    if no_repeat > 1:
+        app_descriptions = np.repeat(np.array(app_descriptions), no_repeat).tolist()
+    
     no_of_description_files = len(app_descriptions)
     typer.secho(
         f"Total app description files: {no_of_description_files}", fg=typer.colors.CYAN
