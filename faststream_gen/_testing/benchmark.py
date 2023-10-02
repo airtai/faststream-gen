@@ -59,10 +59,11 @@ def benchmark(
         ...,
         help="The path to the pre-defined example app descriptions",
     ),
-    repeat: int = typer.Option(
+    no_repeat: int = typer.Option(
         1,
         "--repeat",
-        "-r"
+        "-r",
+        help="Number of generation repetitions per app description",
     ),
 ) -> None:
     fixtures_path_obj = Path(fixtures_path).resolve()
@@ -73,7 +74,8 @@ def benchmark(
         if "-log" not in filename.stem
     ]
     
-    app_descriptions = np.repeat(app_descriptions, repeat).tolist()
+    if no_repeat > 1:
+        app_descriptions = np.repeat(np.array(app_descriptions), no_repeat).tolist()
     
     no_of_description_files = len(app_descriptions)
     typer.secho(
