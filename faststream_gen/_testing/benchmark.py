@@ -48,6 +48,9 @@ app = typer.Typer(
 )
 
 # %% ../../nbs/Benchmark_CLI.ipynb 6
+import numpy as np
+
+
 @app.command(
     "run_benchmark",
     help="Run benchmark against pre-defined example app descriptions",
@@ -56,7 +59,12 @@ def benchmark(
     fixtures_path: str = typer.Argument(
         ...,
         help="The path to the pre-defined example app descriptions",
-    )
+    ),
+    repeat: int = typer.Option(
+        1,
+        "--repeat",
+        "-r"
+    ),
 ) -> None:
     fixtures_path_obj = Path(fixtures_path).resolve()
 
@@ -65,6 +73,9 @@ def benchmark(
         for filename in fixtures_path_obj.glob("*.txt")
         if "-log" not in filename.stem
     ]
+    
+    app_descriptions = np.repeat(app_descriptions, repeat).tolist()
+    
     no_of_description_files = len(app_descriptions)
     typer.secho(
         f"Total app description files: {no_of_description_files}", fg=typer.colors.CYAN
