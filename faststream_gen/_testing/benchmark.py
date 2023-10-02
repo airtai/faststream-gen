@@ -15,6 +15,8 @@ import subprocess # nosec: B404: Consider possible security implications associa
 import typer
 from yaspin import yaspin
 
+import numpy as np
+
 from .._code_generator.constants import INCOMPLETE_APP_ERROR_MSG
 
 
@@ -48,9 +50,6 @@ app = typer.Typer(
 )
 
 # %% ../../nbs/Benchmark_CLI.ipynb 6
-import numpy as np
-
-
 @app.command(
     "run_benchmark",
     help="Run benchmark against pre-defined example app descriptions",
