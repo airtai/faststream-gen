@@ -5,9 +5,6 @@ from pydantic import BaseModel, Field, NonNegativeFloat
 from faststream import Context, ContextRepo, FastStream, Logger
 from faststream.kafka import KafkaBroker
 
-broker = KafkaBroker("localhost:9092")
-app = FastStream(broker)
-
 
 class CryptoPrice(BaseModel):
     price: NonNegativeFloat = Field(
@@ -16,6 +13,10 @@ class CryptoPrice(BaseModel):
     crypto_currency: str = Field(
         ..., examples=["BTC"], description="Cryptocurrency symbol"
     )
+
+
+broker = KafkaBroker("localhost:9092")
+app = FastStream(broker)
 
 
 publisher = broker.publisher("price_mean")
@@ -27,24 +28,24 @@ async def app_setup(context: ContextRepo):
     context.set_global("message_history", message_history)
 
 
-@broker.subscriber("new_data")
-async def on_new_data(
+@broker.subscriber("new_crypto_price")
+async def on_new_crypto_price(
     msg: CryptoPrice,
     logger: Logger,
     message_history: Dict[str, List[float]] = Context(),
     key: bytes = Context("message.raw_message.key"),
 ) -> None:
-    logger.info(f"New data received: {msg=}")
+    logger.info(f"New crypto price {msg=}")
 
-    partition_key = key.decode("utf-8")
-    if partition_key not in message_history:
-        message_history[partition_key] = []
+    crypto_key = key.decode("utf-8")
+    if crypto_key not in message_history:
+        message_history[crypto_key] = []
 
-    message_history[partition_key].append(msg.price)
+    message_history[crypto_key].append(msg.price)
 
-    if len(message_history[partition_key]) > 100:
-        message_history[partition_key].pop(0)
+    if len(message_history[crypto_key]) > 100:
+        message_history[crypto_key] = message_history[crypto_key][-100:]
 
-    if len(message_history[partition_key]) >= 3:
-        price_mean = sum(message_history[partition_key][-3:]) / 3
+    if len(message_history[crypto_key]) >= 3:
+        price_mean = sum(message_history[crypto_key][-3:]) / 3
         await publisher.publish(price_mean, key=key)

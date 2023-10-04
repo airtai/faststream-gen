@@ -1,7 +1,7 @@
-Create a FastStream application for consuming messages from the new_data topic. 
+Create a FastStream application for consuming messages from the new_crypto_price topic. 
 This topic needs to use a partition key.
 
-new_data messages use JSON with two attributes 
+new_crypto_price messages use JSON with two attributes 
 (create class CryptoPrice with these attributes):
 - price: non-negative float (it represents the current price of the crypto)
 - crypto_currency: string (it represents the cryptocurrency e.g. BTC, ETH...)
@@ -19,4 +19,4 @@ Otherwise, Calculate the price mean of the last 3 messages
 for the given partition key.
 
 Publish the price mean to the price_mean topic and use 
-the same partition key that the new_data topic is using.
+the same partition key that the new_crypto_price topic is using.
