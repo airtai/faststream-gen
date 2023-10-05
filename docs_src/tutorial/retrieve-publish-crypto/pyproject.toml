@@ -1,0 +1,50 @@
+[build-system]
+requires = [ "hatchling",]
+build-backend = "hatchling.build"
+
+[project]
+version = "0.1.0"
+name = "my-service"
+dependencies = [ "faststream[kafka, docs]>=0.1.5", "pydantic", "httpx",]
+
+[project.optional-dependencies]
+lint = [ "black==23.9.1", "ruff==0.0.291", "pyupgrade-directories",]
+static-analysis = [ "types-PyYAML", "types-setuptools", "types-ujson", "mypy==1.5.1", "bandit==1.7.5",]
+testing = [ "pytest==7.4.2", "pytest-asyncio==0.21.1",]
+dev = [ "my-service[lint,static-analysis,testing]",]
+
+[tool.mypy]
+strict = true
+python_version = "3.8"
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+show_error_codes = true
+warn_unused_ignores = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_any_unimported = false
+
+[tool.black]
+line-length = 88
+target-version = [ "py38",]
+include = "\\.pyi?$"
+
+[tool.ruff]
+fix = true
+line-length = 88
+target-version = "py38"
+select = [ "E", "W", "F", "I", "C", "B", "Q",]
+ignore = [ "E501", "C901",]
+
+[tool.bandit]
+
+[tool.pytest.ini_options]
+filterwarnings = [ "ignore::DeprecationWarning",]
+
+[tool.ruff.pydocstyle]
+convention = "google"

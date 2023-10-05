@@ -1,5 +1,5 @@
-Create a FastStream application which will retrieve the current cryptocurrency price
-and publish it to new_data topic. 
+Create a FastStream application which will retrieve the current cryptocurrency
+price and publish it to new_crypto_price topic. 
 
 The application should retrieve the data every 2 seconds.
 
@@ -13,12 +13,12 @@ The current price of Bitcoin can be retrieved by a simple GET request to:
 The current price of Ethereum can be retrieved by a simple GET request to:
     - https://api.coinbase.com/v2/prices/ETH-USD/spot
 
-The response of this GET request is a JSON and you can get
-information about the crypto_currency in:
+The response of this GET request is a JSON and you can get information about
+the crypto_currency in:
     response['data']['base']
     
 and the information about the price in:
     response['data']['amount']
 
 Use utf-8 encoded crypto_currency attribute as a partition key when publishing
-the message to new_data topic.
+the message to new_crypto_price topic.
