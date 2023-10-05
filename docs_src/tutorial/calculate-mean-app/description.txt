@@ -1,4 +1,6 @@
-Create a FastStream application for consuming messages from the new_crypto_price topic. 
+Create a FastStream application for consuming messages
+from the new_crypto_price topic. 
+
 This topic needs to use a partition key.
 
 new_crypto_price messages use JSON with two attributes 
