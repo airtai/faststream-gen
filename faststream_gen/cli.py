@@ -247,5 +247,7 @@ For in-depth debugging, check the {logs_dir} directory for complete logs, includ
         )
     else:
         if not save_log_files:
-            shutil.rmtree(f"{output_path}/{LOGS_DIR_NAME}")
+            # Don't delete LOGS dir (at least for now)
+            pass
+            #shutil.rmtree(f"{output_path}/{LOGS_DIR_NAME}")
         typer.secho("✨  All files were successfully generated!", fg=fg)
