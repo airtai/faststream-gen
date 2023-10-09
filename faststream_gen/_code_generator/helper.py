@@ -197,7 +197,7 @@ def get_relevant_prompt_examples(query: str) -> Dict[str, str]:
         The dictionary of the most relevant examples for each step.
     """
     db_path = get_root_data_path() / "examples"
-    db = FAISS.load_local(db_path, OpenAIEmbeddings()) # type: ignore
+    db = FAISS.load_local(db_path, OpenAIEmbeddings())
     results = db.similarity_search(query, k=3, fetch_k=5)
     results_page_content = [r.page_content for r in results]
     prompt_examples = _format_examples(results_page_content)
