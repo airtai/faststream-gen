@@ -6,6 +6,8 @@ __all__ = ['app', 'generate']
 # %% ../../nbs/Embeddings_CLI.ipynb 1
 from typing import *
 import shutil
+import re
+import os
 from tempfile import TemporaryDirectory
 from contextlib import contextmanager
 from pathlib import Path
@@ -22,13 +24,16 @@ import typer
 from faststream_gen._code_generator.constants import (
     FASTSTREAM_REPO_ZIP_URL,
     FASTSTREAM_DOCS_DIR_SUFFIX,
-    FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+    FASTSTREAM_GEN_REPO_ZIP_URL,
+    FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX,
     FASTSTREAM_EXAMPLE_FILES,
     FASTSTREAM_TMP_DIR_PREFIX,
-    FASTSTREAM_DIR_TO_EXCLUDE
+    FASTSTREAM_DIR_TO_EXCLUDE,
+    FASTSTREAM_ROOT_DIR_NAME,
+    FASTSTREAM_EN_DOCS_DIR,
 )
 from .package_data import get_root_data_path
-from .._code_generator.helper import download_and_extract_faststream_archive
+from .._code_generator.helper import download_and_extract_github_repo
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
 def _create_documents(
@@ -119,6 +124,82 @@ def _delete_directory(d: str) -> None:
             print(f"Error deleting directory: {e}")
 
 # %% ../../nbs/Embeddings_CLI.ipynb 11
+def _read_lines_from_file(file_path: Path, lines_spec: str) -> str:
+    with open(file_path, "r") as file:
+        all_lines = file.readlines()
+
+    # Check if lines_spec is empty (indicating all lines should be read)
+    if not lines_spec:
+        return "".join(all_lines)
+
+    selected_lines = []
+    line_specs = lines_spec.split(",")
+
+    for line_spec in line_specs:
+        if "-" in line_spec:
+            # Handle line ranges (e.g., "1-10")
+            start, end = map(int, line_spec.split("-"))
+            selected_lines.extend(all_lines[start - 1 : end])
+        else:
+            # Handle single line numbers
+            line_number = int(line_spec)
+            if 1 <= line_number <= len(all_lines):
+                selected_lines.append(all_lines[line_number - 1])
+
+    return "".join(selected_lines)
+
+
+def _extract_lines(embedded_line: str, root_path: Path) -> str:
+    to_expand_path = re.search("{!>(.*)!}", embedded_line).group(1).strip() # type: ignore 
+    lines_spec = ""
+    if "[ln:" in to_expand_path:
+        to_expand_path, lines_spec = to_expand_path.split("[ln:")
+        to_expand_path = to_expand_path.strip()
+        lines_spec = lines_spec[:-1]
+
+    if Path(f"{root_path}/docs/docs_src").exists():
+        to_expand_path = Path(f"{root_path}/docs") / to_expand_path
+    elif Path(f"{root_path}/docs_src").exists():
+        to_expand_path = Path(f"{root_path}/") / to_expand_path
+    else:
+        raise ValueError(f"Couldn't find docs_src directory")
+    return _read_lines_from_file(to_expand_path, lines_spec)
+
+
+def _expand_markdown(
+    input_markdown_path: Path,
+    output_markdown_path: Path,
+    root_path: Path
+) -> None:
+    with open(input_markdown_path, "r") as input_file, open(
+        output_markdown_path, "w"
+    ) as output_file:
+        for line in input_file:
+            # Check if the line does not contain the "{!>" pattern
+            if "{!>" not in line:
+                # Write the line to the output file
+                output_file.write(line)
+            else:
+                output_file.write(_extract_lines(embedded_line=line, root_path=root_path))
+
+# %% ../../nbs/Embeddings_CLI.ipynb 12
+def _expand_faststream_docs(root_path: Path) -> None:
+    docs_suffix = root_path / FASTSTREAM_DOCS_DIR_SUFFIX
+    docs_suffix.mkdir(exist_ok=True)
+    md_files = (root_path / FASTSTREAM_EN_DOCS_DIR).glob("**/*.md")
+
+    def expand_doc(input_path: Path) -> None:
+        relative_path = os.path.relpath(input_path, docs_suffix)
+        output_path = docs_suffix / relative_path.replace("../docs/docs/en/", "")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        _expand_markdown(
+            input_markdown_path=input_path, output_markdown_path=output_path, root_path=root_path
+        )
+
+    for md_file in md_files:
+        expand_doc(md_file)
+
+# %% ../../nbs/Embeddings_CLI.ipynb 14
 def _generate_docs_db(input_path: Path, output_path: Path) -> None:
     """Generate Document Embeddings Database.
 
@@ -127,20 +208,22 @@ def _generate_docs_db(input_path: Path, output_path: Path) -> None:
     to the specified output directory.
 
     Args:
-        input_path (Path): The path to the directory containing input documents.
+        input_path (Path): The path to the directory containing the extracted files.
         output_path (Path): The path to the directory where the embeddings
             database will be saved.
     """
     with yaspin(
         text="Creating embeddings for the docs...", color="cyan", spinner="clock"
     ) as sp:
-        docs = _create_documents(input_path)
+        _expand_faststream_docs(input_path / FASTSTREAM_ROOT_DIR_NAME)
+
+        docs = _create_documents(input_path / FASTSTREAM_ROOT_DIR_NAME / FASTSTREAM_DOCS_DIR_SUFFIX) 
         _save_embeddings_db(docs, output_path)
 
         sp.text = ""
         sp.ok(f" ✔ Docs embeddings created and saved to: {output_path}")
 
-# %% ../../nbs/Embeddings_CLI.ipynb 13
+# %% ../../nbs/Embeddings_CLI.ipynb 16
 def _check_all_files_exist(d: Path, required_files: List[str]) -> bool:
     """Check if all required files exist in a directory.
 
@@ -155,7 +238,7 @@ def _check_all_files_exist(d: Path, required_files: List[str]) -> bool:
     """
     return all((d / file_name).exists() for file_name in required_files)
 
-# %% ../../nbs/Embeddings_CLI.ipynb 16
+# %% ../../nbs/Embeddings_CLI.ipynb 19
 def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]) -> None:
     """Append contents of specified files to a result file.
 
@@ -179,7 +262,7 @@ def _append_file_contents(d: Path, parent_d: Path, required_files: List[str]) ->
                     f"==== {file_name} starts ====\n{file.read()}\n==== {file_name} ends ====\n"
                 )
 
-# %% ../../nbs/Embeddings_CLI.ipynb 18
+# %% ../../nbs/Embeddings_CLI.ipynb 21
 def _format_examples(input_path: Path, required_files: List[str]) -> None:
     """Format Examples by Appending File Contents.
 
@@ -237,12 +320,12 @@ def _generate_examples_db(
         sp.text = ""
         sp.ok(f" ✔ Examples embeddings created and saved to: {output_path}")
 
-# %% ../../nbs/Embeddings_CLI.ipynb 20
+# %% ../../nbs/Embeddings_CLI.ipynb 23
 app = typer.Typer(
     short_help="Download the zipped FastKafka documentation markdown files, generate embeddings, and save them in a vector database.",
 )
 
-# %% ../../nbs/Embeddings_CLI.ipynb 21
+# %% ../../nbs/Embeddings_CLI.ipynb 24
 @app.command(
     "generate",
     help="Download the docs and examples from FastStream repo, generate embeddings, and save them in a vector database.",
@@ -256,26 +339,30 @@ def generate(
     )
 ) -> None:
     typer.echo(
-        f"Downloading files docs and examples from FastStream repo and generating embeddings."
+        f"Downloading documentation and examples for semantic search."
     )
+    try:
+        _delete_directory(db_path)
 
-    with download_and_extract_faststream_archive(
-        FASTSTREAM_REPO_ZIP_URL
-    ) as extracted_path:
-        try:
-            _delete_directory(db_path)
+        with download_and_extract_github_repo(
+            FASTSTREAM_REPO_ZIP_URL
+        ) as extracted_path:
             _generate_docs_db(
-                extracted_path / FASTSTREAM_DOCS_DIR_SUFFIX, Path(db_path) / "docs"
+                extracted_path, Path(db_path) / "docs"
             )
+
+        with download_and_extract_github_repo(
+            FASTSTREAM_GEN_REPO_ZIP_URL
+        ) as extracted_path:
             _generate_examples_db(
-                extracted_path / FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+                extracted_path / FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX,
                 Path(db_path) / "examples",
             )
 
-            typer.echo(
-                f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
-            )
-        except Exception as e:
-            fg = typer.colors.RED
-            typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
-            raise typer.Exit(code=1)
+        typer.echo(
+            f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
+        )
+    except Exception as e:
+        fg = typer.colors.RED
+        typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
+        raise typer.Exit(code=1)

@@ -4,12 +4,16 @@
 __all__ = ['APPLICATION_FILE_PATH', 'TEST_FILE_PATH', 'TOML_FILE_NAME', 'LOGS_DIR_NAME', 'STEP_LOG_DIR_NAMES', 'DEFAULT_PARAMS',
            'MAX_RETRIES', 'MAX_RESTARTS', 'MAX_ASYNC_SPEC_RETRIES', 'TOKEN_TYPES', 'MODEL_PRICING',
            'OPENAI_KEY_EMPTY_ERROR', 'OPENAI_KEY_NOT_SET_ERROR', 'EMPTY_DESCRIPTION_ERROR', 'INCOMPLETE_DESCRIPTION',
-           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'INCOMPLETE_APP_ERROR_MSG', 'FASTSTREAM_REPO_ZIP_URL',
-           'FASTSTREAM_DOCS_DIR_SUFFIX', 'FASTSTREAM_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_EXAMPLE_FILES',
-           'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE', 'FASTSTREAM_TEMPLATE_ZIP_URL',
+           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'INCOMPLETE_APP_ERROR_MSG', 'FASTSTREAM_GEN_REPO_ZIP_URL',
+           'FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_REPO_ZIP_URL', 'FASTSTREAM_ROOT_DIR_NAME',
+           'FASTSTREAM_DOCS_DIR_SUFFIX', 'FASTSTREAM_EN_DOCS_DIR', 'FASTSTREAM_EXAMPLE_FILES',
+           'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE', 'STAT_0o775', 'FASTSTREAM_TEMPLATE_ZIP_URL',
            'FASTSTREAM_TEMPLATE_DIR_SUFFIX', 'OpenAIModel']
 
-# %% ../../nbs/Constants.ipynb 2
+# %% ../../nbs/Constants.ipynb 1
+import stat
+
+# %% ../../nbs/Constants.ipynb 3
 APPLICATION_FILE_PATH = "app/application.py"
 TEST_FILE_PATH = "tests/test_application.py"
 TOML_FILE_NAME = "pyproject.toml"
@@ -21,7 +25,7 @@ STEP_LOG_DIR_NAMES = {
     "requirements": "requirements-generation-logs",
 }
 
-# %% ../../nbs/Constants.ipynb 4
+# %% ../../nbs/Constants.ipynb 5
 DEFAULT_PARAMS = {
     "temperature": 0.7,
 }
@@ -37,7 +41,7 @@ class OpenAIModel(str, Enum):
     gpt4 = "gpt-4"
 
 
-# %% ../../nbs/Constants.ipynb 7
+# %% ../../nbs/Constants.ipynb 8
 TOKEN_TYPES = ["prompt_tokens", "completion_tokens", "total_tokens"]
 
 MODEL_PRICING = {
@@ -51,7 +55,7 @@ MODEL_PRICING = {
     },
 }
 
-# %% ../../nbs/Constants.ipynb 9
+# %% ../../nbs/Constants.ipynb 10
 OPENAI_KEY_EMPTY_ERROR = "Error: OPENAI_API_KEY cannot be empty. Please set a valid OpenAI API key in OPENAI_API_KEY environment variable and try again.\nYou can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
 OPENAI_KEY_NOT_SET_ERROR = "Error: OPENAI_API_KEY not found in environment variables. Set a valid OpenAI API key in OPENAI_API_KEY environment variable and try again. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
 
@@ -79,14 +83,25 @@ INCOMPLETE_APP_ERROR_MSG = """Apologies, we couldn't generate a working applicat
 
 Please run the following command to start manual debugging:"""
 
-# %% ../../nbs/Constants.ipynb 11
+# %% ../../nbs/Constants.ipynb 12
+FASTSTREAM_GEN_REPO_ZIP_URL = "http://github.com/airtai/faststream-gen/archive/main.zip"
+FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX = "faststream-gen-main/search/examples"
+
 FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/faststream/archive/main.zip"
-FASTSTREAM_DOCS_DIR_SUFFIX = "faststream-main/.faststream_gen"
-FASTSTREAM_EXAMPLES_DIR_SUFFIX = "faststream-main/faststream_gen_examples"
+FASTSTREAM_ROOT_DIR_NAME = "faststream-main"
+FASTSTREAM_DOCS_DIR_SUFFIX = ".faststream_gen"
+FASTSTREAM_EN_DOCS_DIR = "docs/docs/en"
+
 FASTSTREAM_EXAMPLE_FILES = ['description.txt', 'app_skeleton.py', 'app.py', 'test_app.py']
 FASTSTREAM_TMP_DIR_PREFIX = "appended_examples"
 FASTSTREAM_DIR_TO_EXCLUDE = "api"
 
 # %% ../../nbs/Constants.ipynb 13
+STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+             | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+             | stat.S_IROTH |                stat.S_IXOTH )
+
+
+# %% ../../nbs/Constants.ipynb 15
 FASTSTREAM_TEMPLATE_ZIP_URL = "http://github.com/airtai/faststream-template/archive/main.zip"
 FASTSTREAM_TEMPLATE_DIR_SUFFIX = "faststream-template-main"

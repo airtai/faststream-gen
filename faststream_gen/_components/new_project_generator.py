@@ -9,34 +9,29 @@ from pathlib import Path
 from yaspin import yaspin
 import shutil
 import os
-import stat
 
 
 from faststream_gen._code_generator.helper import (
-    download_and_extract_faststream_archive,
+    download_and_extract_github_repo,
 )
 from faststream_gen._code_generator.constants import (
     FASTSTREAM_TEMPLATE_ZIP_URL,
     FASTSTREAM_TEMPLATE_DIR_SUFFIX,
     APPLICATION_FILE_PATH,
     TEST_FILE_PATH,
+    STAT_0o775
 )
 
 from .._code_generator.helper import write_file_contents
 
 # %% ../../nbs/New_Project_Generator.ipynb 3
-_STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
-             | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
-             | stat.S_IROTH |                stat.S_IXOTH )
-
-
 def create_project(
     output_path: str,
 ) -> None:
     with yaspin(
         text="Creating a new FastStream project...", color="cyan", spinner="clock"
     ) as sp:
-        with download_and_extract_faststream_archive(
+        with download_and_extract_github_repo(
             FASTSTREAM_TEMPLATE_ZIP_URL
         ) as extracted_path:
             app_file = str(
@@ -51,7 +46,7 @@ def create_project(
             for p in (
                 Path(extracted_path) / FASTSTREAM_TEMPLATE_DIR_SUFFIX / "scripts"
             ).glob("*.sh"):
-                p.chmod(_STAT_0o775)
+                p.chmod(STAT_0o775)
 
             shutil.copytree(
                 str(extracted_path / FASTSTREAM_TEMPLATE_DIR_SUFFIX),
