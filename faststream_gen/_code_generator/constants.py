@@ -4,10 +4,10 @@
 __all__ = ['APPLICATION_FILE_PATH', 'TEST_FILE_PATH', 'TOML_FILE_NAME', 'LOGS_DIR_NAME', 'STEP_LOG_DIR_NAMES', 'DEFAULT_PARAMS',
            'MAX_RETRIES', 'MAX_RESTARTS', 'MAX_ASYNC_SPEC_RETRIES', 'TOKEN_TYPES', 'MODEL_PRICING',
            'OPENAI_KEY_EMPTY_ERROR', 'OPENAI_KEY_NOT_SET_ERROR', 'EMPTY_DESCRIPTION_ERROR', 'INCOMPLETE_DESCRIPTION',
-           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'INCOMPLETE_APP_ERROR_MSG', 'FASTSTREAM_REPO_ZIP_URL',
-           'FASTSTREAM_DOCS_DIR_SUFFIX', 'FASTSTREAM_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_EXAMPLE_FILES',
-           'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE', 'FASTSTREAM_TEMPLATE_ZIP_URL',
-           'FASTSTREAM_TEMPLATE_DIR_SUFFIX', 'OpenAIModel']
+           'DESCRIPTION_EXAMPLE', 'MAX_NUM_FIXES_MSG', 'INCOMPLETE_APP_ERROR_MSG', 'FASTSTREAM_GEN_REPO_ZIP_URL',
+           'FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX', 'FASTSTREAM_REPO_ZIP_URL', 'FASTSTREAM_DOCS_DIR_SUFFIX',
+           'FASTSTREAM_EXAMPLE_FILES', 'FASTSTREAM_TMP_DIR_PREFIX', 'FASTSTREAM_DIR_TO_EXCLUDE',
+           'FASTSTREAM_TEMPLATE_ZIP_URL', 'FASTSTREAM_TEMPLATE_DIR_SUFFIX', 'OpenAIModel']
 
 # %% ../../nbs/Constants.ipynb 2
 APPLICATION_FILE_PATH = "app/application.py"
@@ -80,9 +80,12 @@ INCOMPLETE_APP_ERROR_MSG = """Apologies, we couldn't generate a working applicat
 Please run the following command to start manual debugging:"""
 
 # %% ../../nbs/Constants.ipynb 11
+FASTSTREAM_GEN_REPO_ZIP_URL = "http://github.com/airtai/faststream-gen/archive/main.zip"
+FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX = "faststream-gen-main/search/examples"
+
 FASTSTREAM_REPO_ZIP_URL = "http://github.com/airtai/faststream/archive/main.zip"
 FASTSTREAM_DOCS_DIR_SUFFIX = "faststream-main/.faststream_gen"
-FASTSTREAM_EXAMPLES_DIR_SUFFIX = "faststream-main/faststream_gen_examples"
+
 FASTSTREAM_EXAMPLE_FILES = ['description.txt', 'app_skeleton.py', 'app.py', 'test_app.py']
 FASTSTREAM_TMP_DIR_PREFIX = "appended_examples"
 FASTSTREAM_DIR_TO_EXCLUDE = "api"

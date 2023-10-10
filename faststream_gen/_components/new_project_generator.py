@@ -13,7 +13,7 @@ import stat
 
 
 from faststream_gen._code_generator.helper import (
-    download_and_extract_faststream_archive,
+    download_and_extract_github_repo,
 )
 from faststream_gen._code_generator.constants import (
     FASTSTREAM_TEMPLATE_ZIP_URL,
@@ -36,7 +36,7 @@ def create_project(
     with yaspin(
         text="Creating a new FastStream project...", color="cyan", spinner="clock"
     ) as sp:
-        with download_and_extract_faststream_archive(
+        with download_and_extract_github_repo(
             FASTSTREAM_TEMPLATE_ZIP_URL
         ) as extracted_path:
             app_file = str(

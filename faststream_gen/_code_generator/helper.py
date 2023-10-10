@@ -3,8 +3,7 @@
 # %% auto 0
 __all__ = ['logger', 'examples_delimiter', 'set_cwd', 'set_logger_level', 'retry_on_error', 'ensure_openai_api_key_set',
            'add_tokens_usage', 'get_relevant_prompt_examples', 'strip_white_spaces', 'write_file_contents',
-           'read_file_contents', 'mock_openai_create', 'download_and_extract_faststream_archive',
-           'validate_python_code']
+           'read_file_contents', 'mock_openai_create', 'download_and_extract_github_repo', 'validate_python_code']
 
 # %% ../../nbs/Helper.ipynb 1
 from typing import *
@@ -308,7 +307,7 @@ def _fetch_content(url: str) -> requests.models.Response: # type: ignore
 
 # %% ../../nbs/Helper.ipynb 35
 @contextmanager
-def download_and_extract_faststream_archive(url: str) -> Generator[Path, None, None]:
+def download_and_extract_github_repo(url: str) -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
         try:
             input_path = Path(f"{d}/archive.zip")

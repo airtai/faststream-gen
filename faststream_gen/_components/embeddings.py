@@ -22,13 +22,14 @@ import typer
 from faststream_gen._code_generator.constants import (
     FASTSTREAM_REPO_ZIP_URL,
     FASTSTREAM_DOCS_DIR_SUFFIX,
-    FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+    FASTSTREAM_GEN_REPO_ZIP_URL,
+    FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX,
     FASTSTREAM_EXAMPLE_FILES,
     FASTSTREAM_TMP_DIR_PREFIX,
     FASTSTREAM_DIR_TO_EXCLUDE
 )
 from .package_data import get_root_data_path
-from .._code_generator.helper import download_and_extract_faststream_archive
+from .._code_generator.helper import download_and_extract_github_repo
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
 def _create_documents(
@@ -256,26 +257,30 @@ def generate(
     )
 ) -> None:
     typer.echo(
-        f"Downloading files docs and examples from FastStream repo and generating embeddings."
+        f"Downloading documentation and examples for semantic search."
     )
+    try:
+        _delete_directory(db_path)
 
-    with download_and_extract_faststream_archive(
-        FASTSTREAM_REPO_ZIP_URL
-    ) as extracted_path:
-        try:
-            _delete_directory(db_path)
+        with download_and_extract_github_repo(
+            FASTSTREAM_REPO_ZIP_URL
+        ) as extracted_path:
             _generate_docs_db(
                 extracted_path / FASTSTREAM_DOCS_DIR_SUFFIX, Path(db_path) / "docs"
             )
+
+        with download_and_extract_github_repo(
+            FASTSTREAM_GEN_REPO_ZIP_URL
+        ) as extracted_path:
             _generate_examples_db(
-                extracted_path / FASTSTREAM_EXAMPLES_DIR_SUFFIX,
+                extracted_path / FASTSTREAM_GEN_EXAMPLES_DIR_SUFFIX,
                 Path(db_path) / "examples",
             )
 
-            typer.echo(
-                f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
-            )
-        except Exception as e:
-            fg = typer.colors.RED
-            typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
-            raise typer.Exit(code=1)
+        typer.echo(
+            f"\nSuccessfully generated all the embeddings and saved to: {db_path}"
+        )
+    except Exception as e:
+        fg = typer.colors.RED
+        typer.secho(f"Unexpected internal error: {e}", err=True, fg=fg)
+        raise typer.Exit(code=1)

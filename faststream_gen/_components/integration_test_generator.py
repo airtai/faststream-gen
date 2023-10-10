@@ -31,7 +31,6 @@ from faststream_gen._code_generator.constants import (
 from .._code_generator.chat import CustomAIChat, ValidateAndFixResponse
 
 from faststream_gen._code_generator.helper import (
-    download_and_extract_faststream_archive,
     write_file_contents,
     read_file_contents,
     set_cwd,
