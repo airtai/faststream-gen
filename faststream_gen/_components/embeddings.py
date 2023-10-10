@@ -11,8 +11,6 @@ import os
 from tempfile import TemporaryDirectory
 from contextlib import contextmanager
 from pathlib import Path
-import importlib.util
-import subprocess  # nosec: B404: Consider possible security implications associated with the subprocess module.
 
 from langchain.document_loaders import UnstructuredMarkdownLoader, DirectoryLoader, TextLoader
 from langchain.schema.document import Document
@@ -35,7 +33,7 @@ from faststream_gen._code_generator.constants import (
     FASTSTREAM_EN_DOCS_DIR,
 )
 from .package_data import get_root_data_path
-from .._code_generator.helper import download_and_extract_github_repo, write_file_contents, set_cwd
+from .._code_generator.helper import download_and_extract_github_repo
 
 # %% ../../nbs/Embeddings_CLI.ipynb 3
 def _create_documents(
