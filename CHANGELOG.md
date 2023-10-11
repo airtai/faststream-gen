@@ -2,6 +2,14 @@
 
 <!-- do not remove -->
 
+## 0.1.7
+
+### Bugs Squashed
+
+- Ensure that the skeleton code generation does not include function implementations ([#176](https://github.com/airtai/faststream-gen/pull/176)), thanks to [@harishmohanraj](https://github.com/harishmohanraj)
+  - Closes #175
+
+
 ## 0.1.6
 
 ### Bugs Squashed
