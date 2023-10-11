@@ -1,0 +1,1364 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development.">
+      
+      
+        <meta name="author" content="airt">
+      
+      
+        <link rel="canonical" href="https://airtai.github.io/faststream-gen/Helper/">
+      
+      
+      
+      
+      <link rel="icon" href="../overrides/images/airt_icon_blue.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+    
+    
+      
+        <title>Helper - faststream-gen</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../overrides/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-84Y5MCKH3B"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-84Y5MCKH3B",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-84Y5MCKH3B",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  
+  
+    
+  
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="faststream-gen - Helper" />
+  <meta property="og:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta property="og:url" content="https://airtai.github.io/faststream-gen/Helper/" />
+  <meta property="og:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="faststream-gen - Helper" />
+  <meta name="twitter:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta name="twitter:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#set_cwd" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../.."> 
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="faststream-gen" class="md-header__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            faststream-gen
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Helper
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="faststream-gen" class="md-nav__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    faststream-gen
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code generator for FastStream
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Tutorial/Cryptocurrency_Tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cryptocurrency analysis with FastStream
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/faststream_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    faststream_gen
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#set_cwd" class="md-nav__link">
+    set_cwd
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#set_logger_level" class="md-nav__link">
+    set_logger_level
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry_on_error" class="md-nav__link">
+    retry_on_error
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensure_openai_api_key_set" class="md-nav__link">
+    ensure_openai_api_key_set
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add_tokens_usage" class="md-nav__link">
+    add_tokens_usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_relevant_prompt_examples" class="md-nav__link">
+    get_relevant_prompt_examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strip_white_spaces" class="md-nav__link">
+    strip_white_spaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write_file_contents" class="md-nav__link">
+    write_file_contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read_file_contents" class="md-nav__link">
+    read_file_contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mock_openai_create" class="md-nav__link">
+    mock_openai_create
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download_and_extract_github_repo" class="md-nav__link">
+    download_and_extract_github_repo
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validate_python_code" class="md-nav__link">
+    validate_python_code
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Helper</h1>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span> <span class="nn">faststream_gen._code_generator.constants</span> <span class="kn">import</span> <span class="n">FASTSTREAM_DOCS_DIR_SUFFIX</span><span class="p">,</span> <span class="n">FASTSTREAM_REPO_ZIP_URL</span><span class="p">,</span> <span class="n">OpenAIModel</span><span class="p">,</span> <span class="n">FASTSTREAM_ROOT_DIR_NAME</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">openai</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">suppress_timestamps</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: ok
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L46"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="set_cwd">set_cwd<a class="headerlink" href="#set_cwd" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> set_cwd (cwd_path:Union[pathlib.Path,str])
+</code></pre></div>
+</blockquote>
+<p>Set the current working directory for the duration of the context
+manager.</p>
+<p>Args: cwd_path: The path to the new working directory.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The above docstring is autogenerated by docstring-gen library (<a href="https://github.com/airtai/docstring-gen">https://github.com/airtai/docstring-gen</a>)</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">set_cwd</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">==</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L66"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="set_logger_level">set_logger_level<a class="headerlink" href="#set_logger_level" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> set_logger_level (func:Callable[...,Any])
+</code></pre></div>
+</blockquote>
+<p>Decorator to set the logger level based on verbosity.</p>
+<p>Args: func: The function to be decorated.</p>
+<p>Returns: The decorated function.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@set_logger_level</span>
+<span class="k">def</span> <span class="nf">_test_logger</span><span class="p">():</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+
+
+<span class="n">_test_logger</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">())</span>
+<span class="k">assert</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>30
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nd">@set_logger_level</span>
+<span class="k">def</span> <span class="nf">_test_logger</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+
+
+<span class="n">_test_logger</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">())</span>
+<span class="k">assert</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: WARNING
+
+20
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L87"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="retry_on_error">retry_on_error<a class="headerlink" href="#retry_on_error" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> retry_on_error (max_retries:int=3, delay:int=1)
+</code></pre></div>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>max_retries</td>
+<td>int</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>delay</td>
+<td>int</td>
+<td>1</td>
+<td>type: ignore</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="nd">@retry_on_error</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">attempt</span><span class="p">):</span>
+    <span class="c1"># Code that may raise an exception</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">([],</span> <span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">actual</span> <span class="o">=</span> <span class="n">my_function</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+<span class="n">expected</span> <span class="o">=</span> <span class="p">([],</span> <span class="kc">False</span><span class="p">)</span> 
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: Attempt 0 failed. Restarting step.
+[INFO] __main__: Attempt 1 failed. Restarting step.
+[INFO] __main__: Attempt 2 failed. Restarting step.
+([], False)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nd">@retry_on_error</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">attempt</span><span class="p">):</span>
+    <span class="c1"># Code that may raise an exception</span>
+    <span class="k">return</span> <span class="s2">&quot;hi&quot;</span>
+
+<span class="c1"># Call the decorated function</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">my_function</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="s2">&quot;hi&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>hi
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L106"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="ensure_openai_api_key_set">ensure_openai_api_key_set<a class="headerlink" href="#ensure_openai_api_key_set" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> ensure_openai_api_key_set ()
+</code></pre></div>
+</blockquote>
+<p>Ensure the ‘OPENAI_API_KEY’ environment variable is set and is not
+empty.</p>
+<p>Raises: KeyError: If the ‘OPENAI_API_KEY’ environment variable is not
+found. ValueError: If the ‘OPENAI_API_KEY’ environment variable is found
+but its value is empty.</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}):</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">ensure_openai_api_key_set</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">OPENAI_KEY_EMPTY_ERROR</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Error: OPENAI_API_KEY cannot be empty. Please set a valid OpenAI API key in OPENAI_API_KEY environment variable and try again.
+You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">ensure_openai_api_key_set</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">OPENAI_KEY_NOT_SET_ERROR</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&#39;Error: OPENAI_API_KEY not found in environment variables. Set a valid OpenAI API key in OPENAI_API_KEY environment variable and try again. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.&#39;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">:</span> <span class="s2">&quot;INVALID_KEY&quot;</span><span class="p">}):</span>
+    <span class="n">ensure_openai_api_key_set</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L121"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="add_tokens_usage">add_tokens_usage<a class="headerlink" href="#add_tokens_usage" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> add_tokens_usage (usage_list:List[Dict[str,int]])
+</code></pre></div>
+</blockquote>
+<p>Add list of OpenAI “usage” dictionaries by categories defined in
+TOKEN_TYPES (prompt_tokens, completion_tokens and total_tokens).</p>
+<p>Args: usage_list: List of OpenAI “usage” dictionaries</p>
+<p>Returns: Dict[str, int]: Dictionary where the keys are TOKEN_TYPES and
+their values are the sum of OpenAI “usage” dictionaries</p>
+<div class="highlight"><pre><span></span><code><span class="n">usage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">129</span><span class="p">,</span>
+    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">130</span>
+  <span class="p">}</span>
+<span class="k">assert</span> <span class="n">add_tokens_usage</span><span class="p">([</span><span class="n">usage</span><span class="p">,</span> <span class="n">usage</span><span class="p">])</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">258</span><span class="p">,</span>
+    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">260</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">usage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">129</span><span class="p">,</span>
+    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">130</span>
+  <span class="p">}</span>
+<span class="k">assert</span> <span class="n">add_tokens_usage</span><span class="p">([</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">usage</span><span class="p">])</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">129</span><span class="p">,</span>
+    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">130</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">fixture</span> <span class="o">=</span> <span class="p">[</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">==== description.txt starts ====</span>
+<span class="sd">description.txt</span>
+<span class="sd">==== description.txt ends ====</span>
+<span class="sd">==== app_skeleton.py starts ====</span>
+<span class="sd">app_skeleton.py</span>
+<span class="sd">==== app_skeleton.py ends ====</span>
+<span class="sd">==== app.py starts ====</span>
+<span class="sd">app.py</span>
+<span class="sd">==== app.py ends ====</span>
+<span class="sd">==== test_app.py starts ====</span>
+<span class="sd">test_app.py</span>
+<span class="sd">==== test_app.py ends ====</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="p">]</span>
+<span class="n">expected</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;description_to_skeleton&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">==== EXAMPLE APP DESCRIPTION ====</span><span class="se">\n\n</span><span class="s2">description.txt</span><span class="se">\n\n\n</span><span class="s2">==== YOUR RESPONSE ====</span><span class="se">\n\n\n</span><span class="s2">app_skeleton.py</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;skeleton_to_app_and_test&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">==== EXAMPLE APP DESCRIPTION ====</span><span class="se">\n\n</span><span class="s2">description.txt</span><span class="se">\n\n\n</span><span class="s2">==== EXAMPLE APP SKELETON ====</span><span class="se">\n\n</span><span class="s2">app_skeleton.py</span><span class="se">\n\n</span><span class="s2">==== YOUR RESPONSE ====</span><span class="se">\n\n</span><span class="s2">### application.py ###</span><span class="se">\n\n</span><span class="s2">app.py</span><span class="se">\n\n</span><span class="s2">### test.py ###</span><span class="se">\n\n</span><span class="s2">test_app.py</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">actual</span> <span class="o">=</span> <span class="n">_format_examples</span><span class="p">(</span><span class="n">fixture</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>{&#39;description_to_skeleton&#39;: &#39;\n==== EXAMPLE APP DESCRIPTION ====\n\ndescription.txt\n\n\n==== YOUR RESPONSE ====\n\n\napp_skeleton.py\n&#39;, &#39;skeleton_to_app_and_test&#39;: &#39;\n==== EXAMPLE APP DESCRIPTION ====\n\ndescription.txt\n\n\n==== EXAMPLE APP SKELETON ====\n\napp_skeleton.py\n\n==== YOUR RESPONSE ====\n\n### application.py ###\n\napp.py\n\n### test.py ###\n\ntest_app.py\n&#39;}
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L189"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="get_relevant_prompt_examples">get_relevant_prompt_examples<a class="headerlink" href="#get_relevant_prompt_examples" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> get_relevant_prompt_examples (query:str)
+</code></pre></div>
+</blockquote>
+<p>Load the vector database and retrieve the most relevant examples based
+on the given query for each step.</p>
+<p>Args: query: The query for relevance-based document retrieval.</p>
+<p>Returns: The dictionary of the most relevant examples for each step.</p>
+<div class="highlight"><pre><span></span><code><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Create a FastStream application using localhost broker for testing and use the default port number. </span>
+<span class="s2">It should consume messages from the &quot;input_data&quot; topic, where each message is a JSON encoded object containing a single attribute: &#39;data&#39;. </span>
+<span class="s2">For each consumed message, create a new message object and increment the value of the data attribute by 1. Finally, send the modified message to the &#39;output_data&#39; topic.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">actual</span> <span class="o">=</span> <span class="n">get_relevant_prompt_examples</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+
+
+<span class="k">assert</span> <span class="s2">&quot;==== EXAMPLE APP DESCRIPTION ====&quot;</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">[</span><span class="s2">&quot;description_to_skeleton&quot;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="s2">&quot;==== app_skeleton.py starts ====&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">[</span><span class="s2">&quot;description_to_skeleton&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">[</span><span class="s2">&quot;description_to_skeleton&quot;</span><span class="p">])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] faiss.loader: Loading faiss with AVX2 support.
+[INFO] faiss.loader: Successfully loaded faiss with AVX2 support.
+
+==== EXAMPLE APP DESCRIPTION ====
+
+Develop a FastStream application using localhost kafka broker.
+The app should consume messages from the input_data topic.
+The input message is a JSON encoded object including two attributes:
+    - x: float
+    - y: float
+    - time: datetime
+
+input_data topic should use partition key.
+While consuming the message, increment x and y attributes by 1 and publish that message to the output_data topic.
+The same partition key should be used in the input_data and output_data topic.
+
+
+
+==== YOUR RESPONSE ====
+
+
+from datetime import datetime
+
+from pydantic import BaseModel, Field
+
+from faststream import Context, FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+
+class Point(BaseModel):
+    x: float = Field(
+        ..., examples=[0.5], description=&quot;The X Coordinate in the coordinate system&quot;
+    )
+    y: float = Field(
+        ..., examples=[0.5], description=&quot;The Y Coordinate in the coordinate system&quot;
+    )
+    time: datetime = Field(
+        ...,
+        examples=[&quot;2020-04-23 10:20:30.400000&quot;],
+        description=&quot;The timestamp of the record&quot;,
+    )
+
+
+broker = KafkaBroker(&quot;localhost:9092&quot;)
+app = FastStream(broker)
+
+
+to_output_data = broker.publisher(&quot;output_data&quot;)
+
+
+@broker.subscriber(&quot;input_data&quot;)
+async def on_input_data(
+    msg: Point, logger: Logger, key: bytes = Context(&quot;message.raw_message.key&quot;)
+) -&gt; None:
+    &quot;&quot;&quot;
+    Processes a message from the &#39;input_data&#39; topic.
+    Increment msg x and y attributes with 1 and publish that message to the output_data topic.
+    The same partition key should be used in the input_data and output_data topic.
+
+    Instructions:
+    1. Consume a message from &#39;input_data&#39; topic.
+    2. Create a new message object (do not directly modify the original).
+    3. Increment msg x and y attributes with 1.
+    4. Publish that message to the output_data topic (The same partition key should be used in the input_data and output_data topic).
+    &quot;&quot;&quot;
+    raise NotImplementedError()
+
+
+==== EXAMPLE APP DESCRIPTION ====
+
+Develop a FastStream application using localhost kafka broker.
+The app should consume messages from the input_data topic.
+The input message is a JSON encoded object including two attributes:
+    - x: float
+    - y: float
+
+While consuming the message, increment x and y attributes by 1 and publish that message to the output_data topic.
+Use messages attribute x as a partition key when publishing to output_data topic.
+
+
+
+==== YOUR RESPONSE ====
+
+
+from pydantic import BaseModel, Field
+
+from faststream import FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+
+class Point(BaseModel):
+    x: float = Field(
+        ..., examples=[0.5], description=&quot;The X Coordinate in the coordinate system&quot;
+    )
+    y: float = Field(
+        ..., examples=[0.5], description=&quot;The Y Coordinate in the coordinate system&quot;
+    )
+
+
+broker = KafkaBroker(&quot;localhost:9092&quot;)
+app = FastStream(broker)
+
+
+to_output_data = broker.publisher(&quot;output_data&quot;)
+
+
+@broker.subscriber(&quot;input_data&quot;)
+async def on_input_data(msg: Point, logger: Logger) -&gt; None:
+    &quot;&quot;&quot;
+    Processes a message from the &#39;input_data&#39; topic.
+    Increment msg x and y attributes with 1 and publish that message to the output_data topic.
+    Publish that message to the output_data topic
+    Use messages attribute x as a partition key when publishing to output_data topic.
+
+    Instructions:
+    1. Consume a message from &#39;input_data&#39; topic.
+    2. Create a new message object (do not directly modify the original).
+    3. Increment msg x and y attributes with 1.
+    4. Publish that message to the output_data topic (Use messages attribute x as a partition key).
+    &quot;&quot;&quot;
+    raise NotImplementedError()
+
+
+==== EXAMPLE APP DESCRIPTION ====
+
+Develop a FastStream application using localhost kafka broker.
+The app should consume messages from the input_data topic.
+The input message is a JSON encoded object including two attributes:
+    - x: float
+    - y: float
+    - time: datetime
+
+input_data topic should use partition key.
+
+Keep all the previous messages in the memory.
+While consuming the message, add all x elements from the memory (x_sum) and all y from the memory (y_sum) and publish the message with x_sum and y_sum to the output_data topic.
+The same partition key should be used in the input_data and output_data topic.
+
+
+
+==== YOUR RESPONSE ====
+
+
+from datetime import datetime
+from typing import List
+
+from pydantic import BaseModel, Field
+
+from faststream import Context, ContextRepo, FastStream, Logger
+from faststream.kafka import KafkaBroker
+
+
+class Point(BaseModel):
+    x: float = Field(
+        ..., examples=[0.5], description=&quot;The X Coordinate in the coordinate system&quot;
+    )
+    y: float = Field(
+        ..., examples=[0.5], description=&quot;The Y Coordinate in the coordinate system&quot;
+    )
+    time: datetime = Field(
+        ...,
+        examples=[&quot;2020-04-23 10:20:30.400000&quot;],
+        description=&quot;The timestamp of the record&quot;,
+    )
+
+
+broker = KafkaBroker(&quot;localhost:9092&quot;)
+app = FastStream(broker)
+
+
+to_output_data = broker.publisher(&quot;output_data&quot;)
+
+
+@app.on_startup
+async def app_setup(context: ContextRepo):
+    &quot;&quot;&quot;
+    Set all necessary global variables inside ContextRepo object:
+        Set message_history for storing all input messages
+    &quot;&quot;&quot;
+    raise NotImplementedError()
+
+
+@broker.subscriber(&quot;input_data&quot;)
+async def on_input_data(
+    msg: Point,
+    logger: Logger,
+    message_history: List[Point] = Context(),
+    key: bytes = Context(&quot;message.raw_message.key&quot;),
+) -&gt; None:
+    &quot;&quot;&quot;
+    Processes a message from the &#39;input_data&#39; topic.
+    Add all x elements from the memory (x_sum) and all y from the memory (y_sum) and publish the message with x_sum and y_sum to the output_data topic.
+    The same partition key should be used in the input_data and output_data topic.
+
+    Instructions:
+    1. Consume a message from &#39;input_data&#39; topic.
+    2. Create a new message object (do not directly modify the original).
+    3. Add all x elements from the memory (x_sum) and all y from the memory (y_sum)
+    4. Publish the message with x_sum and y_sum to the output_data topic. (The same partition key should be used in the input_data and output_data topic).
+    &quot;&quot;&quot;
+    raise NotImplementedError()
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L206"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="strip_white_spaces">strip_white_spaces<a class="headerlink" href="#strip_white_spaces" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> strip_white_spaces (description:str)
+</code></pre></div>
+</blockquote>
+<p>Remove and strip excess whitespaces from a given description</p>
+<p>Args: description: The description string to be processed.</p>
+<p>Returns: The cleaned description string.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fixture</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    I have   a                  lot</span>
+<span class="s2">                of whitespaces</span>
+
+
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;I have a lot of whitespaces&quot;</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">strip_white_spaces</span><span class="p">(</span><span class="n">fixture</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>I have a lot of whitespaces
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L219"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="write_file_contents">write_file_contents<a class="headerlink" href="#write_file_contents" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> write_file_contents (output_file:str, contents:str)
+</code></pre></div>
+</blockquote>
+<p>Write the given contents to the specified output file.</p>
+<p>Args: output_file: The path to the output file where the contents will
+be written. contents: The contents to be written to the output file.</p>
+<p>Raises: OSError: If there is an issue while attempting to save the file.</p>
+<div class="highlight"><pre><span></span><code><span class="n">contents</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">print(&quot;Hello World&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">/grand-parent/parent/child&quot;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">/application.py&quot;</span>
+
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">contents</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">contents</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>/tmp/tmp3i7gtvzn/grand-parent/parent/child/application.py
+
+
+print(&quot;Hello World&quot;)
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L241"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="read_file_contents">read_file_contents<a class="headerlink" href="#read_file_contents" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> read_file_contents (output_file:str)
+</code></pre></div>
+</blockquote>
+<p>Read and return the contents from the specified file.</p>
+<p>Args: output_file: The path to the file to be read.</p>
+<p>Returns: The contents of the file as string.</p>
+<p>Raises: FileNotFoundError: If the specified file does not exist.</p>
+<div class="highlight"><pre><span></span><code><span class="n">contents</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">print(&quot;Hello World&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">/grand-parent/parent/child&quot;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">/application.py&quot;</span>
+
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">contents</span><span class="p">)</span>
+
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">read_file_contents</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">contents</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>/tmp/tmpa4z2fli7/grand-parent/parent/child/application.py
+
+
+print(&quot;Hello World&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">contents</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">print(&quot;Hello World&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">/grand-parent/parent/child&quot;</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">/application.py&quot;</span>
+
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">read_file_contents</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&lt;ExceptionInfo FileNotFoundError(&quot;Error: The file &#39;/tmp/tmp2zdz501b/grand-parent/parent/child/application.py&#39; does not exist. Please ensure that the specified &#39;output_path&#39; is valid and that you have the necessary permissions to access it.&quot;) tblen=2&gt;
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L264"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="mock_openai_create">mock_openai_create<a class="headerlink" href="#mock_openai_create" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> mock_openai_create (test_response:str)
+</code></pre></div>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="n">test_response</span> <span class="o">=</span> <span class="s2">&quot;This is a mock response&quot;</span>
+
+<span class="k">with</span> <span class="n">mock_openai_create</span><span class="p">(</span><span class="n">test_response</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">ChatCompletion</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+    <span class="n">ret_val</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;choices&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;message&#39;</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ret_val</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ret_val</span> <span class="o">==</span> <span class="n">test_response</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>This is a mock response
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">_fetch_content</span><span class="p">(</span><span class="s2">&quot;https://fastkafka.airt.ai/&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="mi">200</span><span class="p">])</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>b&#39;&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot; dir=&quot;ltr&quot; class=&quot;plugin-pages plugin-id-default&quot;&gt;\n&lt;head&gt;\n&lt;meta charset=&quot;UTF-8&quot;&gt;\n&lt;meta name=&quot;generator&quot; content=&quot;Docusaurus v2.4.0&quot;&gt;\n&lt;title data-rh=&quot;true&quot;&gt;Effortless Kaf&#39;
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L310"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="download_and_extract_github_repo">download_and_extract_github_repo<a class="headerlink" href="#download_and_extract_github_repo" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> download_and_extract_github_repo (url:str)
+</code></pre></div>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">download_and_extract_github_repo</span><span class="p">(</span><span class="n">FASTSTREAM_REPO_ZIP_URL</span><span class="p">)</span> <span class="k">as</span> <span class="n">extracted_path</span><span class="p">:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">extracted_path</span><span class="o">/</span><span class="n">FASTSTREAM_ROOT_DIR_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">))]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s2">&quot;pyproject&quot;</span> <span class="ow">in</span> <span class="n">files</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[&#39;README&#39;, &#39;faststream&#39;, &#39;.pre-commit-config&#39;, &#39;CONTRIBUTING&#39;, &#39;.github&#39;, &#39;CODE_OF_CONDUCT&#39;, &#39;pyproject&#39;, &#39;docs&#39;, &#39;scripts&#39;, &#39;SECURITY&#39;, &#39;examples&#39;, &#39;LICENSE&#39;, &#39;tests&#39;, &#39;.gitignore&#39;, &#39;.secrets&#39;]
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/_code_generator/helper.py#L334"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="validate_python_code">validate_python_code<a class="headerlink" href="#validate_python_code" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> validate_python_code (file_name:str, **kwargs:Dict[str,Any])
+</code></pre></div>
+</blockquote>
+<p>Validate and report errors in the provided Python code.</p>
+<p>Args: file_name: Python file to validate</p>
+<p>Returns: A list of error messages encountered during validation. If no
+errors occur, an empty list is returned.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fixture</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">import os</span>
+<span class="s2">def say_hello():</span>
+<span class="s2">    print(&quot;hello&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">app_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;application.py&quot;</span>
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">app_file</span><span class="p">),</span> <span class="n">fixture</span><span class="p">)</span>
+
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">validate_python_code</span><span class="p">(</span><span class="n">app_file</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">fixture</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">import os</span>
+<span class="s2">import invalid_module</span>
+<span class="s2">def say_hello():</span>
+<span class="s2">    print(&quot;hello&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">app_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;application.py&quot;</span>
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">app_file</span><span class="p">),</span> <span class="n">fixture</span><span class="p">)</span>
+
+
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">validate_python_code</span><span class="p">(</span><span class="n">app_file</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ModuleNotFoundError: No module named &#39;invalid_module&#39;&quot;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[&quot;ModuleNotFoundError: No module named &#39;invalid_module&#39;&quot;]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">fixture</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">import os</span>
+<span class="s2">def say_hello()</span>
+<span class="s2">    print(&quot;hello&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">app_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;application.py&quot;</span>
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">app_file</span><span class="p">),</span> <span class="n">fixture</span><span class="p">)</span>
+
+
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">validate_python_code</span><span class="p">(</span><span class="n">app_file</span><span class="p">)</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;SyntaxError: invalid syntax (application.py, line 3)&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;SyntaxError: expected &#39;:&#39; (application.py, line 3)&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;actual = </span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s2"> - expected = </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2"> - sys.version_info = </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[&quot;SyntaxError: expected &#39;:&#39; (application.py, line 3)&quot;]
+</code></pre></div>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2023 onwards, airt
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+    and 
+    <a href="https://nbdev-mkdocs.airt.ai/" target="_blank" rel="noopener">
+      Material for nbdev
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "search.share", "content.code.copy"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+        <script src="../overrides/js/extra.js"></script>
+      
+        <script src="../overrides/js/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

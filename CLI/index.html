@@ -1,0 +1,1045 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development.">
+      
+      
+        <meta name="author" content="airt">
+      
+      
+        <link rel="canonical" href="https://airtai.github.io/faststream-gen/CLI/">
+      
+      
+      
+      
+      <link rel="icon" href="../overrides/images/airt_icon_blue.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+    
+    
+      
+        <title>CLI - faststream-gen</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../overrides/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-84Y5MCKH3B"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-84Y5MCKH3B",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-84Y5MCKH3B",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  
+  
+    
+  
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="faststream-gen - CLI" />
+  <meta property="og:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta property="og:url" content="https://airtai.github.io/faststream-gen/CLI/" />
+  <meta property="og:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="faststream-gen - CLI" />
+  <meta name="twitter:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta name="twitter:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#generate_fastkafka_app" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../.."> 
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="faststream-gen" class="md-header__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            faststream-gen
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CLI
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="faststream-gen" class="md-nav__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    faststream-gen
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code generator for FastStream
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Tutorial/Cryptocurrency_Tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cryptocurrency analysis with FastStream
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/faststream_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    faststream_gen
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generate_fastkafka_app" class="md-nav__link">
+    generate_fastkafka_app
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>CLI</h1>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typer.testing</span> <span class="kn">import</span> <span class="n">CliRunner</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">faststream_gen._components.logger</span> <span class="kn">import</span> <span class="n">suppress_timestamps</span>
+<span class="kn">from</span> <span class="nn">faststream_gen._code_generator.helper</span> <span class="kn">import</span> <span class="n">mock_openai_create</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">suppress_timestamps</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: ok
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">runner</span> <span class="o">=</span> <span class="n">CliRunner</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">usage</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">129</span><span class="p">,</span> <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">130</span><span class="p">}</span>
+
+<span class="n">usage_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">usage</span><span class="p">,</span> <span class="n">usage</span><span class="p">]</span>
+<span class="n">total_tokens_usage</span> <span class="o">=</span> <span class="n">add_tokens_usage</span><span class="p">(</span><span class="n">usage_list</span><span class="p">)</span>
+
+<span class="n">actual</span> <span class="o">=</span> <span class="n">_calculate_price</span><span class="p">(</span><span class="n">total_tokens_usage</span><span class="p">,</span> <span class="s2">&quot;gpt-4&quot;</span><span class="p">)</span>
+<span class="n">expected</span> <span class="o">=</span> <span class="mf">0.007859999999999999</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>0.007859999999999999
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">/app_description.txt&quot;</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number.</span>
+
+<span class="s2">It should consume from &#39;store_product&#39; topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. &#39;EUR&#39;.</span>
+<span class="s2">For each consumed message, check if the currency attribute is set to &#39;HRK&#39;. If it is then change the currency to &#39;EUR&#39; and divide the price by 7.5, if the currency is not set to &#39;HRK&#39; don&#39;t change the original message. Finally, publish the consumed message to &#39;change_currency&#39; topic.</span>
+
+<span class="s2">Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.&quot;&quot;&quot;</span>
+
+
+    <span class="n">write_file_contents</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">_get_description</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number.</span><span class="se">\n\r\n\r</span><span class="s2">It should consume from &#39;store_product&#39; topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. &#39;EUR&#39;.</span><span class="se">\n\r</span><span class="s2">For each consumed message, check if the currency attribute is set to &#39;HRK&#39;. If it is then change the currency to &#39;EUR&#39; and divide the price by 7.5, if the currency is not set to &#39;HRK&#39; don&#39;t change the original message. Finally, publish the consumed message to &#39;change_currency&#39; topic.</span><span class="se">\n\r\n\r</span><span class="s2">Use SASL_SSL with SCRAM-SHA-256 for authentication with username and password.&quot;</span>         
+
+    <span class="k">assert</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span><span class="p">,</span> <span class="n">actual</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: Reading application description from &#39;/tmp/tmp_3ppo83e/app_description.txt&#39;.
+
+&quot;Create a FastKafka application using localhost broker for testing, staging.airt.ai for staging and prod.airt.ai for production. Use default port number.\n\r\n\rIt should consume from &#39;store_product&#39; topic an JSON encoded object with the following three attributes: product_name, currency and price. The format of the currency will be three letter string, e.g. &#39;EUR&#39;.\n\rFor each consumed message, check if the currency attribute is set to &#39;HRK&#39;. If it is then change the currency to &#39;EUR&#39; and divide the price by 7.5, if the currency is not set to &#39;HRK&#39; don&#39;t change the original message. Finally, publish the consumed message to &#39;change_currency&#39; topic.\n\r\n\rUse SASL_SSL with SCRAM-SHA-256 for authentication with username and password.&quot;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">_get_description</span><span class="p">(</span><span class="s2">&quot;incorrect_path&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;Error while reading from the file: &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;incorrect_path&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">[Errno 2] No such file or directory: &#39;incorrect_path&#39;&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Error while reading from the file: &#39;/work/fastkafka-gen/nbs/incorrect_path&#39;
+[Errno 2] No such file or directory: &#39;incorrect_path&#39;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">_validate_app_description</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">OpenAIModel</span><span class="o">.</span><span class="n">gpt3</span><span class="p">,</span> <span class="p">[])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">test_response</span> <span class="o">=</span> <span class="s2">&quot;3&quot;</span>
+
+<span class="k">with</span> <span class="n">mock_openai_create</span><span class="p">(</span><span class="n">test_response</span><span class="p">):</span>
+    <span class="n">validated_description</span><span class="p">,</span> <span class="n">tokens_list</span> <span class="o">=</span> <span class="n">_validate_app_description</span><span class="p">(</span><span class="s2">&quot;some valid description&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">OpenAIModel</span><span class="o">.</span><span class="n">gpt3</span><span class="p">,</span> <span class="p">[])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>✨  Generating a new FastStream application!
+[INFO] faststream_gen._code_generator.app_description_validator: ==== App description validation ====
+⠋ Validating the application description...[INFO] faiss.loader: Loading faiss with AVX2 support.
+[INFO] faiss.loader: Successfully loaded faiss with AVX2 support.
+⠙ Validating the application description... ⠦ Validating the application description... [INFO] faststream_gen._code_generator.chat:
+
+Prompt to the model:
+
+===Role:system===
+
+Message:
+
+You are an expert Python developer, tasked to generate executable Python code as a part of your work with the FastStream framework.
+
+You are to abide by the following guidelines:
+
+1. You must never enclose the generated Python code with ``` python. It is mandatory that the output is a valid and executable Python code. Please ensure this rule is never broken.
+
+2. Some prompts might require you to generate code that contains async functions. For example:
+
+async def app_setup(context: ContextRepo):
+    raise NotImplementedError()
+
+In such cases, it is necessary to add the &quot;import asyncio&quot; statement at the top of the code.
+
+You will encounter sections marked as:
+
+==== APP DESCRIPTION: ====
+
+These sections contain the description of the FastStream app you need to implement. Treat everything below this line, until the end of the prompt, as the description to follow for the app implementation.
+
+
+===Role:user===
+
+Message:
+hide:
+  - navigation
+  - footer
+
+Release Notes
+
+FastStream is a new package based on the ideas and experiences gained from FastKafka and Propan. By joining our forces, we picked up the best from both packages and created the unified way to write services capable of processing streamed data regradless of the underliying protocol. We&#39;ll continue to maintain both packages, but new development will be in this project. If you are starting a new service, this package is the recommended way to do it.
+
+Features
+
+FastStream simplifies the process of writing producers and consumers for message queues, handling all the
+parsing, networking and documentation generation automatically.
+
+Making streaming microservices has never been easier. Designed with junior developers in mind, FastStream simplifies your work while keeping the door open for more advanced use-cases. Here&#39;s a look at the core features that make FastStream a go-to framework for modern, data-centric microservices.
+
+Multiple Brokers: FastStream provides a unified API to work across multiple message brokers (Kafka, RabbitMQ support)
+
+Pydantic Validation: Leverage Pydantic&#39;s validation capabilities to serialize and validates incoming messages
+
+Automatic Docs: Stay ahead with automatic AsyncAPI documentation.
+
+Intuitive: full typed editor support makes your development experience smooth, catching errors before they reach runtime
+
+Powerful Dependency Injection System: Manage your service dependencies efficiently with FastStream&#39;s built-in DI system.
+
+Testable: supports in-memory tests, making your CI/CD pipeline faster and more reliable
+
+Extendable: use extensions for lifespans, custom serialization and middlewares
+
+Integrations: FastStream is fully compatible with any HTTP framework you want (FastAPI especially)
+
+Built for Automatic Code Generation: FastStream is optimized for automatic code generation using advanced models like GPT and Llama
+
+That&#39;s FastStream in a nutshell—easy, efficient, and powerful. Whether you&#39;re just starting with streaming microservices or looking to scale, FastStream has got you covered.
+
+===Role:user===
+
+Message:
+
+You should provide a response of 0, 1, 2, or 3, and nothing else, based on the following rules:
+
+==== RULES: ====
+
+If the ==== APP DESCRIPTION: ==== section is not related to FastStream or contains violence, self-harm, harassment/threatening, or hate/threatening information, respond with 0.
+
+If the ==== APP DESCRIPTION: ==== section is related to FastStream but primarily provides general information about FastStream and what it is, respond with 1.
+
+If it is NOT possible to infer the topic name or there is no explanation about the business logic in the ==== APP DESCRIPTION: ==== section, respond with 2. This is crucial.
+
+If the ==== APP DESCRIPTION: ==== section is related to FastStream, provides instructions on which topic the messages should be consumed/produced, and includes at least one defined topic, respond with 3.
+
+Here are few examples for your understanding:
+
+
+==== EXAMPLE APP DESCRIPTION ====
+Generate a new FastStream app, which has a producer function and a consumer function 
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+In App description 1, the user has not defined the message structure or the topic name to publish/subscribe. As a result, you should respond with 2. 
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+Create a FastStream application.
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+create FastStream app where message has user_data attribute.
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+FastStream app with for consuming messages from the hello topic
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Write a FastStream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on &quot;new_joinee&quot; topic. The message should contain &quot;employee_name&quot;, &quot;age&quot;, &quot;location&quot; and &quot;experience&quot; attributes. After consuming the consumer function should send the details to the &quot;project_team&quot; and &quot;admin_team&quot; topics. Use only localhost broker==== Response 5 ====
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Develop a new FastStream application that consumes JSON-encoded objects from the &quot;receive_order&quot; topic. These objects include attributes like &quot;name&quot; and &quot;quantity.&quot; Upon consumption, enhance the message by adding a &quot;location&quot; attribute set to &quot;Zagreb.&quot; Subsequently, forward the modified message to the &quot;place_order&quot; topic. After this, send another message to the &quot;update_inventory&quot; topic. This message should include a &quot;quantity&quot; attribute that corresponds to the received quantity value. No authentication is required.==== Response 6 ====
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Who are you
+==== YOUR RESPONSE ====
+0
+
+==== EXAMPLE APP DESCRIPTION ====
+What is the latest vesion of FastStream
+==== YOUR RESPONSE ====
+1
+
+Please respond only with numbers 0, 1, 2 or 3 (WITH NO ADDITIONAL TEXT!)
+
+==== APP DESCRIPTION: ====
+
+
+
+===Role:user===
+
+Message:
+some valid description
+==== YOUR RESPONSE ====
+
+ ✔ Application description validated.
+
+/home/harish/.local/lib/python3.11/site-packages/yaspin/core.py:119: UserWarning: color, on_color and attrs are not supported when running in jupyter
+  self._color = self._set_color(color) if color else color
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">test_response</span> <span class="o">=</span> <span class="s2">&quot;3&quot;</span>
+
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="s2">&quot;input.txt&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;app description&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">mock_openai_create</span><span class="p">(</span><span class="n">test_response</span><span class="p">):</span>
+        <span class="n">validated_description</span><span class="p">,</span> <span class="n">tokens_list</span> <span class="o">=</span> <span class="n">_validate_app_description</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_path</span><span class="p">),</span> <span class="n">OpenAIModel</span><span class="o">.</span><span class="n">gpt3</span><span class="p">,</span> <span class="p">[])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[INFO] __main__: Reading application description from &#39;/tmp/tmpguglgo12/input.txt&#39;.
+✨  Generating a new FastStream application!
+[INFO] faststream_gen._code_generator.app_description_validator: ==== App description validation ====
+⠸ Validating the application description... [INFO] faststream_gen._code_generator.chat:
+
+Prompt to the model:
+
+===Role:system===
+
+Message:
+
+You are an expert Python developer, tasked to generate executable Python code as a part of your work with the FastStream framework.
+
+You are to abide by the following guidelines:
+
+1. You must never enclose the generated Python code with ``` python. It is mandatory that the output is a valid and executable Python code. Please ensure this rule is never broken.
+
+2. Some prompts might require you to generate code that contains async functions. For example:
+
+async def app_setup(context: ContextRepo):
+    raise NotImplementedError()
+
+In such cases, it is necessary to add the &quot;import asyncio&quot; statement at the top of the code.
+
+You will encounter sections marked as:
+
+==== APP DESCRIPTION: ====
+
+These sections contain the description of the FastStream app you need to implement. Treat everything below this line, until the end of the prompt, as the description to follow for the app implementation.
+
+
+===Role:user===
+
+Message:
+hide:
+  - navigation
+  - footer
+
+Release Notes
+
+FastStream is a new package based on the ideas and experiences gained from FastKafka and Propan. By joining our forces, we picked up the best from both packages and created the unified way to write services capable of processing streamed data regradless of the underliying protocol. We&#39;ll continue to maintain both packages, but new development will be in this project. If you are starting a new service, this package is the recommended way to do it.
+
+Features
+
+FastStream simplifies the process of writing producers and consumers for message queues, handling all the
+parsing, networking and documentation generation automatically.
+
+Making streaming microservices has never been easier. Designed with junior developers in mind, FastStream simplifies your work while keeping the door open for more advanced use-cases. Here&#39;s a look at the core features that make FastStream a go-to framework for modern, data-centric microservices.
+
+Multiple Brokers: FastStream provides a unified API to work across multiple message brokers (Kafka, RabbitMQ support)
+
+Pydantic Validation: Leverage Pydantic&#39;s validation capabilities to serialize and validates incoming messages
+
+Automatic Docs: Stay ahead with automatic AsyncAPI documentation.
+
+Intuitive: full typed editor support makes your development experience smooth, catching errors before they reach runtime
+
+Powerful Dependency Injection System: Manage your service dependencies efficiently with FastStream&#39;s built-in DI system.
+
+Testable: supports in-memory tests, making your CI/CD pipeline faster and more reliable
+
+Extendable: use extensions for lifespans, custom serialization and middlewares
+
+Integrations: FastStream is fully compatible with any HTTP framework you want (FastAPI especially)
+
+Built for Automatic Code Generation: FastStream is optimized for automatic code generation using advanced models like GPT and Llama
+
+That&#39;s FastStream in a nutshell—easy, efficient, and powerful. Whether you&#39;re just starting with streaming microservices or looking to scale, FastStream has got you covered.
+
+===Role:user===
+
+Message:
+
+You should provide a response of 0, 1, 2, or 3, and nothing else, based on the following rules:
+
+==== RULES: ====
+
+If the ==== APP DESCRIPTION: ==== section is not related to FastStream or contains violence, self-harm, harassment/threatening, or hate/threatening information, respond with 0.
+
+If the ==== APP DESCRIPTION: ==== section is related to FastStream but primarily provides general information about FastStream and what it is, respond with 1.
+
+If it is NOT possible to infer the topic name or there is no explanation about the business logic in the ==== APP DESCRIPTION: ==== section, respond with 2. This is crucial.
+
+If the ==== APP DESCRIPTION: ==== section is related to FastStream, provides instructions on which topic the messages should be consumed/produced, and includes at least one defined topic, respond with 3.
+
+Here are few examples for your understanding:
+
+
+==== EXAMPLE APP DESCRIPTION ====
+Generate a new FastStream app, which has a producer function and a consumer function 
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+In App description 1, the user has not defined the message structure or the topic name to publish/subscribe. As a result, you should respond with 2. 
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+Create a FastStream application.
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+create FastStream app where message has user_data attribute.
+==== YOUR RESPONSE ====
+2
+
+==== EXAMPLE APP DESCRIPTION ====
+FastStream app with for consuming messages from the hello topic
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Write a FastStream application with with one consumer function and two producer functions. The consumer function should receive the a message posted on &quot;new_joinee&quot; topic. The message should contain &quot;employee_name&quot;, &quot;age&quot;, &quot;location&quot; and &quot;experience&quot; attributes. After consuming the consumer function should send the details to the &quot;project_team&quot; and &quot;admin_team&quot; topics. Use only localhost broker==== Response 5 ====
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Develop a new FastStream application that consumes JSON-encoded objects from the &quot;receive_order&quot; topic. These objects include attributes like &quot;name&quot; and &quot;quantity.&quot; Upon consumption, enhance the message by adding a &quot;location&quot; attribute set to &quot;Zagreb.&quot; Subsequently, forward the modified message to the &quot;place_order&quot; topic. After this, send another message to the &quot;update_inventory&quot; topic. This message should include a &quot;quantity&quot; attribute that corresponds to the received quantity value. No authentication is required.==== Response 6 ====
+==== YOUR RESPONSE ====
+3
+
+==== EXAMPLE APP DESCRIPTION ====
+Who are you
+==== YOUR RESPONSE ====
+0
+
+==== EXAMPLE APP DESCRIPTION ====
+What is the latest vesion of FastStream
+==== YOUR RESPONSE ====
+1
+
+Please respond only with numbers 0, 1, 2 or 3 (WITH NO ADDITIONAL TEXT!)
+
+==== APP DESCRIPTION: ====
+
+
+
+===Role:user===
+
+Message:
+app description
+==== YOUR RESPONSE ====
+
+ ✔ Application description validated.
+</code></pre></div>
+<hr />
+<p><a
+href="https://github.com/airtai/faststream-gen/blob/main/faststream_gen/cli.py#L107"
+target="_blank" style="float:right; font-size:smaller">source</a></p>
+<h3 id="generate_fastkafka_app">generate_fastkafka_app<a class="headerlink" href="#generate_fastkafka_app" title="Permanent link">¤</a></h3>
+<blockquote>
+<div class="highlight"><pre><span></span><code> generate_fastkafka_app
+                         (description:Optional[str]=&lt;typer.models.Argument
+                         Info object at 0x7f8c85eea0a0&gt;,
+                         input_path:str=&lt;typer.models.OptionInfo object at
+                         0x7f8c85eeaf70&gt;,
+                         output_path:str=&lt;typer.models.OptionInfo object
+                         at 0x7f8c85eeaee0&gt;, model:faststream_gen._code_ge
+                         nerator.constants.OpenAIModel=&lt;typer.models.Optio
+                         nInfo object at 0x7f8c85eeaa00&gt;,
+                         verbose:bool=&lt;typer.models.OptionInfo object at
+                         0x7f8c85eea460&gt;,
+                         save_log_files:bool=&lt;typer.models.OptionInfo
+                         object at 0x7f8c85eeabe0&gt;)
+</code></pre></div>
+</blockquote>
+<p>Effortlessly create a new FastStream project based on the app
+description.</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;generate&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">])</span>
+</code></pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">                                                                                                                   </span>
+<span style="font-weight: bold"> </span><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">Usage: </span><span style="font-weight: bold">generate [OPTIONS] [DESCRIPTION]                                                                           </span>
+<span style="font-weight: bold">                                                                                                                   </span>
+</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"> Effortlessly create a new FastStream project based on the app description.                                        
+                                                                                                                   &#10;</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">╭─ Arguments ─────────────────────────────────────────────────────────────────────────────────────────────────────╮</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>   description      <span style="color: #bfbf7f; text-decoration-color: #bfbf7f; font-weight: bold">[</span><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">DESCRIPTION</span><span style="color: #bfbf7f; text-decoration-color: #bfbf7f; font-weight: bold">]</span>  Summarize your FastStream application in a few sentences!                     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                                                                                 <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   Include details about messages, topics, servers, and a brief overview of the  <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   intended business logic.                                                      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                                                                                 <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   The simpler and more specific the app description is, the better the          <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   generated app will be. Please refer to the below example for inspiration:     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                                                                                 <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   Create a FastStream application using localhost broker for testing and use    <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   the default port number.  It should consume messages from the "input_data"    <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   topic, where each message is a JSON encoded object containing a single        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   attribute: 'data'.  For each consumed message, create a new message object    <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   and increment the value of the data attribute by 1. Finally, send the         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   modified message to the 'output_data' topic.                                  <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                   <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">[default: None]                                                              </span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────────╮</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--input_file</span>          <span style="color: #008000; text-decoration-color: #008000; font-weight: bold">-i</span>      <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">TEXT                     </span>  The path to the file with the app desription. This     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          path should be relative to the current working         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          directory.                                             <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          If the app description is passed via both a            <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--input_file</span> and a command line argument, the          <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          description from the command line will be used to      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          create the application.                                <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">[default: None]                                       </span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--output_path</span>         <span style="color: #008000; text-decoration-color: #008000; font-weight: bold">-o</span>      <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">TEXT                     </span>  The path to the output directory where the generated   <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          project files will be saved. This path should be       <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          relative to the current working directory.             <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">[default: .]                                          </span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--model</span>               <span style="color: #008000; text-decoration-color: #008000; font-weight: bold">-m</span>      <span style="color: #bfbf7f; text-decoration-color: #bfbf7f; font-weight: bold">[</span><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">gpt-3.5-turbo-16k</span><span style="color: #bfbf7f; text-decoration-color: #bfbf7f; font-weight: bold">|</span><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">gpt-4</span><span style="color: #bfbf7f; text-decoration-color: #bfbf7f; font-weight: bold">]</span>  The OpenAI model that will be used to create the       <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          FastStream project. For better results, we recommend   <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          using 'gpt-4'.                                         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">[default: gpt-3.5-turbo-16k]                          </span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--verbose</span>             <span style="color: #008000; text-decoration-color: #008000; font-weight: bold">-v</span>      <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">                         </span>  Enable verbose logging by setting the logger level to  <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          INFO.                                                  <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--dev</span>                 <span style="color: #008000; text-decoration-color: #008000; font-weight: bold">-d</span>      <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">                         </span>  Save the complete logs generated by faststream-gen     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          inside the output_path directory.                      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--install-completion</span>          <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">                         </span>  Install completion for the current shell.              <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--show-completion</span>             <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">                         </span>  Show completion for the current shell, to copy it or   <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>                                                          customize the installation.                            <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">--help</span>                        <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">                         </span>  Show this message and exit.                            <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">│</span>
+<span style="color: #7f7f7f; text-decoration-color: #7f7f7f">╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+</pre>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2023 onwards, airt
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+    and 
+    <a href="https://nbdev-mkdocs.airt.ai/" target="_blank" rel="noopener">
+      Material for nbdev
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "search.share", "content.code.copy"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+        <script src="../overrides/js/extra.js"></script>
+      
+        <script src="../overrides/js/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

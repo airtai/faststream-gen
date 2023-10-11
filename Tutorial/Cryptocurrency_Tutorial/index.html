@@ -1,0 +1,1772 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development.">
+      
+      
+        <meta name="author" content="airt">
+      
+      
+        <link rel="canonical" href="https://airtai.github.io/faststream-gen/Tutorial/Cryptocurrency_Tutorial/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../cli/faststream_gen/">
+      
+      
+      <link rel="icon" href="../../overrides/images/airt_icon_blue.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+    
+    
+      
+        <title>Cryptocurrency analysis with FastStream - faststream-gen</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6a10b989.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../overrides/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-84Y5MCKH3B"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-84Y5MCKH3B",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-84Y5MCKH3B",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  
+  
+    
+  
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="faststream-gen - Cryptocurrency analysis with FastStream" />
+  <meta property="og:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta property="og:url" content="https://airtai.github.io/faststream-gen/Tutorial/Cryptocurrency_Tutorial/" />
+  <meta property="og:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="faststream-gen - Cryptocurrency analysis with FastStream" />
+  <meta name="twitter:description" content="The faststream-gen library uses advanced AI to generate FastStream code from application descriptions, speeding up FastStream app development." />
+  <meta name="twitter:image" content="https://opengraph.githubassets.com/1691483169.608266/airtai/faststream-gen" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cryptocurrency-analysis-with-faststream" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../../.."> 
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="faststream-gen" class="md-header__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            faststream-gen
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cryptocurrency analysis with FastStream
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="faststream-gen" class="md-nav__button md-logo" aria-label="faststream-gen" data-md-component="logo">
+      
+  <img src="../../overrides/images/airt_icon_blue.svg" alt="logo">
+
+    </a>
+    faststream-gen
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/airtai/faststream-gen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    faststream-gen
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code generator for FastStream
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Cryptocurrency analysis with FastStream
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Cryptocurrency analysis with FastStream
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-and-activating-a-new-python-virtual-environment" class="md-nav__link">
+    Creating and activating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-the-packages" class="md-nav__link">
+    Installing the packages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-openai-api-key" class="md-nav__link">
+    Setting up OpenAI API key
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generating-faststream-applications" class="md-nav__link">
+    Generating FastStream applications
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating FastStream applications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieving-and-publishing-crypto-prices" class="md-nav__link">
+    Retrieving and publishing crypto prices
+  </a>
+  
+    <nav class="md-nav" aria-label="Retrieving and publishing crypto prices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failed-generation" class="md-nav__link">
+    Failed generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#successful-generation" class="md-nav__link">
+    Successful generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-python-virtual-environment" class="md-nav__link">
+    Creating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-application" class="md-nav__link">
+    Testing the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#previewing-asyncapi-docs" class="md-nav__link">
+    Previewing AsyncAPI Docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-localhost-kafka-broker" class="md-nav__link">
+    Starting localhost Kafka broker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-application" class="md-nav__link">
+    Starting the application
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculating-the-moving-average" class="md-nav__link">
+    Calculating the moving average
+  </a>
+  
+    <nav class="md-nav" aria-label="Calculating the moving average">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-python-virtual-environment_1" class="md-nav__link">
+    Creating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-application_1" class="md-nav__link">
+    Testing the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#previewing-asyncapi-docs_1" class="md-nav__link">
+    Previewing AsyncAPI Docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-application_1" class="md-nav__link">
+    Starting the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribing-directly-to-local-kafka-broker-topic" class="md-nav__link">
+    Subscribing directly to local Kafka broker topic
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stopping-kafka-broker" class="md-nav__link">
+    Stopping Kafka broker
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-github-integration" class="md-nav__link">
+    [Optional] GitHub integration
+  </a>
+  
+    <nav class="md-nav" aria-label="[Optional] GitHub integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-locally-hosted-code-to-github" class="md-nav__link">
+    Adding locally hosted code to GitHub
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuous-integration-with-github-actions" class="md-nav__link">
+    Continuous integration with GitHub Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    Repeat
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next steps
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/faststream_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    faststream_gen
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-and-activating-a-new-python-virtual-environment" class="md-nav__link">
+    Creating and activating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-the-packages" class="md-nav__link">
+    Installing the packages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-openai-api-key" class="md-nav__link">
+    Setting up OpenAI API key
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generating-faststream-applications" class="md-nav__link">
+    Generating FastStream applications
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating FastStream applications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieving-and-publishing-crypto-prices" class="md-nav__link">
+    Retrieving and publishing crypto prices
+  </a>
+  
+    <nav class="md-nav" aria-label="Retrieving and publishing crypto prices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failed-generation" class="md-nav__link">
+    Failed generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#successful-generation" class="md-nav__link">
+    Successful generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-python-virtual-environment" class="md-nav__link">
+    Creating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-application" class="md-nav__link">
+    Testing the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#previewing-asyncapi-docs" class="md-nav__link">
+    Previewing AsyncAPI Docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-localhost-kafka-broker" class="md-nav__link">
+    Starting localhost Kafka broker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-application" class="md-nav__link">
+    Starting the application
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculating-the-moving-average" class="md-nav__link">
+    Calculating the moving average
+  </a>
+  
+    <nav class="md-nav" aria-label="Calculating the moving average">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-python-virtual-environment_1" class="md-nav__link">
+    Creating a new Python virtual environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-application_1" class="md-nav__link">
+    Testing the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#previewing-asyncapi-docs_1" class="md-nav__link">
+    Previewing AsyncAPI Docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-application_1" class="md-nav__link">
+    Starting the application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribing-directly-to-local-kafka-broker-topic" class="md-nav__link">
+    Subscribing directly to local Kafka broker topic
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stopping-kafka-broker" class="md-nav__link">
+    Stopping Kafka broker
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-github-integration" class="md-nav__link">
+    [Optional] GitHub integration
+  </a>
+  
+    <nav class="md-nav" aria-label="[Optional] GitHub integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-locally-hosted-code-to-github" class="md-nav__link">
+    Adding locally hosted code to GitHub
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuous-integration-with-github-actions" class="md-nav__link">
+    Continuous integration with GitHub Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    Repeat
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next steps
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="cryptocurrency-analysis-with-faststream">Cryptocurrency analysis with FastStream<a class="headerlink" href="#cryptocurrency-analysis-with-faststream" title="Permanent link">¤</a></h1>
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+
+<p>In this tutorial, we will walk you through the process of using the
+<code>faststream-gen</code> Python library to retrieve cryptocurrency prices in
+real time and calculate their moving average. To accomplish that, we
+will generate following two
+<a href="https://faststream.airt.ai" target="_blank">FastStream</a>
+applications:</p>
+<ol>
+<li>
+<p>A microservice retrieving current cryptocurrency prices from an
+    external
+    <a href="https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/api-prices#get-spot-price" target="_blank">web
+    service</a> and publishing retrieved data to a Kafka topic.</p>
+</li>
+<li>
+<p>A microservice consuming such messages, calculating the moving
+    average price for each cryptocurrency and publishing it to another
+    Kafka topic.</p>
+</li>
+</ol>
+<p>You can watch a short version of the tutorial in the video below:</p>
+<div class="video-wrapper">
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/zklmEzifKdk?si=vQlGPbtS9o3k4twY" frameborder="0" allowfullscreen></iframe>
+
+</div>
+
+<p><strong>Let’s get started!</strong></p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¤</a></h2>
+<p>To complete this tutorial, you will need the following software and
+Python library:</p>
+<ol>
+<li>
+<p><a href="https://www.python.org/" target="_blank">Python</a>
+    (version 3.8 and upward)</p>
+</li>
+<li>
+<p>a valid
+    <a href="https://platform.openai.com/account/api-keys" target="_blank">OPENAI
+    API key</a></p>
+</li>
+<li>
+<p>[optional] <a href="https://github.com/" target="_blank">github
+    account</a> and installed
+    <a href="https://git-scm.com/" target="_blank">git command</a></p>
+</li>
+</ol>
+<p>It is recommended to use a virtual environment for your Python projects.
+Virtual environments are a common and effective Python development
+technique that helps to keep dependencies required by different projects
+separate by creating isolated Python environments for them.</p>
+<p>In this tutorial, we will be using Python’s venv module to create a
+virtual environment.</p>
+<p>First, create a root directory for this tutorial. Navigate to the
+desired location and create a new directory called
+<code>faststream_gen_tutorial</code> and enter it.</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>faststream_gen_tutorial
+<span class="nb">cd</span><span class="w"> </span>faststream_gen_tutorial
+</code></pre></div>
+<h3 id="creating-and-activating-a-new-python-virtual-environment">Creating and activating a new Python virtual environment<a class="headerlink" href="#creating-and-activating-a-new-python-virtual-environment" title="Permanent link">¤</a></h3>
+<p>Create a new virtual environment using
+<a href="https://docs.python.org/3/library/venv.html" target="_blank">
+venv</a>:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+</code></pre></div>
+<p>Next, activate your new virtual environment:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</code></pre></div>
+<h3 id="installing-the-packages">Installing the packages<a class="headerlink" href="#installing-the-packages" title="Permanent link">¤</a></h3>
+<p>Upgrade pip if needed and install <code>faststream-gen</code> package:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>faststream-gen
+</code></pre></div>
+<p>Check that the installation was successful by running the following
+command:</p>
+<div class="highlight"><pre><span></span><code>faststream_gen<span class="w"> </span>--help
+</code></pre></div>
+<p>You should see the full list of options of the command in the output.</p>
+<p>Now you have successfully set up the environment and installed the
+<code>faststream-gen</code> package.</p>
+<h3 id="setting-up-openai-api-key">Setting up OpenAI API key<a class="headerlink" href="#setting-up-openai-api-key" title="Permanent link">¤</a></h3>
+<p><code>faststream-gen</code> uses OpenAI API and you need to export your API key in
+environment variable <code>OPENAI_API_KEY</code>. If you use bash or compatible
+shell, you can do that with the following command:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;sk-your-openai-api-key&quot;</span>
+</code></pre></div>
+<p>If you don’t already have <code>OPENAI_API_KEY</code>, you can create one
+<a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>.</p>
+<h2 id="generating-faststream-applications">Generating FastStream applications<a class="headerlink" href="#generating-faststream-applications" title="Permanent link">¤</a></h2>
+<h3 id="retrieving-and-publishing-crypto-prices">Retrieving and publishing crypto prices<a class="headerlink" href="#retrieving-and-publishing-crypto-prices" title="Permanent link">¤</a></h3>
+<p>Now, we will create an application which retrieves information about
+current cryptocurrency prices from an external
+<a href="https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/api-prices#get-spot-price" target="_blank">web
+service</a> and publishes messages to a Kafka topic. In order to achieve
+this, we need to provide a high-level description of the application in
+<strong>plain English</strong> containing only the <strong>necessary information</strong> needed
+by a <strong>knowledgeable Python developer</strong> familiar with FastStream
+framework to implement it. This should include details such as the
+message schema, instructions on external API-s and web service, and
+guidance on selecting the appropriate topic and partition keys.</p>
+<p>Below is an example of such description used in this particular case.
+Notice that we did not specify steps needed to actually implement, we
+specified <strong>what</strong> the service should do, but not <strong>how</strong> to do it.</p>
+<div class="highlight"><pre><span></span><code>Create a FastStream application which will retrieve the current cryptocurrency
+price and publish it to new_crypto_price topic. 
+
+The application should retrieve the data every 2 seconds.
+
+A message which will be produced is JSON with the two attributes:
+- price: non-negative float (current price of cryptocurrency in USD)
+- crypto_currency: string (the cryptocurrency e.g. BTC, ETH...)
+
+The current price of Bitcoin can be retrieved by a simple GET request to:
+    - https://api.coinbase.com/v2/prices/BTC-USD/spot
+
+The current price of Ethereum can be retrieved by a simple GET request to:
+    - https://api.coinbase.com/v2/prices/ETH-USD/spot
+
+The response of this GET request is a JSON and you can get information about
+the crypto_currency in:
+    response[&#39;data&#39;][&#39;base&#39;]
+
+and the information about the price in:
+    response[&#39;data&#39;][&#39;amount&#39;]
+
+Use utf-8 encoded crypto_currency attribute as a partition key when publishing
+the message to new_crypto_price topic.
+</code></pre></div>
+<p>Let’s generate a new <code>FastStream</code> project inside the
+<code>retrieve-publish-crypto</code> directory. First, copy the previous
+description and paste it into a file called
+<code>description_retrieve_publish.txt</code>.</p>
+<p>Next, run the following command (parameter <code>-i</code> specifies the file path
+for the app description file, while the parameter <code>-o</code> specifies the
+directory where the generated project files will be saved):</p>
+<div class="highlight"><pre><span></span><code>faststream_gen<span class="w"> </span>-i<span class="w"> </span>description_retrieve_publish.txt<span class="w"> </span>-o<span class="w"> </span>retrieve-publish-crypto
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">✨  Generating a new FastStream application!</span>
+<span class="go"> ✔ Application description validated. </span>
+<span class="go"> ✔ FastStream app skeleton code generated. </span>
+<span class="go"> ✔ The app and the tests are generated. </span>
+<span class="go"> ✔ New FastStream project created. </span>
+<span class="go"> ✔ Integration tests were successfully completed. </span>
+<span class="go"> Tokens used: 36938</span>
+<span class="go"> Total Cost (USD): $0.11436</span>
+<span class="go">✨  All files were successfully generated!</span>
+</code></pre></div>
+<h4 id="failed-generation">Failed generation<a class="headerlink" href="#failed-generation" title="Permanent link">¤</a></h4>
+<p>The generation process is not bullet proof and it could fail with a
+meesage like this:</p>
+<div class="highlight"><pre><span></span><code>✨  Generating a new FastStream application!
+ ✔ Application description validated. 
+ ✔ New FastStream project created. 
+ ✔ FastStream app skeleton code generated. 
+ ✘ Error: Failed to generate a valid application and test code. 
+ ✘ Error: Integration tests failed.
+ Tokens used: 79384
+ Total Cost (USD): $0.24567
+
+
+Apologies, we couldn&#39;t generate a working application and test code from your application description.
+
+Please run the following command to start manual debugging:
+
+cd retrieve_without_logs &amp;&amp; pytest
+
+For in-depth debugging, check the retrieve-publish-crypto/_faststream_gen_logs directory for complete logs, including individual step information.
+</code></pre></div>
+<p>There can be a number of reasons for that, the most common being:</p>
+<ul>
+<li>
+<p>The specification you provided was not sufficiently detailed to
+  generate the application. In such cases, you could try to add more
+  detailed instructions and try again.</p>
+</li>
+<li>
+<p>The task is too difficult for default GPT-3.5 model to handle and you
+  could try to use GPT-4 instead:</p>
+</li>
+</ul>
+<!-- -->
+
+<div class="highlight"><pre><span></span><code>faststream_gen --model gpt-4 -i description_retrieve_publish.txt -o retrieve-publish-crypto
+</code></pre></div>
+<ul>
+<li>You were unlucky and you just need to execute the command again. Large
+  language models are stohastic in their nature and they always give
+  different answers to the same questions. There are retry mechanisms in
+  the engine, but sometimes they are not enough and just rerunning the
+  command can mediate the problem.</li>
+</ul>
+<p>If none of the above strategies work, check the already generated files
+and look what the potential problem could be. You can also finish the
+implementation or tests yourself.</p>
+<h4 id="successful-generation">Successful generation<a class="headerlink" href="#successful-generation" title="Permanent link">¤</a></h4>
+<p>If successful, the command will generate <code>FastStream</code> project with the
+following structure:</p>
+<div class="highlight"><pre><span></span><code><span class="go">retrieve-publish-crypto</span>
+<span class="go">├── .github</span>
+<span class="go">│   └── workflows</span>
+<span class="go">│       ├── build_docker.yml</span>
+<span class="go">│       ├── deploy_docs.yml</span>
+<span class="go">│       └── test.yml</span>
+<span class="go">├── .gitignore</span>
+<span class="go">├── Dockerfile</span>
+<span class="go">├── LICENSE</span>
+<span class="go">├── README.md</span>
+<span class="go">├── app</span>
+<span class="go">│   └── application.py</span>
+<span class="go">├── pyproject.toml</span>
+<span class="go">├── scripts</span>
+<span class="go">│   ├── build_docker.sh</span>
+<span class="go">│   ├── lint.sh</span>
+<span class="go">│   ├── services.yml</span>
+<span class="go">│   ├── start_kafka_broker_locally.sh</span>
+<span class="go">│   ├── static-analysis.sh</span>
+<span class="go">│   ├── stop_kafka_broker_locally.sh</span>
+<span class="go">│   └── subscribe_to_kafka_broker_locally.sh</span>
+<span class="go">└── tests</span>
+<span class="go">    ├── __init__.py</span>
+<span class="go">    └── test_application.py</span>
+</code></pre></div>
+<p>The generated application is located in the <code>app/</code> directory, while the
+tests are located in the <code>tests/</code> directory. It is important to keep in
+mind that these files are generated by LLM and may vary with each
+generation.</p>
+<p><strong><code>app/application.py</code></strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">NonNegativeFloat</span>
+
+<span class="kn">from</span> <span class="nn">faststream</span> <span class="kn">import</span> <span class="n">ContextRepo</span><span class="p">,</span> <span class="n">FastStream</span><span class="p">,</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">faststream.kafka</span> <span class="kn">import</span> <span class="n">KafkaBroker</span>
+
+<span class="n">broker</span> <span class="o">=</span> <span class="n">KafkaBroker</span><span class="p">(</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastStream</span><span class="p">(</span><span class="n">broker</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CryptoPrice</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">price</span><span class="p">:</span> <span class="n">NonNegativeFloat</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="mf">50000.0</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Current price of cryptocurrency in USD&quot;</span>
+    <span class="p">)</span>
+    <span class="n">crypto_currency</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;BTC&quot;</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The cryptocurrency&quot;</span>
+    <span class="p">)</span>
+
+<span class="n">publisher</span> <span class="o">=</span> <span class="n">broker</span><span class="o">.</span><span class="n">publisher</span><span class="p">(</span><span class="s2">&quot;new_crypto_price&quot;</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_crypto_price</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextRepo</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Always use context: ContextRepo for storing app_is_running variable</span>
+    <span class="k">while</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;app_is_running&quot;</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="n">price</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;amount&quot;</span><span class="p">]</span>
+                    <span class="n">new_crypto_price</span> <span class="o">=</span> <span class="n">CryptoPrice</span><span class="p">(</span>
+                        <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="n">crypto_currency</span>
+                    <span class="p">)</span>
+                    <span class="k">await</span> <span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span>
+                        <span class="n">new_crypto_price</span><span class="p">,</span>
+                        <span class="n">key</span><span class="o">=</span><span class="n">crypto_currency</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed API request </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> at time </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">time_interval</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">app_setup</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">ContextRepo</span><span class="p">):</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">set_global</span><span class="p">(</span><span class="s2">&quot;app_is_running&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_shutdown</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">ContextRepo</span><span class="p">):</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">set_global</span><span class="p">(</span><span class="s2">&quot;app_is_running&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Get all the running tasks and wait them to finish</span>
+    <span class="n">fetch_tasks</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fetch_tasks&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">fetch_tasks</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">after_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">publish_crypto_price</span><span class="p">(</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextRepo</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting publishing:&quot;</span><span class="p">)</span>
+
+    <span class="n">cryptocurrencies</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;Bitcoin&quot;</span><span class="p">,</span> <span class="s2">&quot;BTC&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Ethereum&quot;</span><span class="p">,</span> <span class="s2">&quot;ETH&quot;</span><span class="p">)]</span>
+    <span class="n">fetch_tasks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
+            <span class="n">fetch_crypto_price</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;https://api.coinbase.com/v2/prices/</span><span class="si">{</span><span class="n">crypto_currency</span><span class="si">}</span><span class="s2">-USD/spot&quot;</span><span class="p">,</span>
+                <span class="n">crypto_currency</span><span class="p">,</span>
+                <span class="n">logger</span><span class="p">,</span>
+                <span class="n">context</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">crypto_currency</span> <span class="ow">in</span> <span class="n">cryptocurrencies</span>
+    <span class="p">]</span>
+    <span class="c1"># you need to save asyncio tasks so you can wait them to finish at app shutdown (the function with @app.on_shutdown function)</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">set_global</span><span class="p">(</span><span class="s2">&quot;fetch_tasks&quot;</span><span class="p">,</span> <span class="n">fetch_tasks</span><span class="p">)</span>
+</code></pre></div>
+<p><strong><code>tests/test_application.py</code></strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">faststream</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">TestApp</span>
+<span class="kn">from</span> <span class="nn">faststream.kafka</span> <span class="kn">import</span> <span class="n">TestKafkaBroker</span>
+
+<span class="kn">from</span> <span class="nn">app.application</span> <span class="kn">import</span> <span class="n">CryptoPrice</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">broker</span>
+
+
+<span class="nd">@broker</span><span class="o">.</span><span class="n">subscriber</span><span class="p">(</span><span class="s2">&quot;new_crypto_price&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">on_new_crypto_price</span><span class="p">(</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">CryptoPrice</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="s2">&quot;message.raw_message.key&quot;</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_fetch_crypto_price</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">TestKafkaBroker</span><span class="p">(</span><span class="n">broker</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">TestApp</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">on_new_crypto_price</span><span class="o">.</span><span class="n">wait_call</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">on_new_crypto_price</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="creating-a-new-python-virtual-environment">Creating a new Python virtual environment<a class="headerlink" href="#creating-a-new-python-virtual-environment" title="Permanent link">¤</a></h4>
+<p>All the required dependencies to run the newly generated FastStream
+project are located within the <code>pyproject.toml</code> file.</p>
+<p>Create and activate a new virtual environment inside the
+<code>retrieve-publish-crypto</code> directory by using
+<a href="https://docs.python.org/3/library/venv.html" target="_blank">
+venv</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>retrieve-publish-crypto
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</code></pre></div>
+<p>Upgrade pip if needed and install the development dependencies:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
+</code></pre></div>
+<h4 id="testing-the-application">Testing the application<a class="headerlink" href="#testing-the-application" title="Permanent link">¤</a></h4>
+<p>In order to verify functional correctness of the application, it is
+recommended to execute the generated unit and integration test by
+running the <code>pytest</code> command.</p>
+<div class="highlight"><pre><span></span><code>pytest
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>============================= test session starts ==============================
+platform linux -- Python 3.10.8, pytest-7.4.2, pluggy-1.3.0
+rootdir: /workspaces/faststream-gen/docs_src/tutorial/retrieve-publish-crypto
+configfile: pyproject.toml
+plugins: anyio-3.7.1, asyncio-0.21.1
+asyncio: mode=strict
+collected 1 item
+
+tests/test_application.py .                                              [100%]
+
+============================== 1 passed in 2.98s ===============================
+</code></pre></div>
+<h4 id="previewing-asyncapi-docs">Previewing AsyncAPI Docs<a class="headerlink" href="#previewing-asyncapi-docs" title="Permanent link">¤</a></h4>
+<p>To preview AsyncAPI Docs for the application, execute the following
+command:</p>
+<div class="highlight"><pre><span></span><code>faststream<span class="w"> </span>docs<span class="w"> </span>serve<span class="w"> </span>app.application:app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">INFO:     Started server process [3575270]</span>
+<span class="go">INFO:     Waiting for application startup.</span>
+<span class="go">INFO:     Application startup complete.</span>
+<span class="go">INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)</span>
+</code></pre></div>
+<p>You can now access the AsyncAPI Docs by opening
+<a href="http://localhost:8000" target="_blank">localhost:8000</a> in
+your browser.</p>
+<p><img alt="AsyncAPI Docs" src="../../images/nbs/Tutorial/images/localhost-asyncapi1.png" /></p>
+<h4 id="starting-localhost-kafka-broker">Starting localhost Kafka broker<a class="headerlink" href="#starting-localhost-kafka-broker" title="Permanent link">¤</a></h4>
+<p>To run the <code>FastStream</code> application locally, ensure that you have a
+running Kafka broker. You can start a Kafka Docker container by
+executing the <code>start_kafka_broker_locally.sh</code> shell script:</p>
+<div class="highlight"><pre><span></span><code>./scripts/start_kafka_broker_locally.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">[+] Running 2/2</span>
+<span class="go"> ⠿ Network scripts_default  Created                                                                                                             0.1s</span>
+<span class="go"> ⠿ Container bitnami_kafka  Started </span>
+</code></pre></div>
+<h4 id="starting-the-application">Starting the application<a class="headerlink" href="#starting-the-application" title="Permanent link">¤</a></h4>
+<p>To start the application, execute the following command:</p>
+<div class="highlight"><pre><span></span><code>faststream<span class="w"> </span>run<span class="w"> </span>app.application:app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">2023-09-15 13:41:21,948 INFO     - FastStream app starting...</span>
+<span class="go">2023-09-15 13:41:22,144 INFO     -      |            - Starting publishing:</span>
+<span class="go">2023-09-15 13:41:22,144 INFO     - FastStream app started successfully! To exit press CTRL+C</span>
+<span class="go">Topic new_crypto_price not found in cluster metadata</span>
+</code></pre></div>
+<p>Ensure that the app remains running, it is needed for the subsequent
+steps.</p>
+<h3 id="calculating-the-moving-average">Calculating the moving average<a class="headerlink" href="#calculating-the-moving-average" title="Permanent link">¤</a></h3>
+<p>Let’s develop an application that calculates the average price of the
+three most recent messages received from the <code>new_crypto_price</code> topic
+for each cryptocurrency. Subsequently, we will publish the computed
+average price to the <code>price_mean</code> topic.</p>
+<p>Here is the full description of the desired application:</p>
+<div class="highlight"><pre><span></span><code>Create a FastStream application for consuming messages
+from the new_crypto_price topic. 
+
+This topic needs to use a partition key.
+
+new_crypto_price messages use JSON with two attributes 
+(create class CryptoPrice with these attributes):
+- price: non-negative float (it represents the current price of the crypto)
+- crypto_currency: string (it represents the cryptocurrency e.g. BTC, ETH...)
+
+The application should save each message to a dictionary (global variable) 
+- partition key should be used as a dictionary key 
+  and value should be a List of prices.
+
+Keep only the last 100 messages in the dictionary.
+
+If there are fewer than 3 messages for a given partition key,
+do not publish any messages.
+
+Otherwise, Calculate the price mean of the last 3 messages
+for the given partition key.
+
+Publish the price mean to the price_mean topic and use 
+the same partition key that the new_crypto_price topic is using.
+</code></pre></div>
+<p>Please open a new terminal and navigate to the root directory of this
+tutorial, which is called <code>faststream_gen_tutorial</code>. Once you are inside
+the <code>faststream_gen_tutorial</code> folder, please activate the virtual
+environment.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>path_to/faststream_gen_tutorial
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</code></pre></div>
+<p>To create a <code>faststream</code> application inside the <code>calculate-mean-app</code>
+directory, first copy the previous description and paste it into the
+<code>description_calculate_mean.txt</code> file.</p>
+<p>Next, run the following command:</p>
+<div class="highlight"><pre><span></span><code>faststream_gen<span class="w"> </span>-i<span class="w"> </span>description_calculate_mean.txt<span class="w"> </span>-o<span class="w"> </span>calculate-mean-app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">✨  Generating a new FastStream application!</span>
+<span class="go"> ✔ Application description validated. </span>
+<span class="go"> ✔ FastStream app skeleton code generated. </span>
+<span class="go"> ✔ The app and the tests are generated. </span>
+<span class="go"> ✔ New FastStream project created. </span>
+<span class="go"> ✔ Integration tests were successfully completed. </span>
+<span class="go"> Tokens used: 13367</span>
+<span class="go"> Total Cost (USD): $0.04147</span>
+<span class="go">✨  All files were successfully generated!</span>
+</code></pre></div>
+<p>If successful, the command will generate <code>calculate-mean-app</code> directory
+with <code>app/application.py</code> and <code>tests/test_application.py</code> inside. If
+not, just rerun the command again until it succeds.</p>
+<p><strong><code>app/application.py</code></strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">NonNegativeFloat</span>
+
+<span class="kn">from</span> <span class="nn">faststream</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">ContextRepo</span><span class="p">,</span> <span class="n">FastStream</span><span class="p">,</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">faststream.kafka</span> <span class="kn">import</span> <span class="n">KafkaBroker</span>
+
+
+<span class="k">class</span> <span class="nc">CryptoPrice</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">price</span><span class="p">:</span> <span class="n">NonNegativeFloat</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="mi">50000</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Current price of the cryptocurrency&quot;</span>
+    <span class="p">)</span>
+    <span class="n">crypto_currency</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;BTC&quot;</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Cryptocurrency symbol&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="n">broker</span> <span class="o">=</span> <span class="n">KafkaBroker</span><span class="p">(</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastStream</span><span class="p">(</span><span class="n">broker</span><span class="p">)</span>
+
+
+<span class="n">publisher</span> <span class="o">=</span> <span class="n">broker</span><span class="o">.</span><span class="n">publisher</span><span class="p">(</span><span class="s2">&quot;price_mean&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">app_setup</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">ContextRepo</span><span class="p">):</span>
+    <span class="n">message_history</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">set_global</span><span class="p">(</span><span class="s2">&quot;message_history&quot;</span><span class="p">,</span> <span class="n">message_history</span><span class="p">)</span>
+
+
+<span class="nd">@broker</span><span class="o">.</span><span class="n">subscriber</span><span class="p">(</span><span class="s2">&quot;new_crypto_price&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">on_new_crypto_price</span><span class="p">(</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">CryptoPrice</span><span class="p">,</span>
+    <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+    <span class="n">message_history</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(),</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="s2">&quot;message.raw_message.key&quot;</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New crypto price </span><span class="si">{</span><span class="n">msg</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">crypto_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">crypto_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">message_history</span><span class="p">:</span>
+        <span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">price</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">price_mean</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">message_history</span><span class="p">[</span><span class="n">crypto_key</span><span class="p">][</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="k">await</span> <span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">price_mean</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div>
+<p><strong><code>tests/test_application.py</code></strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">faststream</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">TestApp</span>
+<span class="kn">from</span> <span class="nn">faststream.kafka</span> <span class="kn">import</span> <span class="n">TestKafkaBroker</span>
+
+<span class="kn">from</span> <span class="nn">app.application</span> <span class="kn">import</span> <span class="n">CryptoPrice</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">broker</span><span class="p">,</span> <span class="n">on_new_crypto_price</span>
+
+
+<span class="nd">@broker</span><span class="o">.</span><span class="n">subscriber</span><span class="p">(</span><span class="s2">&quot;price_mean&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">on_price_mean</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="s2">&quot;message.raw_message.key&quot;</span><span class="p">)):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_app</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">TestKafkaBroker</span><span class="p">(</span><span class="n">broker</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">TestApp</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">broker</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span>
+                <span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;new_crypto_price&quot;</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;BTC&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">on_new_crypto_price</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">on_price_mean</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span>
+
+            <span class="k">await</span> <span class="n">broker</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span>
+                <span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;new_crypto_price&quot;</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;BTC&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">on_new_crypto_price</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">on_price_mean</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span>
+
+            <span class="k">await</span> <span class="n">broker</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span>
+                <span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">70000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;new_crypto_price&quot;</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;BTC&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">on_new_crypto_price</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">CryptoPrice</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">70000</span><span class="p">,</span> <span class="n">crypto_currency</span><span class="o">=</span><span class="s2">&quot;BTC&quot;</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">on_price_mean</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="mf">60000.0</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="creating-a-new-python-virtual-environment_1">Creating a new Python virtual environment<a class="headerlink" href="#creating-a-new-python-virtual-environment_1" title="Permanent link">¤</a></h4>
+<p>All the required dependencies to run the newly generated FastStream
+project are located within the <code>pyproject.toml</code> file. Create a new
+virtual environment and install the development dependencies for the
+project.</p>
+<p>Create and activate a new virtual environment inside the
+<code>calculate-mean-app</code> directory by using
+<a href="https://docs.python.org/3/library/venv.html" target="_blank">
+venv</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>calculate-mean-app
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</code></pre></div>
+<p>Upgrade pip if needed and install the development dependencies:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
+</code></pre></div>
+<h4 id="testing-the-application_1">Testing the application<a class="headerlink" href="#testing-the-application_1" title="Permanent link">¤</a></h4>
+<p>In order to verify functional correctness of the application, it is
+recommended to execute the generated unit and integration test by
+running the <code>pytest</code> command.</p>
+<div class="highlight"><pre><span></span><code>pytest
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>============================= test session starts ==============================
+platform linux -- Python 3.10.8, pytest-7.4.2, pluggy-1.3.0
+rootdir: /workspaces/faststream-gen/docs_src/tutorial/calculate-mean-app
+configfile: pyproject.toml
+plugins: anyio-3.7.1, asyncio-0.21.1
+asyncio: mode=strict
+collected 1 item
+
+tests/test_application.py .                                              [100%]
+
+============================== 1 passed in 0.64s ===============================
+</code></pre></div>
+<h4 id="previewing-asyncapi-docs_1">Previewing AsyncAPI Docs<a class="headerlink" href="#previewing-asyncapi-docs_1" title="Permanent link">¤</a></h4>
+<p>To preview AsyncAPI Docs for the application, execute the following
+command:</p>
+<div class="highlight"><pre><span></span><code>faststream<span class="w"> </span>docs<span class="w"> </span>serve<span class="w"> </span>app.application:app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">INFO:     Started server process [3596205]</span>
+<span class="go">INFO:     Waiting for application startup.</span>
+<span class="go">INFO:     Application startup complete.</span>
+<span class="go">INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)</span>
+</code></pre></div>
+<p>You can now access the AsyncAPI Docs by opening
+<a href="http://localhost:8000" target="_blank">localhost:8000</a> in
+your browser.</p>
+<p><img alt="AsyncAPI Docs" src="../../images/nbs/Tutorial/images/localhost-asyncapi2.png" /></p>
+<h4 id="starting-the-application_1">Starting the application<a class="headerlink" href="#starting-the-application_1" title="Permanent link">¤</a></h4>
+<p>To start the application, execute the following command:</p>
+<div class="highlight"><pre><span></span><code>faststream<span class="w"> </span>run<span class="w"> </span>app.application:app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">2023-10-04 09:31:18,926 INFO     - FastStream app starting...</span>
+<span class="go">2023-10-04 09:31:18,948 INFO     - new_crypto_price |            - `OnNewCryptoPrice` waiting for messages</span>
+<span class="go">Topic new_crypto_price not found in cluster metadata</span>
+<span class="go">2023-10-04 09:31:19,069 INFO     - FastStream app started successfully! To exit, press CTRL+C</span>
+<span class="go">2023-10-04 09:31:40,876 INFO     - new_crypto_price | 0-16964047 - Received</span>
+<span class="go">2023-10-04 09:31:40,878 INFO     - new_crypto_price | 0-16964047 - New crypto price msg=CryptoPrice(price=27414.085, crypto_currency=&#39;BTC&#39;)</span>
+<span class="go">2023-10-04 09:31:40,878 INFO     - new_crypto_price | 0-16964047 - Processed</span>
+<span class="go">2023-10-04 09:31:40,878 INFO     - new_crypto_price | 1-16964047 - Received</span>
+<span class="go">2023-10-04 09:31:40,879 INFO     - new_crypto_price | 1-16964047 - New crypto price msg=CryptoPrice(price=1642.425, crypto_currency=&#39;ETH&#39;)</span>
+<span class="go">2023-10-04 09:31:40,879 INFO     - new_crypto_price | 1-16964047 - Processed</span>
+<span class="go">2023-10-04 09:31:43,053 INFO     - new_crypto_price | 2-16964047 - Received</span>
+<span class="go">2023-10-04 09:31:43,054 INFO     - new_crypto_price | 2-16964047 - New crypto price msg=CryptoPrice(price=27414.085, crypto_currency=&#39;BTC&#39;)</span>
+<span class="go">2023-10-04 09:31:43,054 INFO     - new_crypto_price | 2-16964047 - Processed</span>
+<span class="go">2023-10-04 09:31:43,054 INFO     - new_crypto_price | 3-16964047 - Received</span>
+<span class="go">2023-10-04 09:31:43,055 INFO     - new_crypto_price | 3-16964047 - New crypto price msg=CryptoPrice(price=1642.425, crypto_currency=&#39;ETH&#39;)</span>
+<span class="go">...</span>
+</code></pre></div>
+<p>You can see in the terminal that the application is reading the messages
+from the <code>new_crypto_price</code> topic. Ensure that the app remains running
+as it is needed for the next step.</p>
+<h4 id="subscribing-directly-to-local-kafka-broker-topic">Subscribing directly to local Kafka broker topic<a class="headerlink" href="#subscribing-directly-to-local-kafka-broker-topic" title="Permanent link">¤</a></h4>
+<p>Open the <strong>new terminal</strong>, navigate to the <code>calculate-mean-app</code>
+directory.</p>
+<p>To check if the <code>calculate-mean-app</code> is publishing messages to the
+<code>price_mean</code> topic, run the following command:</p>
+<div class="highlight"><pre><span></span><code>./scripts/subscribe_to_kafka_broker_locally.sh<span class="w"> </span>price_mean
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">BTC     26405.745</span>
+<span class="go">ETH     1621.3733333333332</span>
+<span class="go">BTC     26404.865</span>
+<span class="go">ETH     1621.375</span>
+<span class="go">BTC     26404.865</span>
+<span class="go">...</span>
+</code></pre></div>
+<h4 id="stopping-kafka-broker">Stopping Kafka broker<a class="headerlink" href="#stopping-kafka-broker" title="Permanent link">¤</a></h4>
+<p>To stop the Kafka broker after analyzing the mean price of
+cryptocurrencies, you can execute the following command:</p>
+<div class="highlight"><pre><span></span><code>./scripts/stop_kafka_broker_locally.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">[+] Running 2/2</span>
+<span class="go"> ⠿ Container bitnami_kafka  Removed                                                                            1.2s</span>
+<span class="go"> ⠿ Network scripts_default  Removed </span>
+</code></pre></div>
+<h2 id="optional-github-integration">[Optional] GitHub integration<a class="headerlink" href="#optional-github-integration" title="Permanent link">¤</a></h2>
+<p>To successfully complete this optional tutorial chapter, make sure you
+have a <a href="https://github.com/" target="_blank">GitHub account</a>
+and the <a href="https://git-scm.com/" target="_blank">Git command</a>
+installed. Additionally, ensure that your
+<a href="https://docs.github.com/authentication" target="_blank">authentication</a>
+for GitHub is properly set.</p>
+<p>We need to create two GitHub repositories, one for the <code>FastStream</code>
+project in the <code>retrieve-publish-crypto</code> directory and another for the
+<code>FastStream</code> project in the <code>calculate-mean-app</code> directory. In this
+chapter, we will upload the <code>FastStream</code> project to GitHub, which
+includes the <code>retrieve-publish-crypto</code> project. We will also provide an
+explanation of the generated CI workflows.</p>
+<h3 id="adding-locally-hosted-code-to-github">Adding locally hosted code to GitHub<a class="headerlink" href="#adding-locally-hosted-code-to-github" title="Permanent link">¤</a></h3>
+<p>To create a GitHub repository, click on the following
+<a href="https://github.com/new" target="_blank">link</a>. For the
+<code>Repository name</code>, use <code>retrieve-publish-crypto</code> and click on
+<code>Create repository</code>.</p>
+<p><img alt="Create GitHub Repository" src="../../images/nbs/Tutorial/images/create_git_repo.png" /></p>
+<p>Please open your development environment and go to the
+<code>retrieve-publish-crypto</code> directory that was generated in the previous
+steps.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>path_to/faststream_gen_tutorial/retrieve-publish-crypto
+</code></pre></div>
+<p>Next, execute the following commands:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>init
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Retrieve and publish crypto prices application implemented&quot;</span>
+git<span class="w"> </span>branch<span class="w"> </span>-M<span class="w"> </span>main
+</code></pre></div>
+<p>If you are using <strong>HTTPS</strong> authentication execute (<strong>replace the
+<code>git_username</code></strong> in the URL with your own GitHub username):</p>
+<p><code>git remote add origin https://github.com/git_username/retrieve-publish-crypto.git</code></p>
+<p>If you are using <strong>SSH</strong> authentication execute (<strong>replace the
+<code>git_username</code></strong> in the URL with your own GitHub username):</p>
+<p><code>git remote add origin git@github.com:git_username/retrieve-publish-crypto.git</code></p>
+<p>To update the remote branch with local commits, execute:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+<h3 id="continuous-integration-with-github-actions">Continuous integration with GitHub Actions<a class="headerlink" href="#continuous-integration-with-github-actions" title="Permanent link">¤</a></h3>
+<p>Once the changes are pushed, CI pipeline will run the tests again,
+create and publish the documentation and build Docker container with the
+application.</p>
+<p>To verify the passing status of the CI, open your web browser, go to the
+newly created GitHub repository, and click on the Actions tab.</p>
+<p><img alt="GitHub Actions" src="../../images/nbs/Tutorial/images/gha.png" /></p>
+<p>The tests executed with <code>pytest</code> are passing successfully.
+<img alt="Tests" src="../../images/nbs/Tutorial/images/tests.png" /></p>
+<p>The Docker image has been successfully built and pushed to the GitHub
+Container registry under the repository
+<code>ghcr.io/your_username/retrieve-publish-crypto</code></p>
+<p><img alt="GitHub Actions" src="../../images/nbs/Tutorial/images/build-docker.png" /></p>
+<p>The AsyncAPI docs have been successfully generated and deployed to
+GitHub Pages.</p>
+<p><img alt="Deploy FastStream AsyncAPI Docs" src="../../images/nbs/Tutorial/images/deploy-asyncapi.png" /></p>
+<p>After the successful execution of the <code>Deploy FastStream AsyncAPI Docs</code>
+workflow, a new branch named <code>gh-pages</code> will be created. To access the
+GitHub Pages settings, navigate to the <code>Settings -&gt; Pages</code>, select the
+<code>gh-pages</code> branch as the designated branch for hosting the GitHub Pages
+and click on <code>Save</code>.</p>
+<p><img alt="GitHub Pages" src="../../images/nbs/Tutorial/images/github-pages.png" /> <br></p>
+<p>By setting up a branch on GitHub Pages, a new workflow will
+automatically be triggered within the GitHub Actions. To access this
+workflow, simply click on the <code>Actions</code> tab and open the
+<code>pages build and deployment</code> workflow.</p>
+<p><img alt="Pages build and deploy" src="../../images/nbs/Tutorial/images/pages-build-and-deploy.png" /></p>
+<p>Once all the jobs within the workflow are completed, you can click on
+the provided URL to conveniently view and explore the AsyncAPI Docs that
+have been generated for your application.</p>
+<p><img alt="AsyncAPI Docs" src="../../images/nbs/Tutorial/images/asyncapi-docs.png" /></p>
+<h3 id="repeat">Repeat<a class="headerlink" href="#repeat" title="Permanent link">¤</a></h3>
+<p>Repeat the same process with <code>calculate-mean-app</code> project.</p>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">¤</a></h2>
+<p>Congratulations! You have successfully completed this tutorial and
+gained a new set of skills. Now that you have learned how to use
+<code>faststream-gen</code>, try it out with your own example!</p>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2023 onwards, airt
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+    and 
+    <a href="https://nbdev-mkdocs.airt.ai/" target="_blank" rel="noopener">
+      Material for nbdev
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+        <script src="../../overrides/js/extra.js"></script>
+      
+        <script src="../../overrides/js/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
