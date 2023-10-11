@@ -18,5 +18,5 @@ jobs:
           pip install -e ".[dev]"
       - name: Run pytest
         shell: bash
-        run: pytest
+        run: bash scripts/test.sh
 
