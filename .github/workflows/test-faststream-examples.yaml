@@ -18,5 +18,8 @@ jobs:
           pip install -e ".[dev]"
       - name: Run pytest
         shell: bash
-        run: bash scripts/test.sh
+        run: |
+          scripts/test.sh
+          scripts/test.sh docs_src/tutorial/calculate-mean-app/tests/test_application.py
+          scripts/test.sh docs_src/tutorial/retrieve-publish-crypto/tests/test_application.py
 
