@@ -22,4 +22,5 @@ jobs:
           scripts/test.sh
           scripts/test.sh docs_src/tutorial/calculate-mean-app/tests/test_application.py
           scripts/test.sh docs_src/tutorial/retrieve-publish-crypto/tests/test_application.py
+          scripts/test.sh docs_src/app_index_example/test.py
 
